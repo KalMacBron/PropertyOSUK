@@ -1,1 +1,8 @@
-aW5jbHVkZTogcGFja2FnZTpmbHV0dGVyX2xpbnRzL2ZsdXR0ZXIueWFtbAoKbGludGVyOgogIHJ1bGVzOgogICAgYWx3YXlzX3VzZV9wYWNrYWdlX2ltcG9ydHM6IHRydWUKICAgIGF2b2lkX3ByaW50OiB0cnVlCiAgICBwcmVmZXJfZmluYWxfbG9jYWxzOiB0cnVlCgo=
+include: package:flutter_lints/flutter.yaml
+
+linter:
+  rules:
+    always_use_package_imports: true
+    avoid_print: true
+    prefer_final_locals: true
+
