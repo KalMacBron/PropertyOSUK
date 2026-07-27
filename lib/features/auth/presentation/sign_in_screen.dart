@@ -1,1 +1,30 @@
-aW1wb3J0ICdwYWNrYWdlOmZsdXR0ZXIvbWF0ZXJpYWwuZGFydCc7CgpjbGFzcyBTaWduSW5TY3JlZW4gZXh0ZW5kcyBTdGF0ZWxlc3NXaWRnZXQgewogIGNvbnN0IFNpZ25JblNjcmVlbih7c3VwZXIua2V5fSk7CgogIEBvdmVycmlkZQogIFdpZGdldCBidWlsZChCdWlsZENvbnRleHQgY29udGV4dCkgewogICAgcmV0dXJuIGNvbnN0IFNjYWZmb2xkKAogICAgICBib2R5OiBDZW50ZXIoCiAgICAgICAgY2hpbGQ6IFNpemVkQm94KAogICAgICAgICAgd2lkdGg6IDQyMCwKICAgICAgICAgIGNoaWxkOiBDYXJkKAogICAgICAgICAgICBjaGlsZDogUGFkZGluZygKICAgICAgICAgICAgICBwYWRkaW5nOiBFZGdlSW5zZXRzLmFsbCgzMiksCiAgICAgICAgICAgICAgY2hpbGQ6IENvbHVtbigKICAgICAgICAgICAgICAgIG1haW5BeGlzU2l6ZTogTWFpbkF4aXNTaXplLm1pbiwKICAgICAgICAgICAgICAgIGNoaWxkcmVuOiBbCiAgICAgICAgICAgICAgICAgIFRleHQoJ1Byb3BlcnR5T1MnLCBzdHlsZTogVGV4dFN0eWxlKGZvbnRTaXplOiAzMCkpLAogICAgICAgICAgICAgICAgICBTaXplZEJveChoZWlnaHQ6IDEyKSwKICAgICAgICAgICAgICAgICAgVGV4dCgnSW52aXRhdGlvbi1vbmx5IEFscGhhIHNpZ24taW4gd2lsbCBiZSBpbXBsZW1lbnRlZCBoZXJlLicpLAogICAgICAgICAgICAgICAgXSwKICAgICAgICAgICAgICApLAogICAgICAgICAgICApLAogICAgICAgICAgKSwKICAgICAgICApLAogICAgICApLAogICAgKTsKICB9Cn0KCg==
+import 'package:flutter/material.dart';
+
+class SignInScreen extends StatelessWidget {
+  const SignInScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Center(
+        child: SizedBox(
+          width: 420,
+          child: Card(
+            child: Padding(
+              padding: EdgeInsets.all(32),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text('PropertyOS', style: TextStyle(fontSize: 30)),
+                  SizedBox(height: 12),
+                  Text('Invitation-only Alpha sign-in will be implemented here.'),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
