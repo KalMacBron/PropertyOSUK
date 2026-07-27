@@ -9,7 +9,7 @@ Future<void> main() async {
   final config = AppConfig.fromEnvironment();
   await Supabase.initialize(
     url: config.supabaseUrl,
-    anonKey: config.supabaseAnonKey,
+    publishableKey: config.supabaseAnonKey,
   );
 
   runApp(const PropertyOsApp());
