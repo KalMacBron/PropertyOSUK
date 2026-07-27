@@ -1,1 +1,63 @@
-aW1wb3J0ICdwYWNrYWdlOmZsdXR0ZXIvbWF0ZXJpYWwuZGFydCc7CmltcG9ydCAncGFja2FnZTpnb19yb3V0ZXIvZ29fcm91dGVyLmRhcnQnOwppbXBvcnQgJ3BhY2thZ2U6cHJvcGVydHlfb3MvZmVhdHVyZXMvYXV0aC9wcmVzZW50YXRpb24vc2lnbl9pbl9zY3JlZW4uZGFydCc7CmltcG9ydCAncGFja2FnZTpwcm9wZXJ0eV9vcy9mZWF0dXJlcy9wcm9wZXJ0aWVzL3ByZXNlbnRhdGlvbi9wcm9wZXJ0aWVzX3NjcmVlbi5kYXJ0JzsKaW1wb3J0ICdwYWNrYWdlOnByb3BlcnR5X29zL2ZlYXR1cmVzL3RvZGF5L3ByZXNlbnRhdGlvbi90b2RheV9zY3JlZW4uZGFydCc7CgpmaW5hbCBwcm9wZXJ0eU9zUm91dGVyID0gR29Sb3V0ZXIoCiAgaW5pdGlhbExvY2F0aW9uOiAnL3RvZGF5JywKICByb3V0ZXM6IFsKICAgIEdvUm91dGUoCiAgICAgIHBhdGg6ICcvc2lnbi1pbicsCiAgICAgIGJ1aWxkZXI6IChjb250ZXh0LCBzdGF0ZSkgPT4gY29uc3QgU2lnbkluU2NyZWVuKCksCiAgICApLAogICAgU2hlbGxSb3V0ZSgKICAgICAgYnVpbGRlcjogKGNvbnRleHQsIHN0YXRlLCBjaGlsZCkgPT4gX0FwcFNoZWxsKGNoaWxkOiBjaGlsZCksCiAgICAgIHJvdXRlczogWwogICAgICAgIEdvUm91dGUoCiAgICAgICAgICBwYXRoOiAnL3RvZGF5JywKICAgICAgICAgIGJ1aWxkZXI6IChjb250ZXh0LCBzdGF0ZSkgPT4gY29uc3QgVG9kYXlTY3JlZW4oKSwKICAgICAgICApLAogICAgICAgIEdvUm91dGUoCiAgICAgICAgICBwYXRoOiAnL3Byb3BlcnRpZXMnLAogICAgICAgICAgYnVpbGRlcjogKGNvbnRleHQsIHN0YXRlKSA9PiBjb25zdCBQcm9wZXJ0aWVzU2NyZWVuKCksCiAgICAgICAgKSwKICAgICAgXSwKICAgICksCiAgXSwKKTsKCmNsYXNzIF9BcHBTaGVsbCBleHRlbmRzIFN0YXRlbGVzc1dpZGdldCB7CiAgY29uc3QgX0FwcFNoZWxsKHtyZXF1aXJlZCB0aGlzLmNoaWxkfSk7CgogIGZpbmFsIFdpZGdldCBjaGlsZDsKCiAgQG92ZXJyaWRlCiAgV2lkZ2V0IGJ1aWxkKEJ1aWxkQ29udGV4dCBjb250ZXh0KSB7CiAgICByZXR1cm4gU2NhZmZvbGQoCiAgICAgIGFwcEJhcjogQXBwQmFyKHRpdGxlOiBjb25zdCBUZXh0KCdQcm9wZXJ0eU9TJykpLAogICAgICBkcmF3ZXI6IE5hdmlnYXRpb25EcmF3ZXIoCiAgICAgICAgY2hpbGRyZW46IFsKICAgICAgICAgIGNvbnN0IFBhZGRpbmcoCiAgICAgICAgICAgIHBhZGRpbmc6IEVkZ2VJbnNldHMuZnJvbUxUUkIoMjgsIDIwLCAxNiwgMTIpLAogICAgICAgICAgICBjaGlsZDogVGV4dCgnV29ya3NwYWNlJyksCiAgICAgICAgICApLAogICAgICAgICAgTmF2aWdhdGlvbkRyYXdlckRlc3RpbmF0aW9uKAogICAgICAgICAgICBpY29uOiBjb25zdCBJY29uKEljb25zLnRvZGF5X291dGxpbmVkKSwKICAgICAgICAgICAgbGFiZWw6IGNvbnN0IFRleHQoJ1RvZGF5JyksCiAgICAgICAgICApLAogICAgICAgICAgTmF2aWdhdGlvbkRyYXdlckRlc3RpbmF0aW9uKAogICAgICAgICAgICBpY29uOiBjb25zdCBJY29uKEljb25zLmhvbWVfd29ya19vdXRsaW5lZCksCiAgICAgICAgICAgIGxhYmVsOiBjb25zdCBUZXh0KCdQcm9wZXJ0aWVzJyksCiAgICAgICAgICApLAogICAgICAgIF0sCiAgICAgICAgb25EZXN0aW5hdGlvblNlbGVjdGVkOiAoaW5kZXgpIHsKICAgICAgICAgIE5hdmlnYXRvci5vZihjb250ZXh0KS5wb3AoKTsKICAgICAgICAgIGNvbnRleHQuZ28oaW5kZXggPT0gMCA/ICcvdG9kYXknIDogJy9wcm9wZXJ0aWVzJyk7CiAgICAgICAgfSwKICAgICAgKSwKICAgICAgYm9keTogY2hpbGQsCiAgICApOwogIH0KfQoK
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:property_os/features/auth/presentation/sign_in_screen.dart';
+import 'package:property_os/features/properties/presentation/properties_screen.dart';
+import 'package:property_os/features/today/presentation/today_screen.dart';
+
+final propertyOsRouter = GoRouter(
+  initialLocation: '/today',
+  routes: [
+    GoRoute(
+      path: '/sign-in',
+      builder: (context, state) => const SignInScreen(),
+    ),
+    ShellRoute(
+      builder: (context, state, child) => _AppShell(child: child),
+      routes: [
+        GoRoute(
+          path: '/today',
+          builder: (context, state) => const TodayScreen(),
+        ),
+        GoRoute(
+          path: '/properties',
+          builder: (context, state) => const PropertiesScreen(),
+        ),
+      ],
+    ),
+  ],
+);
+
+class _AppShell extends StatelessWidget {
+  const _AppShell({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('PropertyOS')),
+      drawer: NavigationDrawer(
+        children: [
+          const Padding(
+            padding: EdgeInsets.fromLTRB(28, 20, 16, 12),
+            child: Text('Workspace'),
+          ),
+          NavigationDrawerDestination(
+            icon: const Icon(Icons.today_outlined),
+            label: const Text('Today'),
+          ),
+          NavigationDrawerDestination(
+            icon: const Icon(Icons.home_work_outlined),
+            label: const Text('Properties'),
+          ),
+        ],
+        onDestinationSelected: (index) {
+          Navigator.of(context).pop();
+          context.go(index == 0 ? '/today' : '/properties');
+        },
+      ),
+      body: child,
+    );
+  }
+}
+
