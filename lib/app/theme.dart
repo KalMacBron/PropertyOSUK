@@ -1,1 +1,21 @@
-aW1wb3J0ICdwYWNrYWdlOmZsdXR0ZXIvbWF0ZXJpYWwuZGFydCc7CgpUaGVtZURhdGEgYnVpbGRQcm9wZXJ0eU9zVGhlbWUoKSB7CiAgY29uc3QgbmF2eSA9IENvbG9yKDB4RkYxNDIxM0QpOwogIGNvbnN0IGFjY2VudCA9IENvbG9yKDB4RkYyRjdENkQpOwoKICByZXR1cm4gVGhlbWVEYXRhKAogICAgY29sb3JTY2hlbWU6IENvbG9yU2NoZW1lLmZyb21TZWVkKAogICAgICBzZWVkQ29sb3I6IGFjY2VudCwKICAgICAgcHJpbWFyeTogbmF2eSwKICAgICAgYnJpZ2h0bmVzczogQnJpZ2h0bmVzcy5saWdodCwKICAgICksCiAgICBzY2FmZm9sZEJhY2tncm91bmRDb2xvcjogY29uc3QgQ29sb3IoMHhGRkY1RjdGQSksCiAgICB1c2VNYXRlcmlhbDM6IHRydWUsCiAgICBjYXJkVGhlbWU6IGNvbnN0IENhcmRUaGVtZURhdGEoCiAgICAgIGVsZXZhdGlvbjogMCwKICAgICAgbWFyZ2luOiBFZGdlSW5zZXRzLnplcm8sCiAgICApLAogICk7Cn0KCg==
+import 'package:flutter/material.dart';
+
+ThemeData buildPropertyOsTheme() {
+  const navy = Color(0xFF14213D);
+  const accent = Color(0xFF2F7D6D);
+
+  return ThemeData(
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: accent,
+      primary: navy,
+      brightness: Brightness.light,
+    ),
+    scaffoldBackgroundColor: const Color(0xFFF5F7FA),
+    useMaterial3: true,
+    cardTheme: const CardThemeData(
+      elevation: 0,
+      margin: EdgeInsets.zero,
+    ),
+  );
+}
+
