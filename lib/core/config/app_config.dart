@@ -1,1 +1,26 @@
-Y2xhc3MgQXBwQ29uZmlnIHsKICBjb25zdCBBcHBDb25maWcoewogICAgcmVxdWlyZWQgdGhpcy5zdXBhYmFzZVVybCwKICAgIHJlcXVpcmVkIHRoaXMuc3VwYWJhc2VBbm9uS2V5LAogIH0pOwoKICBmYWN0b3J5IEFwcENvbmZpZy5mcm9tRW52aXJvbm1lbnQoKSB7CiAgICBjb25zdCB1cmwgPSBTdHJpbmcuZnJvbUVudmlyb25tZW50KCdTVVBBQkFTRV9VUkwnKTsKICAgIGNvbnN0IGFub25LZXkgPSBTdHJpbmcuZnJvbUVudmlyb25tZW50KCdTVVBBQkFTRV9BTk9OX0tFWScpOwoKICAgIGlmICh1cmwuaXNFbXB0eSB8fCBhbm9uS2V5LmlzRW1wdHkpIHsKICAgICAgdGhyb3cgU3RhdGVFcnJvcigKICAgICAgICAnU1VQQUJBU0VfVVJMIGFuZCBTVVBBQkFTRV9BTk9OX0tFWSBtdXN0IGJlIHByb3ZpZGVkIHdpdGggLS1kYXJ0LWRlZmluZS4nLAogICAgICApOwogICAgfQoKICAgIHJldHVybiBjb25zdCBBcHBDb25maWcoCiAgICAgIHN1cGFiYXNlVXJsOiB1cmwsCiAgICAgIHN1cGFiYXNlQW5vbktleTogYW5vbktleSwKICAgICk7CiAgfQoKICBmaW5hbCBTdHJpbmcgc3VwYWJhc2VVcmw7CiAgZmluYWwgU3RyaW5nIHN1cGFiYXNlQW5vbktleTsKfQoK
+class AppConfig {
+  const AppConfig({
+    required this.supabaseUrl,
+    required this.supabaseAnonKey,
+  });
+
+  factory AppConfig.fromEnvironment() {
+    const url = String.fromEnvironment('SUPABASE_URL');
+    const anonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
+
+    if (url.isEmpty || anonKey.isEmpty) {
+      throw StateError(
+        'SUPABASE_URL and SUPABASE_ANON_KEY must be provided with --dart-define.',
+      );
+    }
+
+    return const AppConfig(
+      supabaseUrl: url,
+      supabaseAnonKey: anonKey,
+    );
+  }
+
+  final String supabaseUrl;
+  final String supabaseAnonKey;
+}
+
