@@ -1,1 +1,28 @@
-aW1wb3J0ICdwYWNrYWdlOmZsdXR0ZXIvbWF0ZXJpYWwuZGFydCc7CgpjbGFzcyBUb2RheVNjcmVlbiBleHRlbmRzIFN0YXRlbGVzc1dpZGdldCB7CiAgY29uc3QgVG9kYXlTY3JlZW4oe3N1cGVyLmtleX0pOwoKICBAb3ZlcnJpZGUKICBXaWRnZXQgYnVpbGQoQnVpbGRDb250ZXh0IGNvbnRleHQpIHsKICAgIHJldHVybiBMaXN0VmlldygKICAgICAgcGFkZGluZzogY29uc3QgRWRnZUluc2V0cy5hbGwoMjQpLAogICAgICBjaGlsZHJlbjogY29uc3QgWwogICAgICAgIFRleHQoJ0dvb2QgbW9ybmluZycsIHN0eWxlOiBUZXh0U3R5bGUoZm9udFNpemU6IDMwKSksCiAgICAgICAgU2l6ZWRCb3goaGVpZ2h0OiA4KSwKICAgICAgICBUZXh0KCdIZXJlIGlzIHdoYXQgbmVlZHMgeW91ciBhdHRlbnRpb24gdG9kYXkuJyksCiAgICAgICAgU2l6ZWRCb3goaGVpZ2h0OiAyNCksCiAgICAgICAgQ2FyZCgKICAgICAgICAgIGNoaWxkOiBQYWRkaW5nKAogICAgICAgICAgICBwYWRkaW5nOiBFZGdlSW5zZXRzLmFsbCgyNCksCiAgICAgICAgICAgIGNoaWxkOiBUZXh0KAogICAgICAgICAgICAgICdUaGUgZGF0YWJhc2UtYmFja2VkIGRhaWx5IGJyaWVmaW5nIGFuZCByZWNvbW1lbmRlZCBhY3Rpb25zICcKICAgICAgICAgICAgICAnd2lsbCBiZSByZW5kZXJlZCBoZXJlLicsCiAgICAgICAgICAgICksCiAgICAgICAgICApLAogICAgICAgICksCiAgICAgIF0sCiAgICApOwogIH0KfQoK
+import 'package:flutter/material.dart';
+
+class TodayScreen extends StatelessWidget {
+  const TodayScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.all(24),
+      children: const [
+        Text('Good morning', style: TextStyle(fontSize: 30)),
+        SizedBox(height: 8),
+        Text('Here is what needs your attention today.'),
+        SizedBox(height: 24),
+        Card(
+          child: Padding(
+            padding: EdgeInsets.all(24),
+            child: Text(
+              'The database-backed daily briefing and recommended actions '
+              'will be rendered here.',
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
