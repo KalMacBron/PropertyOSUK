@@ -1,1 +1,17 @@
-aW1wb3J0ICdwYWNrYWdlOmZsdXR0ZXIvd2lkZ2V0cy5kYXJ0JzsKaW1wb3J0ICdwYWNrYWdlOnByb3BlcnR5X29zL2FwcC9wcm9wZXJ0eV9vc19hcHAuZGFydCc7CmltcG9ydCAncGFja2FnZTpwcm9wZXJ0eV9vcy9jb3JlL2NvbmZpZy9hcHBfY29uZmlnLmRhcnQnOwppbXBvcnQgJ3BhY2thZ2U6c3VwYWJhc2VfZmx1dHRlci9zdXBhYmFzZV9mbHV0dGVyLmRhcnQnOwoKRnV0dXJlPHZvaWQ+IG1haW4oKSBhc3luYyB7CiAgV2lkZ2V0c0ZsdXR0ZXJCaW5kaW5nLmVuc3VyZUluaXRpYWxpemVkKCk7CgogIGZpbmFsIGNvbmZpZyA9IEFwcENvbmZpZy5mcm9tRW52aXJvbm1lbnQoKTsKICBhd2FpdCBTdXBhYmFzZS5pbml0aWFsaXplKAogICAgdXJsOiBjb25maWcuc3VwYWJhc2VVcmwsCiAgICBhbm9uS2V5OiBjb25maWcuc3VwYWJhc2VBbm9uS2V5LAogICk7CgogIHJ1bkFwcChjb25zdCBQcm9wZXJ0eU9zQXBwKCkpOwp9Cgo=
+import 'package:flutter/widgets.dart';
+import 'package:property_os/app/property_os_app.dart';
+import 'package:property_os/core/config/app_config.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final config = AppConfig.fromEnvironment();
+  await Supabase.initialize(
+    url: config.supabaseUrl,
+    anonKey: config.supabaseAnonKey,
+  );
+
+  runApp(const PropertyOsApp());
+}
+
