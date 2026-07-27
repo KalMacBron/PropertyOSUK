@@ -120,9 +120,8 @@ class PortfolioRepository {
         'property_address_line_1': addressLine1.trim(),
         'property_town_or_city': townOrCity.trim(),
         'property_postcode': postcode.trim().toUpperCase(),
-        'property_display_name': displayName?.trim().isEmpty == true
-            ? null
-            : displayName?.trim(),
+        'property_display_name':
+            displayName?.trim().isEmpty == true ? null : displayName?.trim(),
         'property_type_name': propertyType,
         'property_bedrooms': bedrooms,
       },
