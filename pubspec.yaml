@@ -1,1 +1,26 @@
-bmFtZTogcHJvcGVydHlfb3MKZGVzY3JpcHRpb246IFByb3BlcnR5T1MgcHJpdmF0ZSBBbHBoYS4KcHVibGlzaF90bzogbm9uZQp2ZXJzaW9uOiAwLjEuMCsxCgplbnZpcm9ubWVudDoKICBzZGs6ICI+PTMuNS4wIDw0LjAuMCIKCmRlcGVuZGVuY2llczoKICBmbHV0dGVyOgogICAgc2RrOiBmbHV0dGVyCiAgZmx1dHRlcl9yaXZlcnBvZDogXjIuNi4xCiAgZ29fcm91dGVyOiBeMTQuOC4xCiAgaW50bDogXjAuMjAuMgogIHN1cGFiYXNlX2ZsdXR0ZXI6IF4yLjkuMAoKZGV2X2RlcGVuZGVuY2llczoKICBmbHV0dGVyX3Rlc3Q6CiAgICBzZGs6IGZsdXR0ZXIKICBmbHV0dGVyX2xpbnRzOiBeNS4wLjAKICBpbnRlZ3JhdGlvbl90ZXN0OgogICAgc2RrOiBmbHV0dGVyCgpmbHV0dGVyOgogIHVzZXMtbWF0ZXJpYWwtZGVzaWduOiB0cnVlCgo=
+name: property_os
+description: PropertyOS private Alpha.
+publish_to: none
+version: 0.1.0+1
+
+environment:
+  sdk: ">=3.5.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_riverpod: ^2.6.1
+  go_router: ^14.8.1
+  intl: ^0.20.2
+  supabase_flutter: ^2.9.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  integration_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+
