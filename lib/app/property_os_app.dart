@@ -1,1 +1,21 @@
-aW1wb3J0ICdwYWNrYWdlOmZsdXR0ZXIvbWF0ZXJpYWwuZGFydCc7CmltcG9ydCAncGFja2FnZTpmbHV0dGVyX3JpdmVycG9kL2ZsdXR0ZXJfcml2ZXJwb2QuZGFydCc7CmltcG9ydCAncGFja2FnZTpwcm9wZXJ0eV9vcy9hcHAvcm91dGVyLmRhcnQnOwppbXBvcnQgJ3BhY2thZ2U6cHJvcGVydHlfb3MvYXBwL3RoZW1lLmRhcnQnOwoKY2xhc3MgUHJvcGVydHlPc0FwcCBleHRlbmRzIFN0YXRlbGVzc1dpZGdldCB7CiAgY29uc3QgUHJvcGVydHlPc0FwcCh7c3VwZXIua2V5fSk7CgogIEBvdmVycmlkZQogIFdpZGdldCBidWlsZChCdWlsZENvbnRleHQgY29udGV4dCkgewogICAgcmV0dXJuIFByb3ZpZGVyU2NvcGUoCiAgICAgIGNoaWxkOiBNYXRlcmlhbEFwcC5yb3V0ZXIoCiAgICAgICAgdGl0bGU6ICdQcm9wZXJ0eU9TJywKICAgICAgICBkZWJ1Z1Nob3dDaGVja2VkTW9kZUJhbm5lcjogZmFsc2UsCiAgICAgICAgdGhlbWU6IGJ1aWxkUHJvcGVydHlPc1RoZW1lKCksCiAgICAgICAgcm91dGVyQ29uZmlnOiBwcm9wZXJ0eU9zUm91dGVyLAogICAgICApLAogICAgKTsKICB9Cn0KCg==
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:property_os/app/router.dart';
+import 'package:property_os/app/theme.dart';
+
+class PropertyOsApp extends StatelessWidget {
+  const PropertyOsApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ProviderScope(
+      child: MaterialApp.router(
+        title: 'PropertyOS',
+        debugShowCheckedModeBanner: false,
+        theme: buildPropertyOsTheme(),
+        routerConfig: propertyOsRouter,
+      ),
+    );
+  }
+}
+
