@@ -1,0 +1,49 @@
+name: Deploy Alpha
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - agent/auth-property-onboarding
+
+permissions:
+  contents: read
+
+concurrency:
+  group: propertyos-alpha
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: alpha
+      url: https://alpha.propertyosuk.com
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build Flutter Web
+        run: >
+          flutter build web --release
+          --dart-define=SUPABASE_URL="${{ secrets.SUPABASE_URL }}"
+          --dart-define=SUPABASE_PUBLISHABLE_KEY="${{ secrets.SUPABASE_PUBLISHABLE_KEY }}"
+
+      - name: Deploy to Hostinger
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
+        with:
+          server: 147.93.88.23
+          username: u714985569.alpha.propertyosuk.com
+          password: ${{ secrets.HOSTINGER_FTP_PASSWORD }}
+          port: 21
+          protocol: ftp
+          local-dir: build/web/
+          server-dir: /home/u714985569/domains/propertyosuk.com/public_html/alpha/
+          dangerous-clean-slate: false
