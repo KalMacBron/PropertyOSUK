@@ -1,1 +1,23 @@
-bmFtZTogQ0kKCm9uOgogIHB1bGxfcmVxdWVzdDoKICBwdXNoOgogICAgYnJhbmNoZXM6IFttYWluXQoKcGVybWlzc2lvbnM6CiAgY29udGVudHM6IHJlYWQKCmpvYnM6CiAgZmx1dHRlcjoKICAgIHJ1bnMtb246IHVidW50dS1sYXRlc3QKICAgIHN0ZXBzOgogICAgICAtIHVzZXM6IGFjdGlvbnMvY2hlY2tvdXRAdjQKICAgICAgLSB1c2VzOiBzdWJvc2l0by9mbHV0dGVyLWFjdGlvbkB2MgogICAgICAgIHdpdGg6CiAgICAgICAgICBjaGFubmVsOiBzdGFibGUKICAgICAgICAgIGNhY2hlOiB0cnVlCiAgICAgIC0gcnVuOiBmbHV0dGVyIHB1YiBnZXQKICAgICAgLSBydW46IGRhcnQgZm9ybWF0IC0tb3V0cHV0PW5vbmUgLS1zZXQtZXhpdC1pZi1jaGFuZ2VkIC4KICAgICAgLSBydW46IGZsdXR0ZXIgYW5hbHl6ZQogICAgICAtIHJ1bjogZmx1dHRlciB0ZXN0Cg==
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  flutter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - run: dart format --output=none --set-exit-if-changed .
+      - run: flutter analyze
+      - run: flutter test
