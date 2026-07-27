@@ -1,1 +1,19 @@
-aW1wb3J0ICdwYWNrYWdlOnByb3BlcnR5X29zL2ZlYXR1cmVzL3RvZGF5L2RvbWFpbi90b2RheV9hY3Rpb24uZGFydCc7CmltcG9ydCAncGFja2FnZTpzdXBhYmFzZV9mbHV0dGVyL3N1cGFiYXNlX2ZsdXR0ZXIuZGFydCc7CgpjbGFzcyBUb2RheVJlcG9zaXRvcnkgewogIGNvbnN0IFRvZGF5UmVwb3NpdG9yeSh0aGlzLl9jbGllbnQpOwoKICBmaW5hbCBTdXBhYmFzZUNsaWVudCBfY2xpZW50OwoKICBGdXR1cmU8TGlzdDxUb2RheUFjdGlvbj4+IGZldGNoQWN0aW9ucyhTdHJpbmcgb3JnYW5pc2F0aW9uSWQpIGFzeW5jIHsKICAgIGZpbmFsIHJvd3MgPSBhd2FpdCBfY2xpZW50CiAgICAgICAgLmZyb20oJ3RvZGF5X2FjdGlvbnMnKQogICAgICAgIC5zZWxlY3QoKQogICAgICAgIC5lcSgnb3JnYW5pc2F0aW9uX2lkJywgb3JnYW5pc2F0aW9uSWQpCiAgICAgICAgLm9yZGVyKCdkdWVfZGF0ZScpOwoKICAgIHJldHVybiByb3dzLm1hcChUb2RheUFjdGlvbi5mcm9tSnNvbikudG9MaXN0KCk7CiAgfQp9Cgo=
+import 'package:property_os/features/today/domain/today_action.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+class TodayRepository {
+  const TodayRepository(this._client);
+
+  final SupabaseClient _client;
+
+  Future<List<TodayAction>> fetchActions(String organisationId) async {
+    final rows = await _client
+        .from('today_actions')
+        .select()
+        .eq('organisation_id', organisationId)
+        .order('due_date');
+
+    return rows.map(TodayAction.fromJson).toList();
+  }
+}
+
