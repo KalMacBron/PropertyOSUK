@@ -4,4 +4,3 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 final supabaseProvider = Provider<SupabaseClient>(
   (ref) => Supabase.instance.client,
 );
-
