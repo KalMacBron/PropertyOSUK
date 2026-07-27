@@ -1,1 +1,13 @@
-LmRhcnRfdG9vbC8KLmVudgouZmx1dHRlci1wbHVnaW5zCi5mbHV0dGVyLXBsdWdpbnMtZGVwZW5kZW5jaWVzCi5pZGVhLwoubWV0YWRhdGEKLnBhY2thZ2VzCi52c2NvZGUvCmJ1aWxkLwpjb3ZlcmFnZS8KKi5pbWwKc3VwYWJhc2UvLmJyYW5jaGVzLwpzdXBhYmFzZS8udGVtcC8K
+.dart_tool/
+.env
+.flutter-plugins
+.flutter-plugins-dependencies
+.idea/
+.metadata
+.packages
+.vscode/
+build/
+coverage/
+*.iml
+supabase/.branches/
+supabase/.temp/
