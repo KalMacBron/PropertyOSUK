@@ -48,7 +48,7 @@ jobs:
           username: u714985569.alpha.propertyosuk.com
           password: ${{ secrets.HOSTINGER_FTP_PASSWORD }}
           port: 21
-          protocol: ftp
+          protocol: ftps
           local-dir: build/web/
           server-dir: /
           dangerous-clean-slate: false
