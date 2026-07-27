@@ -1,1 +1,301 @@
-IyBQcm9wZXJ0eU9TIEFscGhhIEJ1aWxkIFNwZWNpZmljYXRpb24KCioqQ29tcGFueToqKiBLYWVsVmFyZW4gIAoqKlByb2R1Y3Q6KiogUHJvcGVydHlPUyAgCioqUmVsZWFzZToqKiBQcml2YXRlIEFscGhhICAKKipTdGF0dXM6KiogQnVpbGQtcmVhZHkgIAoqKlByaW1hcnkgdXNlcjoqKiBJbmRlcGVuZGVudCBVSyByZXNpZGVudGlhbCBsYW5kbG9yZCBtYW5hZ2luZyA14oCTNTAgcHJvcGVydGllcwoKIyMgMS4gUHVycG9zZQoKQnVpbGQgYSBzZWN1cmUsIGRhdGFiYXNlLWJhY2tlZCBQcm9wZXJ0eU9TIHdlYiBhcHBsaWNhdGlvbiB0aGF0IEthcmwgY2FuIHRlc3Qgd2l0aCBhIHJlYWwgcG9ydGZvbGlvLgoKVGhlIEFscGhhIG11c3QgcHJvdmUgb25lIGNlbnRyYWwgcHJvcG9zaXRpb246Cgo+IFByb3BlcnR5IGFuZCBjb21wbGlhbmNlIGluZm9ybWF0aW9uIGNhbiBiZSBjb252ZXJ0ZWQgaW50byByZWxpYWJsZSBkYWlseSBhY3Rpb25zIGFuZCBhIHVzZWZ1bCBwcm9wZXJ0eSBoaXN0b3J5LgoKVGhlIGV4aXN0aW5nIFByb3BlcnR5T1MgU2l0ZXMgcHJvdG90eXBlIGlzIHRoZSB2aXN1YWwgYW5kIHdvcmtmbG93IHJlZmVyZW5jZS4gSXQgaXMgbm90IHRoZSBwcm9kdWN0aW9uIGNvZGViYXNlLgoKIyMgMi4gQWxwaGEgc3VjY2VzcyBjcml0ZXJpYQoKVGhlIEFscGhhIHN1Y2NlZWRzIHdoZW4gYSBsYW5kbG9yZCBjYW46CgoxLiBTaWduIGluIHNlY3VyZWx5LgoyLiBBZGQgYW5kIG1haW50YWluIHByb3BlcnRpZXMuCjMuIFJlY29yZCBhIHRlbmFuY3kgd2l0aG91dCBzdG9yaW5nIHVubmVjZXNzYXJ5IHNlbnNpdGl2ZSBpZGVudGl0eSBkYXRhLgo0LiBBZGQgYSBjb21wbGlhbmNlIHJlY29yZCBhbmQgc3VwcG9ydGluZyBkb2N1bWVudC4KNS4gU2VlIGR1ZSwgZXhwaXJlZCBhbmQgbWlzc2luZyBpdGVtcyBjYWxjdWxhdGVkIGNvbnNpc3RlbnRseS4KNi4gUmVjZWl2ZSBhIHJlY29tbWVuZGVkIGFjdGlvbiBvbiBUb2RheS4KNy4gQ29tcGxldGUgdGhlIGFjdGlvbi4KOC4gU2VlIHRoZSBjaGFuZ2UgaW4gdGhlIHByb3BlcnR5IHRpbWVsaW5lLgo5LiBSZWNvcmQgYW5kIHRyYWNrIGEgbWFpbnRlbmFuY2UgaXNzdWUuCjEwLiBFeHBvcnQgdGhlaXIgc3RydWN0dXJlZCBkYXRhLgoKS2FybCBzaG91bGQgYmUgYWJsZSB0byB1c2UgdGhlIEFscGhhIHdpdGggaGlzIG93biBwb3J0Zm9saW8gZm9yIHR3byB0byBmb3VyIHdlZWtzIHdpdGhvdXQgcmVseWluZyBvbiB0aGUgcHVibGljIHByb3RvdHlwZS4KCiMjIDMuIFByb2R1Y3QgcHJpbmNpcGxlcwoKLSAqKlRvZGF5IGZpcnN0OioqIGxlYWQgd2l0aCBkZWNpc2lvbnMgYW5kIGFjdGlvbnMsIG5vdCBkYXRhIGVudHJ5LgotICoqRXZpZGVuY2UgbGlua2VkOioqIGltcG9ydGFudCBzdGF0dXNlcyBhbmQgYWN0aW9ucyBsaW5rIHRvIHRoZWlyIHNvdXJjZS4KLSAqKkRldGVybWluaXN0aWMgYmVmb3JlIGdlbmVyYXRpdmU6KiogZGF0ZXMsIHdhcm5pbmdzIGFuZCBoZWFsdGggc3RhdHVzZXMgY29tZSBmcm9tIHJ1bGVzIGFuZCBxdWVyaWVzLgotICoqSHVtYW4gY29uZmlybWVkOioqIEFJLWV4dHJhY3RlZCBmYWN0cyBuZXZlciB1cGRhdGUgY29tcGxpYW5jZSByZWNvcmRzIHdpdGhvdXQgY29uZmlybWF0aW9uLgotICoqQ2FsbSBieSBkZWZhdWx0OioqIHJlc2VydmUgdXJnZW50IGxhbmd1YWdlIGZvciBnZW51aW5lbHkgdXJnZW50IGNvbmRpdGlvbnMuCi0gKipVSyBzcGVjaWZpYzoqKiB1c2UgVUsgdGVybWlub2xvZ3ksIGRhdGVzLCBjdXJyZW5jeSBhbmQgY29tcGxpYW5jZSBjYXRlZ29yaWVzLgotICoqUHJpdmF0ZSBieSBkZWZhdWx0OioqIGludml0YXRpb24tb25seSBhY2Nlc3MsIG1pbmltdW0gcGVyc29uYWwgZGF0YSBhbmQgcm93LWxldmVsIHNlY3VyaXR5LgotICoqU3RhbmRhbG9uZToqKiBQcm9wZXJ0eU9TIG11c3Qgbm90IGRlcGVuZCBvbiBUcmFkZU9TLCBUcmFkZUNpcmNsZSBvciBGaXJlIFNhZmV0eSBtb2R1bGVzLgoKIyMgNC4gSW4gc2NvcGUKCiMjIyBJZGVudGl0eSBhbmQgYWNjb3VudAoKLSBFbWFpbCBzaWduLWluIGFuZCBzaWduLW91dCB0aHJvdWdoIFN1cGFiYXNlIEF1dGgKLSBPbmUgb3IgbW9yZSBtZW1iZXJzIHBlciBvcmdhbmlzYXRpb24KLSBSb2xlczogb3duZXIsIGFkbWluLCBtZW1iZXIsIHZpZXdlcgotIE9yZ2FuaXNhdGlvbi1sZXZlbCBkYXRhIGlzb2xhdGlvbgoKIyMjIFByb3BlcnRpZXMKCi0gQ3JlYXRlLCB2aWV3LCBlZGl0IGFuZCBhcmNoaXZlIGEgcHJvcGVydHkKLSBVSyBhZGRyZXNzLCBwcm9wZXJ0eSB0eXBlLCBiZWRyb29tcyBhbmQgbm90ZXMKLSBSZWNvcmQgZGVjbGFyZWQgb3duZXJzaGlwIHRocm91Z2ggcmV1c2FibGUgaW5kaXZpZHVhbCwgam9pbnQsIGxpbWl0ZWQtY29tcGFueSwKICB0cnVzdCwgcGFydG5lcnNoaXAgb3Igb3RoZXIgb3duZXJzaGlwIGVudGl0aWVzCi0gU3VwcG9ydCBtdWx0aXBsZSBvd25lcnMgYW5kIG93bmVyc2hpcCBwZXJjZW50YWdlcyBwZXIgcHJvcGVydHkKLSBQb3J0Zm9saW8gbGlzdCBhbmQgcHJvcGVydHkgZGV0YWlsCgojIyMgVGVuYW5jaWVzCgotIEN1cnJlbnQgYW5kIGhpc3RvcmljYWwgdGVuYW5jeSBkYXRlcwotIE1vbnRobHkgcmVudCBhbmQgcGF5bWVudCBkYXkKLSBUZW5hbnQgZGlzcGxheSBuYW1lIG9yIGluaXRpYWxzCi0gTm8gaWRlbnRpdHkgZG9jdW1lbnRzLCBiYW5rIGRldGFpbHMgb3IgUmlnaHQgdG8gUmVudCBldmlkZW5jZSBpbiBBbHBoYQoKIyMjIENvbXBsaWFuY2UKCi0gQ29uZmlndXJhYmxlIHJlcXVpcmVtZW50IGNhdGFsb2d1ZQotIFByb3BlcnR5IGNvbXBsaWFuY2UgcmVjb3JkcwotIFN0YXR1c2VzOiBjb21wbGlhbnQsIGR1ZSBzb29uLCBleHBpcmVkLCBtaXNzaW5nLCBuZWVkcyByZXZpZXcsIG5vdCBhcHBsaWNhYmxlCi0gSXNzdWUsIGV4cGlyeSwgcmV2aWV3IGFuZCBjb21wbGV0aW9uIGRhdGVzCi0gU291cmNlIGRvY3VtZW50IGFuZCBub3RlcwotIERlZmF1bHQgaW5pdGlhbCBjYXRlZ29yaWVzOiBHYXMgU2FmZXR5LCBFUEMsIEVJQ1IsIERlcG9zaXQgUHJvdGVjdGlvbiwgUmlnaHQgdG8gUmVudCwgU21va2UgQWxhcm1zLCBDTyBBbGFybXMsIExhbmRsb3JkIEluc3VyYW5jZQoKIyMjIERvY3VtZW50cwoKLSBQcml2YXRlIHVwbG9hZCBhbmQgZG93bmxvYWQKLSBQcm9wZXJ0eSwgY29tcGxpYW5jZSBhbmQgbWFpbnRlbmFuY2UgYXNzb2NpYXRpb24KLSBNYW51YWwgY2xhc3NpZmljYXRpb24KLSBQcm9jZXNzaW5nIGFuZCBjb25maXJtYXRpb24gc3RhdHVzCi0gRXh0cmFjdGVkIG1ldGFkYXRhIHN0b3JlZCBzZXBhcmF0ZWx5IGZyb20gY29uZmlybWVkIG9wZXJhdGlvbmFsIGZhY3RzCgojIyMgVGFza3MKCi0gTWFudWFsIGFuZCBzeXN0ZW0tZ2VuZXJhdGVkIHRhc2tzCi0gUHJpb3JpdHksIGR1ZSBkYXRlLCBzdGF0dXMgYW5kIHNvdXJjZQotIENvbXBsZXRlLCBjYW5jZWwgYW5kIHJlb3BlbiBhY3Rpb25zCgojIyMgTWFpbnRlbmFuY2UKCi0gSXNzdWUsIHByaW9yaXR5LCBzdGF0dXMsIGNvbnRyYWN0b3IsIGNvc3QgZXN0aW1hdGUgYW5kIG5vdGVzCi0gU3VwcG9ydGluZyBkb2N1bWVudCBhc3NvY2lhdGlvbgoKIyMjIFRpbWVsaW5lCgotIEFwcGVuZC1vbmx5IG9wZXJhdGlvbmFsIGV2ZW50cyBmb3IgaW1wb3J0YW50IGNyZWF0ZXMsIHVwZGF0ZXMgYW5kIGNvbXBsZXRpb25zCi0gUHJvcGVydHksIGFjdG9yLCBzb3VyY2UgcmVjb3JkIGFuZCBldmVudCBtZXRhZGF0YQotIFRpbWVsaW5lIGV2ZW50cyBhcmUgbm90IHVzZWQgYXMgdGhlIHNvdXJjZSBvZiBjdXJyZW50IHN0YXRlCgojIyMgVG9kYXkKCi0gUG9ydGZvbGlvIGNvdW50cwotIENvbXBsaWFuY2UgZHVlIHdpdGhpbiA0NSBkYXlzCi0gRXhwaXJlZCBhbmQgbWlzc2luZyBjb21wbGlhbmNlCi0gT3ZlcmR1ZSBhbmQgdXBjb21pbmcgdGFza3MKLSBPcGVuIGhpZ2gtcHJpb3JpdHkgbWFpbnRlbmFuY2UKLSBUZW5hbmNpZXMgZW5kaW5nIHdpdGhpbiA2MCBkYXlzCi0gUmVjb21tZW5kZWQgYWN0aW9ucyBvcmRlcmVkIGJ5IHVyZ2VuY3kgYW5kIGR1ZSBkYXRlCgojIyMgRXhwb3J0CgotIE9yZ2FuaXNhdGlvbi1zY29wZWQgSlNPTiBvciBDU1YgZXhwb3J0IG9mIHN0cnVjdHVyZWQgQWxwaGEgZGF0YQotIERvY3VtZW50cyBleHBvcnRlZCBzZXBhcmF0ZWx5IHRocm91Z2ggYXV0aG9yaXNlZCBkb3dubG9hZCBsaW5rcwoKIyMgNS4gRXhwbGljaXRseSBvdXQgb2Ygc2NvcGUKCi0gRnVsbCByZW50IGNvbGxlY3Rpb24sIGFycmVhcnMgYW5kIGFjY291bnRpbmcKLSBPcGVuIGJhbmtpbmcKLSBUZW5hbnQsIGNvbnRyYWN0b3Igb3IgYWdlbnQgcG9ydGFscwotIFRyYWRlT1Mgb3IgVHJhZGVDaXJjbGUgaW50ZWdyYXRpb24KLSBQcm9mZXNzaW9uYWwgZmlyZS1yaXNrLWFzc2Vzc21lbnQgYXV0aG9yaW5nCi0gQXV0b21hdGVkIGxlZ2FsIGNvbmNsdXNpb25zIG9yIGNlcnRpZmljYXRpb24KLSBVbmNvbmZpcm1lZCBBSSB1cGRhdGVzCi0gTmF0aXZlIGlPUyBhbmQgQW5kcm9pZCByZWxlYXNlcwotIFN1YnNjcmlwdGlvbiBiaWxsaW5nCi0gR292ZXJubWVudCwgY291bmNpbCBvciByZWd1bGF0b3IgaW50ZWdyYXRpb25zCi0gQ29tcGxleCByZXBvcnRpbmcgYW5kIGN1c3RvbSB3b3JrZmxvdyBidWlsZGVycwoKIyMgNi4gUHJpbWFyeSB2ZXJ0aWNhbCBzbGljZQoKYGBgbWVybWFpZApmbG93Y2hhcnQgVEQKICAgIEFbIkFkZCBwcm9wZXJ0eSJdIC0tPiBCWyJBZGQgY29tcGxpYW5jZSByZWNvcmQiXQogICAgQiAtLT4gQ1siVXBsb2FkIGV2aWRlbmNlIl0KICAgIEMgLS0+IERbIkNvbmZpcm0gZGF0ZXMiXQogICAgRCAtLT4gRVsiQ2FsY3VsYXRlIHdhcm5pbmciXQogICAgRSAtLT4gRlsiU2hvdyBUb2RheSBhY3Rpb24iXQogICAgRiAtLT4gR1siQ29tcGxldGUgdGFzayJdCiAgICBHIC0tPiBIWyJXcml0ZSB0aW1lbGluZSBldmVudCJdCmBgYAoKVGhpcyBzbGljZSBpcyBjb21wbGV0ZSBvbmx5IHdoZW4gaXQgd29ya3MgYWNyb3NzIGF1dGhlbnRpY2F0aW9uLCBkYXRhYmFzZSwgc3RvcmFnZSwgVUkgYW5kIHJvdy1sZXZlbCBzZWN1cml0eS4KCiMjIDcuIENvcmUgc2NyZWVucwoKfCBTY3JlZW4gfCBBbHBoYSByZXNwb25zaWJpbGl0eSB8CnwtLS18LS0tfAp8IFNpZ24gaW4gfCBBdXRoZW50aWNhdGUgaW52aXRlZCB1c2VycyB8CnwgVG9kYXkgfCBCcmllZmluZywgcmlza3MsIHVwY29taW5nIGRhdGVzIGFuZCByZWNvbW1lbmRlZCBhY3Rpb25zIHwKfCBQcm9wZXJ0aWVzIHwgU2VhcmNoYWJsZSBwb3J0Zm9saW8gbGlzdCBhbmQgcHJvcGVydHkgY3JlYXRpb24gfAp8IFByb3BlcnR5IGRldGFpbCB8IE92ZXJ2aWV3LCB0ZW5hbmN5LCBjb21wbGlhbmNlLCBkb2N1bWVudHMsIG1haW50ZW5hbmNlLCB0YXNrcyBhbmQgdGltZWxpbmUgfAp8IENvbXBsaWFuY2UgfCBQb3J0Zm9saW8td2lkZSBzdGF0dXMgdGFibGUgYW5kIGZpbHRlcnMgfAp8IERvY3VtZW50cyB8IFVwbG9hZCwgY2xhc3NpZnksIGNvbmZpcm0gYW5kIGluc3BlY3QgZXZpZGVuY2UgfAp8IFRhc2tzIHwgRmlsdGVyLCBjcmVhdGUsIHVwZGF0ZSBhbmQgY29tcGxldGUgYWN0aW9ucyB8CnwgTWFpbnRlbmFuY2UgfCBMb2cgYW5kIHByb2dyZXNzIHByb3BlcnR5IGlzc3VlcyB8CnwgU2V0dGluZ3MgfCBBY2NvdW50LCBvcmdhbmlzYXRpb24sIG5vdGlmaWNhdGlvbnMgYW5kIGV4cG9ydCB8CgpUaGUgc3RhbmRhbG9uZSBjb252ZXJzYXRpb25hbCBBc3Npc3RhbnQgaXMgZGVmZXJyZWQgdW50aWwgdGhlIHVuZGVybHlpbmcgZXZpZGVuY2UgbW9kZWwgaXMgcHJvdmVuLgoKIyMgOC4gQXJjaGl0ZWN0dXJlCgp8IExheWVyIHwgRGVjaXNpb24gfAp8LS0tfC0tLXwKfCBDbGllbnQgfCBGbHV0dGVyIFdlYiwgc3RydWN0dXJlZCBmb3IgbGF0ZXIgbW9iaWxlIHRhcmdldHMgfAp8IFN0YXRlIG1hbmFnZW1lbnQgfCBSaXZlcnBvZCB8CnwgTmF2aWdhdGlvbiB8IEdvUm91dGVyIHwKfCBEYXRhYmFzZSB8IFN1cGFiYXNlIFBvc3RncmVTUUwgfAp8IEF1dGhlbnRpY2F0aW9uIHwgU3VwYWJhc2UgQXV0aCB8CnwgRmlsZSBzdG9yYWdlIHwgUHJpdmF0ZSBTdXBhYmFzZSBTdG9yYWdlIGJ1Y2tldCB8CnwgQWNjZXNzIGNvbnRyb2wgfCBQb3N0Z3JlU1FMIFJvdy1MZXZlbCBTZWN1cml0eSB8CnwgU2VydmVyIGxvZ2ljIHwgU1FMIGZ1bmN0aW9ucywgdmlld3MgYW5kIFN1cGFiYXNlIEVkZ2UgRnVuY3Rpb25zIHdoZXJlIHNlY3JldHMgYXJlIHJlcXVpcmVkIHwKfCBBSSB8IE9wZW5BSSBBUEkgY2FsbGVkIG9ubHkgZnJvbSBhIHNlcnZlci1zaWRlIGZ1bmN0aW9uIHwKfCBTb3VyY2UgY29udHJvbCB8IFByaXZhdGUgS2FlbFZhcmVuIEdpdEh1YiByZXBvc2l0b3J5IHwKfCBFbnZpcm9ubWVudHMgfCBMb2NhbCwgZGV2ZWxvcG1lbnQgYW5kIHByb2R1Y3Rpb24gfAoKTm8gT3BlbkFJIG9yIFN1cGFiYXNlIHNlcnZpY2Utcm9sZSBzZWNyZXQgbWF5IGJlIHNoaXBwZWQgaW4gdGhlIEZsdXR0ZXIgY2xpZW50LgoKIyMgOS4gRGF0YSBhbmQgc2VjdXJpdHkgcmVxdWlyZW1lbnRzCgotIEV2ZXJ5IGJ1c2luZXNzIHJlY29yZCBiZWxvbmdzIHRvIGFuIGBvcmdhbmlzYXRpb25faWRgLgotIE93bmVyc2hpcCByZWNvcmRzIGRlc2NyaWJlIHRoZSB1c2VyJ3MgZGVjbGFyZWQgYXJyYW5nZW1lbnQ7IFByb3BlcnR5T1MgZG9lcwogIG5vdCB2ZXJpZnkgbGVnYWwgb3IgYmVuZWZpY2lhbCBvd25lcnNoaXAgb3IgZGV0ZXJtaW5lIHRheCB0cmVhdG1lbnQuCi0gRXZlcnkgb3JnYW5pc2F0aW9uLXNjb3BlZCB0YWJsZSBoYXMgUkxTIGVuYWJsZWQuCi0gQWNjZXNzIGlzIGRlcml2ZWQgZnJvbSBhdXRoZW50aWNhdGVkIG9yZ2FuaXNhdGlvbiBtZW1iZXJzaGlwLgotIFN0b3JhZ2Ugb2JqZWN0cyB1c2UgYW4gb3JnYW5pc2F0aW9uLXByZWZpeGVkIHBhdGguCi0gQXJjaGl2ZWQgcmVjb3JkcyByZW1haW4gcmVjb3ZlcmFibGUgYW5kIGV4Y2x1ZGVkIGZyb20gbm9ybWFsIHZpZXdzLgotIFVzZXIgYWN0aW9ucyByZWNvcmQgYGNyZWF0ZWRfYXRgLCBgdXBkYXRlZF9hdGAgYW5kIGFjdG9yIHdoZXJlIGFwcHJvcHJpYXRlLgotIFNlbnNpdGl2ZSBsb2dzIG11c3Qgbm90IGNvbnRhaW4gZG9jdW1lbnQgY29udGVudHMgb3IgcGVyc29uYWwgZGF0YS4KLSBVc2UgZmljdGlvbmFsIG9yIG1pbmltaXNlZCB0ZW5hbnQgZGV0YWlscyBkdXJpbmcgZWFybHkgdGVzdGluZy4KLSBQcm9kdWN0aW9uIGRhdGEgbXVzdCBuZXZlciBiZSBsb2FkZWQgaW50byB0aGUgcHVibGljIFNpdGVzIHByb3RvdHlwZS4KLSBCYWNrdXBzLCBleHBvcnQgYW5kIGRlbGV0aW9uIGJlaGF2aW91ciBtdXN0IGJlIHRlc3RlZCBiZWZvcmUgaW52aXRpbmcgZXh0ZXJuYWwgdXNlcnMuCgojIyAxMC4gVG9kYXkgcnVsZXMKClRoZSBmaXJzdCBUb2RheSBicmllZmluZyBpcyBnZW5lcmF0ZWQgZnJvbSBkYXRhYmFzZSBxdWVyaWVzOgoKfCBDb25kaXRpb24gfCBPdXRwdXQgfAp8LS0tfC0tLXwKfCBDb21wbGlhbmNlIGV4cGlyZWQgfCBVcmdlbnQgYWN0aW9uIHwKfCBDb21wbGlhbmNlIG1pc3NpbmcgfCBIaWdoIGFjdGlvbiB8CnwgRXhwaXJ5IHdpdGhpbiAxNCBkYXlzIHwgSGlnaCBhY3Rpb24gfAp8IEV4cGlyeSB3aXRoaW4gMTXigJM0NSBkYXlzIHwgTWVkaXVtIGFjdGlvbiB8CnwgVGFzayBvdmVyZHVlIHwgUHJpb3JpdHkgZGVyaXZlZCBmcm9tIHRhc2sgfAp8IEhpZ2gvdXJnZW50IG1haW50ZW5hbmNlIG9wZW4gfCBIaWdoIGFjdGlvbiB8CnwgVGVuYW5jeSBlbmRzIHdpdGhpbiAzMCBkYXlzIHwgSGlnaCByZXZpZXcgYWN0aW9uIHwKfCBUZW5hbmN5IGVuZHMgd2l0aGluIDMx4oCTNjAgZGF5cyB8IE1lZGl1bSByZXZpZXcgYWN0aW9uIHwKCkVhY2ggcmVjb21tZW5kYXRpb24gbXVzdCBpbmNsdWRlIGl0cyBwcm9wZXJ0eSwgc291cmNlIHR5cGUsIHNvdXJjZSByZWNvcmQsIHJlYXNvbiwgZHVlIGRhdGUgYW5kIGRlZXAgbGluay4KCiMjIDExLiBBSSBib3VuZGFyeQoKQUkgZG9jdW1lbnQgZXh0cmFjdGlvbiBpcyBQaGFzZSAyIG9mIHRoZSBBbHBoYS4KCkl0IG1heToKCi0gU3VnZ2VzdCBkb2N1bWVudCB0eXBlIGFuZCBwcm9wZXJ0eQotIEV4dHJhY3QgaXNzdWUsIGV4cGlyeSBhbmQgcmV2aWV3IGRhdGVzCi0gRXh0cmFjdCBjZXJ0aWZpY2F0ZSBvciBwb2xpY3kgcmVmZXJlbmNlcwotIEFzc2lnbiBjb25maWRlbmNlIHRvIGVhY2ggcHJvcG9zZWQgdmFsdWUKLSBFeHBsYWluIHdoaWNoIGRvY3VtZW50IHRleHQgc3VwcG9ydHMgYSBzdWdnZXN0aW9uCgpJdCBtYXkgbm90OgoKLSBDZXJ0aWZ5IGxlZ2FsIGNvbXBsaWFuY2UKLSBTaWxlbnRseSBvdmVyd3JpdGUgY29uZmlybWVkIGZhY3RzCi0gR2VuZXJhdGUgYSBjb21wbGlhbmNlIHN0YXR1cyB3aXRob3V0IGRldGVybWluaXN0aWMgcnVsZXMKLSBleHBvc2Ugb25lIG9yZ2FuaXNhdGlvbidzIGRhdGEgdG8gYW5vdGhlcgoKIyMgMTIuIERlbGl2ZXJ5IHNlcXVlbmNlCgojIyMgTWlsZXN0b25lIDEg4oCUIEZvdW5kYXRpb24KCi0gUmVwb3NpdG9yeSwgZW52aXJvbm1lbnRzIGFuZCBjb250aW51b3VzIGNoZWNrcwotIFN1cGFiYXNlIHByb2plY3QgYW5kIHZlcnNpb25lZCBtaWdyYXRpb25zCi0gQXV0aCwgb3JnYW5pc2F0aW9ucywgbWVtYmVyc2hpcHMgYW5kIFJMUyB0ZXN0cwotIEZsdXR0ZXIgc2hlbGwgYW5kIG5hdmlnYXRpb24KCiMjIyBNaWxlc3RvbmUgMiDigJQgVmVydGljYWwgc2xpY2UKCi0gUHJvcGVydGllcwotIENvbXBsaWFuY2UgcmVjb3JkcwotIFByaXZhdGUgZG9jdW1lbnQgdXBsb2FkCi0gVG9kYXkgd2FybmluZwotIFRhc2sgY29tcGxldGlvbgotIFRpbWVsaW5lIGV2ZW50CgojIyMgTWlsZXN0b25lIDMg4oCUIFdvcmtpbmcgcG9ydGZvbGlvCgotIFRlbmFuY2llcwotIE1haW50ZW5hbmNlCi0gUG9ydGZvbGlvLXdpZGUgY29tcGxpYW5jZQotIEV4cG9ydAotIFJlc3BvbnNpdmUgYW5kIGFjY2Vzc2liaWxpdHkgcGFzcwoKIyMjIE1pbGVzdG9uZSA0IOKAlCBBc3Npc3RlZCBkb2N1bWVudHMKCi0gU2VjdXJlIGV4dHJhY3Rpb24gZnVuY3Rpb24KLSBQcm9wb3NlZCBmYWN0cyBhbmQgY29uZmlkZW5jZQotIENvbmZpcm1hdGlvbiB3b3JrZmxvdwotIEV2aWRlbmNlLWxpbmtlZCByZXN1bHRzCgojIyMgTWlsZXN0b25lIDUg4oCUIFByaXZhdGUgdmFsaWRhdGlvbgoKLSBJbXBvcnQgS2FybCdzIGVpZ2h0IHByb3BlcnRpZXMKLSBVc2UgZGFpbHkgZm9yIHR3byB0byBmb3VyIHdlZWtzCi0gUmVjb3JkIGZyaWN0aW9uIGFuZCBtaXNzaW5nIHdvcmtmbG93cwotIEludml0ZSB0d28gb3IgdGhyZWUgdHJ1c3RlZCBsYW5kbG9yZHMKLSBEZWNpZGUgdGhlIGNvbW1lcmNpYWwgTVZQIGZyb20gb2JzZXJ2ZWQgdXNlCgojIyAxMy4gUXVhbGl0eSBnYXRlcwoKLSBBdXRvbWF0ZWQgZm9ybWF0dGluZywgYW5hbHlzaXMgYW5kIHRlc3RzIHBhc3MuCi0gRGF0YWJhc2UgbWlncmF0aW9uIGFwcGxpZXMgY2xlYW5seSB0byBhbiBlbXB0eSBTdXBhYmFzZSBwcm9qZWN0LgotIFJMUyB0ZXN0cyBwcm92ZSBjcm9zcy1vcmdhbmlzYXRpb24gYWNjZXNzIGlzIGRlbmllZC4KLSBUaGUgdmVydGljYWwgc2xpY2UgaGFzIGFuIGVuZC10by1lbmQgdGVzdC4KLSBUb2RheSByZXN1bHRzIGFyZSBjb3ZlcmVkIGJ5IGRhdGUtYm91bmRhcnkgdGVzdHMuCi0gS2V5Ym9hcmQgbmF2aWdhdGlvbiBhbmQgY29tbW9uIHJlc3BvbnNpdmUgd2lkdGhzIGFyZSB1c2FibGUuCi0gRXJyb3JzIHByb3ZpZGUgcmVjb3ZlcnkgZ3VpZGFuY2Ugd2l0aG91dCBsZWFraW5nIGludGVybmFsIGRldGFpbHMuCi0gU2VlZCBkYXRhIGlzIGZpY3Rpb25hbCBhbmQgY2xlYXJseSBzZXBhcmF0ZWQgZnJvbSBwcm9kdWN0aW9uIGRhdGEuCgojIyAxNC4gQWxwaGEgYWNjZXB0YW5jZSB0ZXN0CgpHaXZlbiBhbiBhdXRoZW50aWNhdGVkIG93bmVyIHdpdGggYSBwcm9wZXJ0eSwgd2hlbiB0aGV5IGNyZWF0ZSBhIEdhcyBTYWZldHkgcmVjb3JkIGV4cGlyaW5nIGluIDMxIGRheXMgYW5kIGF0dGFjaCBhIGNlcnRpZmljYXRlLCBQcm9wZXJ0eU9TIG11c3Q6CgoxLiBTdG9yZSB0aGUgcmVjb3JkIGFuZCBwcml2YXRlIGV2aWRlbmNlLgoyLiBDYWxjdWxhdGUgYGR1ZV9zb29uYC4KMy4gU2hvdyBhIGRhdGVkIGFjdGlvbiBvbiBUb2RheS4KNC4gTGluayB0aGUgYWN0aW9uIHRvIHRoZSBwcm9wZXJ0eSBhbmQgZXZpZGVuY2UuCjUuIEFsbG93IHRoZSBhY3Rpb24gdG8gYmUgY29tcGxldGVkLgo2LiBSZWNvcmQgdGhlIGNvbXBsZXRpb24gaW4gdGhlIHByb3BlcnR5IHRpbWVsaW5lLgo3LiBQcmV2ZW50IGEgdXNlciBmcm9tIGFub3RoZXIgb3JnYW5pc2F0aW9uIHJlYWRpbmcgYW55IG9mIHRob3NlIHJlY29yZHMuCgojIyAxNS4gQWxwaGEgZGlzY2xhaW1lcgoKPiBQcm9wZXJ0eU9TIGhlbHBzIG9yZ2FuaXNlIGluZm9ybWF0aW9uIGFuZCBoaWdobGlnaHQgcG90ZW50aWFsIGNvbXBsaWFuY2UgYWN0aW9ucy4gSXQgZG9lcyBub3QgcHJvdmlkZSBsZWdhbCBhZHZpY2UsIGNlcnRpZnkgY29tcGxpYW5jZSBvciByZXBsYWNlIHByb2Zlc3Npb25hbCBsYW5kbG9yZCwgbGVnYWwgb3IgY29tcGxpYW5jZSBhZHZpY2UuCg==
+# PropertyOS Alpha Build Specification
+
+**Company:** KaelVaren  
+**Product:** PropertyOS  
+**Release:** Private Alpha  
+**Status:** Build-ready  
+**Primary user:** Independent UK residential landlord managing 5–50 properties
+
+## 1. Purpose
+
+Build a secure, database-backed PropertyOS web application that Karl can test with a real portfolio.
+
+The Alpha must prove one central proposition:
+
+> Property and compliance information can be converted into reliable daily actions and a useful property history.
+
+The existing PropertyOS Sites prototype is the visual and workflow reference. It is not the production codebase.
+
+## 2. Alpha success criteria
+
+The Alpha succeeds when a landlord can:
+
+1. Sign in securely.
+2. Add and maintain properties.
+3. Record a tenancy without storing unnecessary sensitive identity data.
+4. Add a compliance record and supporting document.
+5. See due, expired and missing items calculated consistently.
+6. Receive a recommended action on Today.
+7. Complete the action.
+8. See the change in the property timeline.
+9. Record and track a maintenance issue.
+10. Export their structured data.
+
+Karl should be able to use the Alpha with his own portfolio for two to four weeks without relying on the public prototype.
+
+## 3. Product principles
+
+- **Today first:** lead with decisions and actions, not data entry.
+- **Evidence linked:** important statuses and actions link to their source.
+- **Deterministic before generative:** dates, warnings and health statuses come from rules and queries.
+- **Human confirmed:** AI-extracted facts never update compliance records without confirmation.
+- **Calm by default:** reserve urgent language for genuinely urgent conditions.
+- **UK specific:** use UK terminology, dates, currency and compliance categories.
+- **Private by default:** invitation-only access, minimum personal data and row-level security.
+- **Standalone:** PropertyOS must not depend on TradeOS, TradeCircle or Fire Safety modules.
+
+## 4. In scope
+
+### Identity and account
+
+- Email sign-in and sign-out through Supabase Auth
+- One or more members per organisation
+- Roles: owner, admin, member, viewer
+- Organisation-level data isolation
+
+### Properties
+
+- Create, view, edit and archive a property
+- UK address, property type, bedrooms and notes
+- Record declared ownership through reusable individual, joint, limited-company,
+  trust, partnership or other ownership entities
+- Support multiple owners and ownership percentages per property
+- Portfolio list and property detail
+
+### Tenancies
+
+- Current and historical tenancy dates
+- Monthly rent and payment day
+- Tenant display name or initials
+- No identity documents, bank details or Right to Rent evidence in Alpha
+
+### Compliance
+
+- Configurable requirement catalogue
+- Property compliance records
+- Statuses: compliant, due soon, expired, missing, needs review, not applicable
+- Issue, expiry, review and completion dates
+- Source document and notes
+- Default initial categories: Gas Safety, EPC, EICR, Deposit Protection, Right to Rent, Smoke Alarms, CO Alarms, Landlord Insurance
+
+### Documents
+
+- Private upload and download
+- Property, compliance and maintenance association
+- Manual classification
+- Processing and confirmation status
+- Extracted metadata stored separately from confirmed operational facts
+
+### Tasks
+
+- Manual and system-generated tasks
+- Priority, due date, status and source
+- Complete, cancel and reopen actions
+
+### Maintenance
+
+- Issue, priority, status, contractor, cost estimate and notes
+- Supporting document association
+
+### Timeline
+
+- Append-only operational events for important creates, updates and completions
+- Property, actor, source record and event metadata
+- Timeline events are not used as the source of current state
+
+### Today
+
+- Portfolio counts
+- Compliance due within 45 days
+- Expired and missing compliance
+- Overdue and upcoming tasks
+- Open high-priority maintenance
+- Tenancies ending within 60 days
+- Recommended actions ordered by urgency and due date
+
+### Export
+
+- Organisation-scoped JSON or CSV export of structured Alpha data
+- Documents exported separately through authorised download links
+
+## 5. Explicitly out of scope
+
+- Full rent collection, arrears and accounting
+- Open banking
+- Tenant, contractor or agent portals
+- TradeOS or TradeCircle integration
+- Professional fire-risk-assessment authoring
+- Automated legal conclusions or certification
+- Unconfirmed AI updates
+- Native iOS and Android releases
+- Subscription billing
+- Government, council or regulator integrations
+- Complex reporting and custom workflow builders
+
+## 6. Primary vertical slice
+
+```mermaid
+flowchart TD
+    A["Add property"] --> B["Add compliance record"]
+    B --> C["Upload evidence"]
+    C --> D["Confirm dates"]
+    D --> E["Calculate warning"]
+    E --> F["Show Today action"]
+    F --> G["Complete task"]
+    G --> H["Write timeline event"]
+```
+
+This slice is complete only when it works across authentication, database, storage, UI and row-level security.
+
+## 7. Core screens
+
+| Screen | Alpha responsibility |
+|---|---|
+| Sign in | Authenticate invited users |
+| Today | Briefing, risks, upcoming dates and recommended actions |
+| Properties | Searchable portfolio list and property creation |
+| Property detail | Overview, tenancy, compliance, documents, maintenance, tasks and timeline |
+| Compliance | Portfolio-wide status table and filters |
+| Documents | Upload, classify, confirm and inspect evidence |
+| Tasks | Filter, create, update and complete actions |
+| Maintenance | Log and progress property issues |
+| Settings | Account, organisation, notifications and export |
+
+The standalone conversational Assistant is deferred until the underlying evidence model is proven.
+
+## 8. Architecture
+
+| Layer | Decision |
+|---|---|
+| Client | Flutter Web, structured for later mobile targets |
+| State management | Riverpod |
+| Navigation | GoRouter |
+| Database | Supabase PostgreSQL |
+| Authentication | Supabase Auth |
+| File storage | Private Supabase Storage bucket |
+| Access control | PostgreSQL Row-Level Security |
+| Server logic | SQL functions, views and Supabase Edge Functions where secrets are required |
+| AI | OpenAI API called only from a server-side function |
+| Source control | Private KaelVaren GitHub repository |
+| Environments | Local, development and production |
+
+No OpenAI or Supabase service-role secret may be shipped in the Flutter client.
+
+## 9. Data and security requirements
+
+- Every business record belongs to an `organisation_id`.
+- Ownership records describe the user's declared arrangement; PropertyOS does
+  not verify legal or beneficial ownership or determine tax treatment.
+- Every organisation-scoped table has RLS enabled.
+- Access is derived from authenticated organisation membership.
+- Storage objects use an organisation-prefixed path.
+- Archived records remain recoverable and excluded from normal views.
+- User actions record `created_at`, `updated_at` and actor where appropriate.
+- Sensitive logs must not contain document contents or personal data.
+- Use fictional or minimised tenant details during early testing.
+- Production data must never be loaded into the public Sites prototype.
+- Backups, export and deletion behaviour must be tested before inviting external users.
+
+## 10. Today rules
+
+The first Today briefing is generated from database queries:
+
+| Condition | Output |
+|---|---|
+| Compliance expired | Urgent action |
+| Compliance missing | High action |
+| Expiry within 14 days | High action |
+| Expiry within 15–45 days | Medium action |
+| Task overdue | Priority derived from task |
+| High/urgent maintenance open | High action |
+| Tenancy ends within 30 days | High review action |
+| Tenancy ends within 31–60 days | Medium review action |
+
+Each recommendation must include its property, source type, source record, reason, due date and deep link.
+
+## 11. AI boundary
+
+AI document extraction is Phase 2 of the Alpha.
+
+It may:
+
+- Suggest document type and property
+- Extract issue, expiry and review dates
+- Extract certificate or policy references
+- Assign confidence to each proposed value
+- Explain which document text supports a suggestion
+
+It may not:
+
+- Certify legal compliance
+- Silently overwrite confirmed facts
+- Generate a compliance status without deterministic rules
+- expose one organisation's data to another
+
+## 12. Delivery sequence
+
+### Milestone 1 — Foundation
+
+- Repository, environments and continuous checks
+- Supabase project and versioned migrations
+- Auth, organisations, memberships and RLS tests
+- Flutter shell and navigation
+
+### Milestone 2 — Vertical slice
+
+- Properties
+- Compliance records
+- Private document upload
+- Today warning
+- Task completion
+- Timeline event
+
+### Milestone 3 — Working portfolio
+
+- Tenancies
+- Maintenance
+- Portfolio-wide compliance
+- Export
+- Responsive and accessibility pass
+
+### Milestone 4 — Assisted documents
+
+- Secure extraction function
+- Proposed facts and confidence
+- Confirmation workflow
+- Evidence-linked results
+
+### Milestone 5 — Private validation
+
+- Import Karl's eight properties
+- Use daily for two to four weeks
+- Record friction and missing workflows
+- Invite two or three trusted landlords
+- Decide the commercial MVP from observed use
+
+## 13. Quality gates
+
+- Automated formatting, analysis and tests pass.
+- Database migration applies cleanly to an empty Supabase project.
+- RLS tests prove cross-organisation access is denied.
+- The vertical slice has an end-to-end test.
+- Today results are covered by date-boundary tests.
+- Keyboard navigation and common responsive widths are usable.
+- Errors provide recovery guidance without leaking internal details.
+- Seed data is fictional and clearly separated from production data.
+
+## 14. Alpha acceptance test
+
+Given an authenticated owner with a property, when they create a Gas Safety record expiring in 31 days and attach a certificate, PropertyOS must:
+
+1. Store the record and private evidence.
+2. Calculate `due_soon`.
+3. Show a dated action on Today.
+4. Link the action to the property and evidence.
+5. Allow the action to be completed.
+6. Record the completion in the property timeline.
+7. Prevent a user from another organisation reading any of those records.
+
+## 15. Alpha disclaimer
+
+> PropertyOS helps organise information and highlight potential compliance actions. It does not provide legal advice, certify compliance or replace professional landlord, legal or compliance advice.
