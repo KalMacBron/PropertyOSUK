@@ -16,4 +16,3 @@ class TodayRepository {
     return rows.map(TodayAction.fromJson).toList();
   }
 }
-
