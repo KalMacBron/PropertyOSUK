@@ -1,19 +1,26 @@
 class AppConfig {
-  const AppConfig({required this.supabaseUrl, required this.supabaseAnonKey});
+  const AppConfig({
+    required this.supabaseUrl,
+    required this.supabasePublishableKey,
+  });
 
   factory AppConfig.fromEnvironment() {
     const url = String.fromEnvironment('SUPABASE_URL');
-    const anonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
+    const publishableKey = String.fromEnvironment('SUPABASE_PUBLISHABLE_KEY');
 
-    if (url.isEmpty || anonKey.isEmpty) {
+    if (url.isEmpty || publishableKey.isEmpty) {
       throw StateError(
-        'SUPABASE_URL and SUPABASE_ANON_KEY must be provided with --dart-define.',
+        'SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY must be provided '
+        'with --dart-define.',
       );
     }
 
-    return const AppConfig(supabaseUrl: url, supabaseAnonKey: anonKey);
+    return const AppConfig(
+      supabaseUrl: url,
+      supabasePublishableKey: publishableKey,
+    );
   }
 
   final String supabaseUrl;
-  final String supabaseAnonKey;
+  final String supabasePublishableKey;
 }
