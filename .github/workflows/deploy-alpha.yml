@@ -51,4 +51,4 @@ jobs:
           protocol: ftps
           local-dir: build/web/
           server-dir: /alpha/
-          dangerous-clean-slate: false
+          dangerous-clean-slate: true
