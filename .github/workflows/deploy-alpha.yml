@@ -2,9 +2,13 @@ name: Deploy Alpha
 
 on:
   workflow_dispatch:
-  push:
+  pull_request:
     branches:
-      - agent/auth-property-onboarding
+      - main
+    types:
+      - opened
+      - synchronize
+      - reopened
 
 permissions:
   contents: read
@@ -15,6 +19,7 @@ concurrency:
 
 jobs:
   deploy:
+    if: github.head_ref == 'agent/auth-property-onboarding'
     runs-on: ubuntu-latest
     environment:
       name: alpha
