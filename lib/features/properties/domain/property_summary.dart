@@ -1,1 +1,20 @@
-Y2xhc3MgUHJvcGVydHlTdW1tYXJ5IHsKICBjb25zdCBQcm9wZXJ0eVN1bW1hcnkoewogICAgcmVxdWlyZWQgdGhpcy5pZCwKICAgIHJlcXVpcmVkIHRoaXMuYWRkcmVzcywKICAgIHJlcXVpcmVkIHRoaXMucG9zdGNvZGUsCiAgfSk7CgogIGZhY3RvcnkgUHJvcGVydHlTdW1tYXJ5LmZyb21Kc29uKE1hcDxTdHJpbmcsIGR5bmFtaWM+IGpzb24pIHsKICAgIHJldHVybiBQcm9wZXJ0eVN1bW1hcnkoCiAgICAgIGlkOiBqc29uWydpZCddIGFzIFN0cmluZywKICAgICAgYWRkcmVzczogJyR7anNvblsnYWRkcmVzc19saW5lXzEnXX0sICR7anNvblsndG93bl9vcl9jaXR5J119JywKICAgICAgcG9zdGNvZGU6IGpzb25bJ3Bvc3Rjb2RlJ10gYXMgU3RyaW5nLAogICAgKTsKICB9CgogIGZpbmFsIFN0cmluZyBpZDsKICBmaW5hbCBTdHJpbmcgYWRkcmVzczsKICBmaW5hbCBTdHJpbmcgcG9zdGNvZGU7Cn0KCg==
+class PropertySummary {
+  const PropertySummary({
+    required this.id,
+    required this.address,
+    required this.postcode,
+  });
+
+  factory PropertySummary.fromJson(Map<String, dynamic> json) {
+    return PropertySummary(
+      id: json['id'] as String,
+      address: '${json['address_line_1']}, ${json['town_or_city']}',
+      postcode: json['postcode'] as String,
+    );
+  }
+
+  final String id;
+  final String address;
+  final String postcode;
+}
+
