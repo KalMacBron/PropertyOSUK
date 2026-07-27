@@ -45,10 +45,10 @@ jobs:
         uses: SamKirkland/FTP-Deploy-Action@v4.3.6
         with:
           server: 147.93.88.23
-          username: u714985569.alpha.propertyosuk.com
+          username: u714985569.propertyosuk.com
           password: ${{ secrets.HOSTINGER_FTP_PASSWORD }}
           port: 21
           protocol: ftps
           local-dir: build/web/
-          server-dir: /
+          server-dir: /alpha/
           dangerous-clean-slate: false
