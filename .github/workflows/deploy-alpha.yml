@@ -45,5 +45,5 @@ jobs:
           port: 21
           protocol: ftp
           local-dir: build/web/
-          server-dir: /home/u714985569/domains/propertyosuk.com/public_html/alpha/
+          server-dir: /
           dangerous-clean-slate: false
