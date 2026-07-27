@@ -10,4 +10,3 @@ void main() {
     skip: 'Scaffold: implement with Milestone 2.',
   );
 }
-
