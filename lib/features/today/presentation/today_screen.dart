@@ -25,4 +25,3 @@ class TodayScreen extends StatelessWidget {
     );
   }
 }
-
