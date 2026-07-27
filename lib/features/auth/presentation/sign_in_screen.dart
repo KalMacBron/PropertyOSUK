@@ -17,7 +17,9 @@ class SignInScreen extends StatelessWidget {
                 children: [
                   Text('PropertyOS', style: TextStyle(fontSize: 30)),
                   SizedBox(height: 12),
-                  Text('Invitation-only Alpha sign-in will be implemented here.'),
+                  Text(
+                    'Invitation-only Alpha sign-in will be implemented here.',
+                  ),
                 ],
               ),
             ),
@@ -27,4 +29,3 @@ class SignInScreen extends StatelessWidget {
     );
   }
 }
-
