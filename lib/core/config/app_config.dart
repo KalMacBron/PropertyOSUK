@@ -1,8 +1,5 @@
 class AppConfig {
-  const AppConfig({
-    required this.supabaseUrl,
-    required this.supabaseAnonKey,
-  });
+  const AppConfig({required this.supabaseUrl, required this.supabaseAnonKey});
 
   factory AppConfig.fromEnvironment() {
     const url = String.fromEnvironment('SUPABASE_URL');
@@ -14,13 +11,9 @@ class AppConfig {
       );
     }
 
-    return const AppConfig(
-      supabaseUrl: url,
-      supabaseAnonKey: anonKey,
-    );
+    return const AppConfig(supabaseUrl: url, supabaseAnonKey: anonKey);
   }
 
   final String supabaseUrl;
   final String supabaseAnonKey;
 }
-
