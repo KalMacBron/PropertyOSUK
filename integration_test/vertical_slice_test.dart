@@ -1,1 +1,13 @@
-aW1wb3J0ICdwYWNrYWdlOmZsdXR0ZXJfdGVzdC9mbHV0dGVyX3Rlc3QuZGFydCc7Cgp2b2lkIG1haW4oKSB7CiAgdGVzdFdpZGdldHMoCiAgICAncHJvcGVydHkgY29tcGxpYW5jZSB0byBUb2RheSBhY3Rpb24gdmVydGljYWwgc2xpY2UnLAogICAgKHRlc3RlcikgYXN5bmMgewogICAgICAvLyBJbXBsZW1lbnQgYWdhaW5zdCBhIGRpc3Bvc2FibGUgbG9jYWwgU3VwYWJhc2UgaW5zdGFuY2UuCiAgICAgIC8vIFRoZSBjb21wbGV0ZWQgdGVzdCBtdXN0IGNvdmVyIGNyZWF0ZSwgd2FybmluZywgY29tcGxldGlvbiBhbmQgdGltZWxpbmUuCiAgICB9LAogICAgc2tpcDogJ1NjYWZmb2xkOiBpbXBsZW1lbnQgd2l0aCBNaWxlc3RvbmUgMi4nLAogICk7Cn0KCg==
+import 'package:flutter_test/flutter_test.dart';
+
+void main() {
+  testWidgets(
+    'property compliance to Today action vertical slice',
+    (tester) async {
+      // Implement against a disposable local Supabase instance.
+      // The completed test must cover create, warning, completion and timeline.
+    },
+    skip: 'Scaffold: implement with Milestone 2.',
+  );
+}
+
