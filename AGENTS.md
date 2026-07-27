@@ -1,1 +1,49 @@
-IyBQcm9wZXJ0eU9TIGVuZ2luZWVyaW5nIGluc3RydWN0aW9ucwoKIyMgUHJvZHVjdCBib3VuZGFyeQoKUHJvcGVydHlPUyBpcyBhIHByaXZhdGUgQWxwaGEgZm9yIGluZGVwZW5kZW50IFVLIHJlc2lkZW50aWFsIGxhbmRsb3Jkcy4gS2VlcAp0aGUgZnJvemVuIHNjb3BlIGluIGBkb2NzL1Byb3BlcnR5T1NfQWxwaGFfQnVpbGRfU3BlY2lmaWNhdGlvbi5tZGAuIE5ldyBpZGVhcwpiZWxvbmcgaW4gdGhlIGJhY2tsb2cgdW5sZXNzIHRoZXkgYmxvY2sgYW4gQWxwaGEgYWNjZXB0YW5jZSBvdXRjb21lLgoKIyMgQXJjaGl0ZWN0dXJlCgotIEZsdXR0ZXIgV2ViIHdpdGggUml2ZXJwb2QgYW5kIEdvUm91dGVyCi0gU3VwYWJhc2UgQXV0aCwgUG9zdGdyZVNRTCBhbmQgcHJpdmF0ZSBTdG9yYWdlCi0gQWxsIGJ1c2luZXNzIGRhdGEgaXMgc2NvcGVkIGJ5IGBvcmdhbmlzYXRpb25faWRgCi0gUm93LUxldmVsIFNlY3VyaXR5IGlzIG1hbmRhdG9yeSBiZWZvcmUgcmVhbCBkYXRhIGlzIHVzZWQKLSBUb2RheSByZWNvbW1lbmRhdGlvbnMgYXJlIGRldGVybWluaXN0aWMgYW5kIHRyYWNlYWJsZSB0byBzb3VyY2UgcmVjb3JkcwotIEFJIHN1Z2dlc3Rpb25zIG5ldmVyIGFsdGVyIGNvbmZpcm1lZCBvcGVyYXRpb25hbCBmYWN0cyB3aXRob3V0IHVzZXIgYXBwcm92YWwKCiMjIENvbnZlbnRpb25zCgotIFVzZSBVSyB0ZXJtaW5vbG9neSwgR0JQIGFuZCBgZGQvTU0veXl5eWAgaW4gdGhlIGludGVyZmFjZS4KLSBVc2UgZmVhdHVyZS1maXJzdCBGbHV0dGVyIGZvbGRlcnMuCi0gU3RvcmUgbW9uZXkgYXMgaW50ZWdlciBwZW5jZSBhbmQgZGF0ZXMgYXMgUG9zdGdyZVNRTCBgZGF0ZWAgd2hlcmUgdGltZSBpcyBub3QKICBtZWFuaW5nZnVsLgotIE5ldmVyIGNvbW1pdCBjcmVkZW50aWFscywgYC5lbnZgIGZpbGVzLCB0ZW5hbnQgaWRlbnRpdHkgZG9jdW1lbnRzIG9yIHJlYWwKICBwb3J0Zm9saW8gZGF0YS4KLSBNaWdyYXRpb25zIGFyZSBpbW11dGFibGUgYWZ0ZXIgdGhleSBoYXZlIGJlZW4gYXBwbGllZCB0byBhIHNoYXJlZCBlbnZpcm9ubWVudC4KCiMjIFJlcXVpcmVkIGNoZWNrcwoKUnVuIHRoZSBhdmFpbGFibGUgc3Vic2V0IGJlZm9yZSBjb21taXR0aW5nOgoKYGBgYmFzaApkYXJ0IGZvcm1hdCAtLW91dHB1dD1ub25lIC0tc2V0LWV4aXQtaWYtY2hhbmdlZCAuCmZsdXR0ZXIgYW5hbHl6ZQpmbHV0dGVyIHRlc3QKc3VwYWJhc2UgZGIgcmVzZXQKc3VwYWJhc2UgdGVzdCBkYgpgYGAKCklmIGEgdG9vbCBpcyB1bmF2YWlsYWJsZSwgcmVwb3J0IHRoZSB1bnJ1biBjaGVjayBleHBsaWNpdGx5LiBBIHNraXBwZWQKaW50ZWdyYXRpb24gdGVzdCBpcyBhIHZpc2libGUgbWlsZXN0b25lIHRhcmdldCwgbm90IGV2aWRlbmNlIG9mIGEgcGFzc2luZyBmbG93LgoKIyMgRGVmaW5pdGlvbiBvZiBkb25lCgotIENvZGUgYW5kIG1pZ3JhdGlvbnMgYXJlIHJldmlld2VkIGZvciBjcm9zcy1vcmdhbmlzYXRpb24gcmVmZXJlbmNlcy4KLSBSTFMgcG9saWNpZXMgY292ZXIgZXZlcnkgb3JnYW5pc2F0aW9uLXNjb3BlZCB0YWJsZSBhbmQgU3RvcmFnZSBwYXRoLgotIFRlc3RzIGNvdmVyIHRoZSBjaGFuZ2VkIHJ1bGUgb3Igd29ya2Zsb3cuCi0gVXNlci1mYWNpbmcgY2xhaW1zIGRvIG5vdCBjZXJ0aWZ5IGNvbXBsaWFuY2Ugb3IgcHJvdmlkZSBsZWdhbCBvciB0YXggYWR2aWNlLgotIERvY3VtZW50YXRpb24gcmVmbGVjdHMgbWF0ZXJpYWwgYXJjaGl0ZWN0dXJlIG9yIHNjb3BlIGNoYW5nZXMuCg==
+# PropertyOS engineering instructions
+
+## Product boundary
+
+PropertyOS is a private Alpha for independent UK residential landlords. Keep
+the frozen scope in `docs/PropertyOS_Alpha_Build_Specification.md`. New ideas
+belong in the backlog unless they block an Alpha acceptance outcome.
+
+## Architecture
+
+- Flutter Web with Riverpod and GoRouter
+- Supabase Auth, PostgreSQL and private Storage
+- All business data is scoped by `organisation_id`
+- Row-Level Security is mandatory before real data is used
+- Today recommendations are deterministic and traceable to source records
+- AI suggestions never alter confirmed operational facts without user approval
+
+## Conventions
+
+- Use UK terminology, GBP and `dd/MM/yyyy` in the interface.
+- Use feature-first Flutter folders.
+- Store money as integer pence and dates as PostgreSQL `date` where time is not
+  meaningful.
+- Never commit credentials, `.env` files, tenant identity documents or real
+  portfolio data.
+- Migrations are immutable after they have been applied to a shared environment.
+
+## Required checks
+
+Run the available subset before committing:
+
+```bash
+dart format --output=none --set-exit-if-changed .
+flutter analyze
+flutter test
+supabase db reset
+supabase test db
+```
+
+If a tool is unavailable, report the unrun check explicitly. A skipped
+integration test is a visible milestone target, not evidence of a passing flow.
+
+## Definition of done
+
+- Code and migrations are reviewed for cross-organisation references.
+- RLS policies cover every organisation-scoped table and Storage path.
+- Tests cover the changed rule or workflow.
+- User-facing claims do not certify compliance or provide legal or tax advice.
+- Documentation reflects material architecture or scope changes.
