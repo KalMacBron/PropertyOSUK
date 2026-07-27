@@ -1,1 +1,29 @@
-YmVnaW47CnNlbGVjdCBwbGFuKDcpOwoKc2VsZWN0IGhhc190YWJsZSgncHVibGljJywgJ3Byb3BlcnRpZXMnLCAncHJvcGVydGllcyB0YWJsZSBleGlzdHMnKTsKc2VsZWN0IGhhc190YWJsZSgncHVibGljJywgJ293bmVyc2hpcF9lbnRpdGllcycsICdvd25lcnNoaXAgZW50aXRpZXMgdGFibGUgZXhpc3RzJyk7CnNlbGVjdCBoYXNfdGFibGUoJ3B1YmxpYycsICdwcm9wZXJ0eV9vd25lcnNoaXBzJywgJ3Byb3BlcnR5IG93bmVyc2hpcCBqb2luIHRhYmxlIGV4aXN0cycpOwpzZWxlY3QgaGFzX3ZpZXcoJ3B1YmxpYycsICd0b2RheV9hY3Rpb25zJywgJ1RvZGF5IGFjdGlvbiB2aWV3IGV4aXN0cycpOwpzZWxlY3QgY29sX2lzX2ZrKAogICdwdWJsaWMnLCAnb3duZXJzaGlwX2VudGl0aWVzJywgJ29yZ2FuaXNhdGlvbl9pZCcsCiAgJ293bmVyc2hpcCBlbnRpdGllcyBhcmUgb3JnYW5pc2F0aW9uIHNjb3BlZCcKKTsKc2VsZWN0IGNvbF9pc19maygKICAncHVibGljJywgJ3Byb3BlcnR5X293bmVyc2hpcHMnLCAncHJvcGVydHlfaWQnLAogICdwcm9wZXJ0eSBvd25lcnNoaXAgbGlua3MgdG8gYSBwcm9wZXJ0eScKKTsKc2VsZWN0IGlzKAogIHB1YmxpYy5jb21wbGlhbmNlX3N0YXRlX2ZvcigKICAgIGN1cnJlbnRfZGF0ZSArIDMxLAogICAgbnVsbCwKICAgIG5vdygpLAogICAgbnVsbCwKICAgIDQ1CiAgKTo6dGV4dCwKICAnZHVlX3Nvb24nLAogICdjb25maXJtZWQgY29tcGxpYW5jZSBleHBpcmluZyBpbiAzMSBkYXlzIGlzIGR1ZSBzb29uJwopOwoKc2VsZWN0ICogZnJvbSBmaW5pc2goKTsKcm9sbGJhY2s7Cg==
+begin;
+select plan(7);
+
+select has_table('public', 'properties', 'properties table exists');
+select has_table('public', 'ownership_entities', 'ownership entities table exists');
+select has_table('public', 'property_ownerships', 'property ownership join table exists');
+select has_view('public', 'today_actions', 'Today action view exists');
+select col_is_fk(
+  'public', 'ownership_entities', 'organisation_id',
+  'ownership entities are organisation scoped'
+);
+select col_is_fk(
+  'public', 'property_ownerships', 'property_id',
+  'property ownership links to a property'
+);
+select is(
+  public.compliance_state_for(
+    current_date + 31,
+    null,
+    now(),
+    null,
+    45
+  )::text,
+  'due_soon',
+  'confirmed compliance expiring in 31 days is due soon'
+);
+
+select * from finish();
+rollback;
