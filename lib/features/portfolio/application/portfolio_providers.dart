@@ -10,13 +10,19 @@ final organisationProvider = FutureProvider<OrganisationSummary?>(
   (ref) => ref.watch(portfolioRepositoryProvider).currentOrganisation(),
 );
 
-final ownershipEntitiesProvider = FutureProvider<List<OwnershipEntity>>((ref) async {
+final ownershipEntitiesProvider = FutureProvider<List<OwnershipEntity>>((
+  ref,
+) async {
   final organisation = await ref.watch(organisationProvider.future);
   if (organisation == null) return [];
-  return ref.watch(portfolioRepositoryProvider).listOwnershipEntities(organisation.id);
+  return ref
+      .watch(portfolioRepositoryProvider)
+      .listOwnershipEntities(organisation.id);
 });
 
-final propertiesProvider = FutureProvider<List<Map<String, dynamic>>>((ref) async {
+final propertiesProvider = FutureProvider<List<Map<String, dynamic>>>((
+  ref,
+) async {
   final organisation = await ref.watch(organisationProvider.future);
   if (organisation == null) return [];
   return ref.watch(portfolioRepositoryProvider).listProperties(organisation.id);

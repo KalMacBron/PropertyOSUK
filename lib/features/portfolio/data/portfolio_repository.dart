@@ -51,7 +51,8 @@ class PortfolioRepository {
   }
 
   Future<OrganisationSummary> createOrganisation(String name) async {
-    final slug = '${name.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]+'), '-')}-${DateTime.now().millisecondsSinceEpoch}';
+    final slug =
+        '${name.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]+'), '-')}-${DateTime.now().millisecondsSinceEpoch}';
     final id = await _client.rpc<String>(
       'create_organisation',
       params: {'organisation_name': name.trim(), 'organisation_slug': slug},
@@ -59,7 +60,9 @@ class PortfolioRepository {
     return OrganisationSummary(id: id, name: name.trim());
   }
 
-  Future<List<OwnershipEntity>> listOwnershipEntities(String organisationId) async {
+  Future<List<OwnershipEntity>> listOwnershipEntities(
+    String organisationId,
+  ) async {
     final rows = await _client
         .from('ownership_entities')
         .select()
@@ -79,7 +82,9 @@ class PortfolioRepository {
       'organisation_id': organisationId,
       'entity_type': entityType,
       'legal_name': legalName.trim(),
-      'company_number': companyNumber?.trim().isEmpty == true ? null : companyNumber?.trim().toUpperCase(),
+      'company_number': companyNumber?.trim().isEmpty == true
+          ? null
+          : companyNumber?.trim().toUpperCase(),
       'created_by': _userId,
     });
   }
@@ -87,7 +92,9 @@ class PortfolioRepository {
   Future<List<Map<String, dynamic>>> listProperties(String organisationId) {
     return _client
         .from('properties')
-        .select('id, display_name, address_line_1, town_or_city, postcode, property_ownerships(ownership_percentage, ownership_entities(legal_name))')
+        .select(
+          'id, display_name, address_line_1, town_or_city, postcode, property_ownerships(ownership_percentage, ownership_entities(legal_name))',
+        )
         .eq('organisation_id', organisationId)
         .eq('status', 'active')
         .order('address_line_1');
@@ -104,16 +111,21 @@ class PortfolioRepository {
     String? propertyType,
     int? bedrooms,
   }) async {
-    await _client.rpc<void>('create_property_with_ownership', params: {
-      'target_organisation_id': organisationId,
-      'target_ownership_entity_id': ownershipEntityId,
-      'target_ownership_percentage': ownershipPercentage,
-      'property_address_line_1': addressLine1.trim(),
-      'property_town_or_city': townOrCity.trim(),
-      'property_postcode': postcode.trim().toUpperCase(),
-      'property_display_name': displayName?.trim().isEmpty == true ? null : displayName?.trim(),
-      'property_type_name': propertyType,
-      'property_bedrooms': bedrooms,
-    });
+    await _client.rpc<void>(
+      'create_property_with_ownership',
+      params: {
+        'target_organisation_id': organisationId,
+        'target_ownership_entity_id': ownershipEntityId,
+        'target_ownership_percentage': ownershipPercentage,
+        'property_address_line_1': addressLine1.trim(),
+        'property_town_or_city': townOrCity.trim(),
+        'property_postcode': postcode.trim().toUpperCase(),
+        'property_display_name': displayName?.trim().isEmpty == true
+            ? null
+            : displayName?.trim(),
+        'property_type_name': propertyType,
+        'property_bedrooms': bedrooms,
+      },
+    );
   }
 }

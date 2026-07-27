@@ -14,8 +14,14 @@ final propertyOsRouter = GoRouter(
       builder: (context, state, child) => _AppShell(child: child),
       routes: [
         GoRoute(path: '/today', builder: (_, __) => const TodayScreen()),
-        GoRoute(path: '/properties', builder: (_, __) => const PropertiesScreen()),
-        GoRoute(path: '/ownership', builder: (_, __) => const OwnershipEntitiesScreen()),
+        GoRoute(
+          path: '/properties',
+          builder: (_, __) => const PropertiesScreen(),
+        ),
+        GoRoute(
+          path: '/ownership',
+          builder: (_, __) => const OwnershipEntitiesScreen(),
+        ),
       ],
     ),
   ],
@@ -40,10 +46,22 @@ class _AppShell extends ConsumerWidget {
     ),
     drawer: NavigationDrawer(
       children: [
-        const Padding(padding: EdgeInsets.fromLTRB(28, 20, 16, 12), child: Text('Portfolio')),
-        const NavigationDrawerDestination(icon: Icon(Icons.today_outlined), label: Text('Today')),
-        const NavigationDrawerDestination(icon: Icon(Icons.home_work_outlined), label: Text('Properties')),
-        const NavigationDrawerDestination(icon: Icon(Icons.account_balance_outlined), label: Text('Ownership')),
+        const Padding(
+          padding: EdgeInsets.fromLTRB(28, 20, 16, 12),
+          child: Text('Portfolio'),
+        ),
+        const NavigationDrawerDestination(
+          icon: Icon(Icons.today_outlined),
+          label: Text('Today'),
+        ),
+        const NavigationDrawerDestination(
+          icon: Icon(Icons.home_work_outlined),
+          label: Text('Properties'),
+        ),
+        const NavigationDrawerDestination(
+          icon: Icon(Icons.account_balance_outlined),
+          label: Text('Ownership'),
+        ),
       ],
       onDestinationSelected: (index) {
         Navigator.of(context).pop();
