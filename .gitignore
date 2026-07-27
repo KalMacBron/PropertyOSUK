@@ -1,0 +1,13 @@
+.dart_tool/
+.env
+.flutter-plugins
+.flutter-plugins-dependencies
+.idea/
+.metadata
+.packages
+.vscode/
+build/
+coverage/
+*.iml
+supabase/.branches/
+supabase/.temp/
