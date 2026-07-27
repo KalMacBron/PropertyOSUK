@@ -1,1 +1,28 @@
-Y2xhc3MgVG9kYXlBY3Rpb24gewogIGNvbnN0IFRvZGF5QWN0aW9uKHsKICAgIHJlcXVpcmVkIHRoaXMudGl0bGUsCiAgICByZXF1aXJlZCB0aGlzLnJlYXNvbiwKICAgIHJlcXVpcmVkIHRoaXMucHJpb3JpdHksCiAgICB0aGlzLnByb3BlcnR5SWQsCiAgICB0aGlzLmR1ZURhdGUsCiAgfSk7CgogIGZhY3RvcnkgVG9kYXlBY3Rpb24uZnJvbUpzb24oTWFwPFN0cmluZywgZHluYW1pYz4ganNvbikgewogICAgcmV0dXJuIFRvZGF5QWN0aW9uKAogICAgICB0aXRsZToganNvblsndGl0bGUnXSBhcyBTdHJpbmcsCiAgICAgIHJlYXNvbjoganNvblsncmVhc29uJ10gYXMgU3RyaW5nLAogICAgICBwcmlvcml0eToganNvblsncHJpb3JpdHknXSBhcyBTdHJpbmcsCiAgICAgIHByb3BlcnR5SWQ6IGpzb25bJ3Byb3BlcnR5X2lkJ10gYXMgU3RyaW5nPywKICAgICAgZHVlRGF0ZToganNvblsnZHVlX2RhdGUnXSA9PSBudWxsCiAgICAgICAgICA/IG51bGwKICAgICAgICAgIDogRGF0ZVRpbWUucGFyc2UoanNvblsnZHVlX2RhdGUnXSBhcyBTdHJpbmcpLAogICAgKTsKICB9CgogIGZpbmFsIFN0cmluZyB0aXRsZTsKICBmaW5hbCBTdHJpbmcgcmVhc29uOwogIGZpbmFsIFN0cmluZyBwcmlvcml0eTsKICBmaW5hbCBTdHJpbmc/IHByb3BlcnR5SWQ7CiAgZmluYWwgRGF0ZVRpbWU/IGR1ZURhdGU7Cn0KCg==
+class TodayAction {
+  const TodayAction({
+    required this.title,
+    required this.reason,
+    required this.priority,
+    this.propertyId,
+    this.dueDate,
+  });
+
+  factory TodayAction.fromJson(Map<String, dynamic> json) {
+    return TodayAction(
+      title: json['title'] as String,
+      reason: json['reason'] as String,
+      priority: json['priority'] as String,
+      propertyId: json['property_id'] as String?,
+      dueDate: json['due_date'] == null
+          ? null
+          : DateTime.parse(json['due_date'] as String),
+    );
+  }
+
+  final String title;
+  final String reason;
+  final String priority;
+  final String? propertyId;
+  final DateTime? dueDate;
+}
+
