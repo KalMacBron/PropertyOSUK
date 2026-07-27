@@ -18,4 +18,3 @@ class PropertyOsApp extends StatelessWidget {
     );
   }
 }
-
