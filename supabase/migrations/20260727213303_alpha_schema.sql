@@ -1,0 +1,1 @@
+-- Reserved no-op migration recorded during initial development project setup.
