@@ -64,7 +64,9 @@ class OwnershipEntitiesScreen extends ConsumerWidget {
                         labelText: 'Companies House number',
                       ),
                       validator: (value) {
-                        if (value == null || value.trim().isEmpty) return null;
+                        if (value == null || value.trim().isEmpty) {
+                          return null;
+                        }
                         return RegExp(
                           r'^[A-Za-z0-9]{8}$',
                         ).hasMatch(value.trim())
@@ -89,8 +91,9 @@ class OwnershipEntitiesScreen extends ConsumerWidget {
             ),
             FilledButton(
               onPressed: () {
-                if (formKey.currentState!.validate())
+                if (formKey.currentState!.validate()) {
                   Navigator.pop(context, true);
+                }
               },
               child: const Text('Add entity'),
             ),
