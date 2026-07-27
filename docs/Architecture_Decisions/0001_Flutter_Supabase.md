@@ -1,1 +1,27 @@
-IyBBRFIgMDAwMTogRmx1dHRlciBhbmQgU3VwYWJhc2UgZm9yIHRoZSBQcm9wZXJ0eU9TIEFscGhhCgoqKlN0YXR1czoqKiBBY2NlcHRlZCAgCioqRGF0ZToqKiAyMDI2LTA3LTI3CgojIyBDb250ZXh0CgpQcm9wZXJ0eU9TIG5lZWRzIGEgcHJpdmF0ZSwgZGF0YWJhc2UtYmFja2VkIHdlYiBBbHBoYSB0aGF0IGNhbiBsYXRlciB0YXJnZXQgaU9TCmFuZCBBbmRyb2lkIHdpdGhvdXQgaW50cm9kdWNpbmcgaW5mcmFzdHJ1Y3R1cmUgYmV5b25kIHRoZSBuZWVkcyBvZiB2YWxpZGF0aW9uLgoKIyMgRGVjaXNpb24KClVzZSBGbHV0dGVyIGZvciB0aGUgY2xpZW50IGFuZCBTdXBhYmFzZSBmb3IgYXV0aGVudGljYXRpb24sIFBvc3RncmVTUUwsIHByaXZhdGUKb2JqZWN0IHN0b3JhZ2UgYW5kIHNlcnZlci1zaWRlIGZ1bmN0aW9ucy4KClVzZSBkYXRhYmFzZSBSb3ctTGV2ZWwgU2VjdXJpdHkgZm9yIG9yZ2FuaXNhdGlvbiBpc29sYXRpb24uIEtlZXAgZGV0ZXJtaW5pc3RpYwpUb2RheSBhbmQgY29tcGxpYW5jZSBydWxlcyBpbiBTUUwgb3IgdGVzdGVkIGFwcGxpY2F0aW9uIGxvZ2ljLiBDYWxsIGV4dGVybmFsIEFJCnNlcnZpY2VzIG9ubHkgZnJvbSBzZXJ2ZXItc2lkZSBmdW5jdGlvbnMuCgojIyBDb25zZXF1ZW5jZXMKCi0gT25lIGNsaWVudCBjb2RlYmFzZSBjYW4gbGF0ZXIgc3VwcG9ydCB3ZWIgYW5kIG1vYmlsZS4KLSBQb3N0Z3JlU1FMIHJlbWFpbnMgcG9ydGFibGUgYW5kIGluc3BlY3RhYmxlLgotIFNlY3VyaXR5IGRlcGVuZHMgb24gY29tcGxldGUgUkxTIHBvbGljaWVzIGFuZCB0ZXN0cy4KLSBGbHV0dGVyIFdlYiBzdWl0YWJpbGl0eSBtdXN0IGJlIHJlYXNzZXNzZWQgYWZ0ZXIgcmVhbCBBbHBoYSB1c2FnZS4KLSBObyBkZWNpc2lvbiBoYXMgYmVlbiBtYWRlIHRvIHVzZSBBV1MgZm9yIHRoZSBBbHBoYS4KCg==
+# ADR 0001: Flutter and Supabase for the PropertyOS Alpha
+
+**Status:** Accepted  
+**Date:** 2026-07-27
+
+## Context
+
+PropertyOS needs a private, database-backed web Alpha that can later target iOS
+and Android without introducing infrastructure beyond the needs of validation.
+
+## Decision
+
+Use Flutter for the client and Supabase for authentication, PostgreSQL, private
+object storage and server-side functions.
+
+Use database Row-Level Security for organisation isolation. Keep deterministic
+Today and compliance rules in SQL or tested application logic. Call external AI
+services only from server-side functions.
+
+## Consequences
+
+- One client codebase can later support web and mobile.
+- PostgreSQL remains portable and inspectable.
+- Security depends on complete RLS policies and tests.
+- Flutter Web suitability must be reassessed after real Alpha usage.
+- No decision has been made to use AWS for the Alpha.
+
