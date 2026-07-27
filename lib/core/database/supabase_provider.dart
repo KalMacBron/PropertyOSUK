@@ -1,1 +1,7 @@
-aW1wb3J0ICdwYWNrYWdlOmZsdXR0ZXJfcml2ZXJwb2QvZmx1dHRlcl9yaXZlcnBvZC5kYXJ0JzsKaW1wb3J0ICdwYWNrYWdlOnN1cGFiYXNlX2ZsdXR0ZXIvc3VwYWJhc2VfZmx1dHRlci5kYXJ0JzsKCmZpbmFsIHN1cGFiYXNlUHJvdmlkZXIgPSBQcm92aWRlcjxTdXBhYmFzZUNsaWVudD4oCiAgKHJlZikgPT4gU3VwYWJhc2UuaW5zdGFuY2UuY2xpZW50LAopOwoK
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+final supabaseProvider = Provider<SupabaseClient>(
+  (ref) => Supabase.instance.client,
+);
+
