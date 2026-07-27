@@ -25,4 +25,3 @@ class TodayAction {
   final String? propertyId;
   final DateTime? dueDate;
 }
-
