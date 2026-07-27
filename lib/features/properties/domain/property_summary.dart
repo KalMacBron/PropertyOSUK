@@ -17,4 +17,3 @@ class PropertySummary {
   final String address;
   final String postcode;
 }
-
