@@ -7,6 +7,6 @@ void main() {
       // Implement against a disposable local Supabase instance.
       // The completed test must cover create, warning, completion and timeline.
     },
-    skip: 'Scaffold: implement with Milestone 2.',
+    skip: true,
   );
 }
