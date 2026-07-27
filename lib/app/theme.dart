@@ -12,10 +12,6 @@ ThemeData buildPropertyOsTheme() {
     ),
     scaffoldBackgroundColor: const Color(0xFFF5F7FA),
     useMaterial3: true,
-    cardTheme: const CardThemeData(
-      elevation: 0,
-      margin: EdgeInsets.zero,
-    ),
+    cardTheme: const CardThemeData(elevation: 0, margin: EdgeInsets.zero),
   );
 }
-
