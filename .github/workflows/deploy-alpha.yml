@@ -50,5 +50,5 @@ jobs:
           port: 21
           protocol: ftps
           local-dir: build/web/
-          server-dir: /alpha/
+          server-dir: /public_html/alpha/
           dangerous-clean-slate: true
