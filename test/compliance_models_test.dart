@@ -47,6 +47,6 @@ void main() {
       requirementTypeId: 'requirement-id',
       reviewDate: DateTime(2026, 8, 28),
     );
-    expect(reviewRecord.statusOn(today), ComplianceStatus.notRecorded);
+    expect(reviewRecord.statusOn(today), ComplianceStatus.compliant);
   });
 }
