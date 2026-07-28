@@ -76,7 +76,19 @@ const extractionSchema = {
 Deno.serve(async (req: Request) => {
   const requestId = crypto.randomUUID();
   const origin = req.headers.get("origin");
-  if (req.method === "OPTIONS") return response(origin, 204, {});
+  if (req.method === "OPTIONS") {
+    const headers: Record<string, string> = {
+      "cache-control": "no-store",
+    };
+    if (origin && corsOrigins.has(origin)) {
+      headers["access-control-allow-origin"] = origin;
+      headers["access-control-allow-headers"] =
+        "authorization, apikey, content-type";
+      headers["access-control-allow-methods"] = "POST, OPTIONS";
+      headers.vary = "Origin";
+    }
+    return new Response(null, { status: 204, headers });
+  }
   if (req.method !== "POST") {
     return response(origin, 405, { error: "method_not_allowed", requestId });
   }
