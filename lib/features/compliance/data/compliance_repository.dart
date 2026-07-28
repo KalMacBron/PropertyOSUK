@@ -36,8 +36,7 @@ class ComplianceRepository {
 
     return propertyRows.map((row) {
       final id = row['id'] as String;
-      final address =
-          '${row['address_line_1']}, ${row['town_or_city']}';
+      final address = '${row['address_line_1']}, ${row['town_or_city']}';
       return PropertyCompliance(
         id: id,
         name: (row['display_name'] as String?)?.trim().isNotEmpty == true
@@ -60,22 +59,19 @@ class ComplianceRepository {
     required String? referenceNumber,
     required String? notes,
   }) async {
-    await _client.from('property_compliance_records').upsert(
-      {
-        'organisation_id': organisationId,
-        'property_id': propertyId,
-        'requirement_type_id': requirementTypeId,
-        'issue_date': _dateValue(issueDate),
-        'expiry_date': _dateValue(expiryDate),
-        'review_date': _dateValue(reviewDate),
-        'reference_number': _optional(referenceNumber),
-        'notes': _optional(notes),
-        'confirmed_at': DateTime.now().toUtc().toIso8601String(),
-        'confirmed_by': _userId,
-        'created_by': _userId,
-      },
-      onConflict: 'property_id,requirement_type_id',
-    );
+    await _client.from('property_compliance_records').upsert({
+      'organisation_id': organisationId,
+      'property_id': propertyId,
+      'requirement_type_id': requirementTypeId,
+      'issue_date': _dateValue(issueDate),
+      'expiry_date': _dateValue(expiryDate),
+      'review_date': _dateValue(reviewDate),
+      'reference_number': _optional(referenceNumber),
+      'notes': _optional(notes),
+      'confirmed_at': DateTime.now().toUtc().toIso8601String(),
+      'confirmed_by': _userId,
+      'created_by': _userId,
+    }, onConflict: 'property_id,requirement_type_id');
   }
 
   Future<void> deleteRecord(String recordId) =>
@@ -89,6 +85,6 @@ class ComplianceRepository {
   String? _dateValue(DateTime? value) => value == null
       ? null
       : '${value.year.toString().padLeft(4, '0')}-'
-          '${value.month.toString().padLeft(2, '0')}-'
-          '${value.day.toString().padLeft(2, '0')}';
+            '${value.month.toString().padLeft(2, '0')}-'
+            '${value.day.toString().padLeft(2, '0')}';
 }
