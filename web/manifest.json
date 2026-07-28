@@ -1,0 +1,11 @@
+{
+  "name": "PropertyOS Alpha",
+  "short_name": "PropertyOS",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#F7F8FA",
+  "theme_color": "#17324D",
+  "description": "PropertyOS private Alpha for independent UK landlords.",
+  "orientation": "portrait-primary",
+  "prefer_related_applications": false
+}

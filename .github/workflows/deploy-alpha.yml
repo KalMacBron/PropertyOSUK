@@ -1,0 +1,68 @@
+name: Deploy Alpha
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+permissions:
+  contents: read
+
+concurrency:
+  group: propertyos-alpha
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    if: github.head_ref == 'agent/auth-property-onboarding'
+    runs-on: ubuntu-latest
+    environment:
+      name: alpha
+      url: https://alpha.propertyosuk.com
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build Flutter Web
+        # Repository secrets are compiled into the browser-safe Alpha build.
+        # Alpha deliberately disables the PWA worker so deployments cannot serve stale code.
+        run: >
+          flutter build web --release
+          --pwa-strategy=none
+          --dart-define=SUPABASE_URL="${{ secrets.SUPABASE_URL }}"
+          --dart-define=SUPABASE_PUBLISHABLE_KEY="${{ secrets.SUPABASE_PUBLISHABLE_KEY }}"
+
+      - name: Version Flutter application bundle
+        # Hostinger CDN can retain main.dart.js despite no-cache headers.
+        # Give every application bundle an immutable URL and update the loader manifest.
+        shell: bash
+        run: |
+          build_id="${GITHUB_SHA::12}"
+          versioned_bundle="main.dart.${build_id}.js"
+          mv build/web/main.dart.js "build/web/${versioned_bundle}"
+          sed -i "s/main\.dart\.js/${versioned_bundle}/g" build/web/flutter_bootstrap.js
+          grep -F "${versioned_bundle}" build/web/flutter_bootstrap.js
+
+      - name: Deploy to Hostinger
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
+        with:
+          server: 147.93.88.23
+          username: u714985569.propertyosuk.com
+          password: ${{ secrets.HOSTINGER_FTP_PASSWORD }}
+          port: 21
+          protocol: ftps
+          local-dir: build/web/
+          server-dir: /public_html/alpha/
+          dangerous-clean-slate: true
