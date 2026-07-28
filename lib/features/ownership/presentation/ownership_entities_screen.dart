@@ -68,8 +68,8 @@ class OwnershipEntitiesScreen extends ConsumerWidget {
                           return null;
                         }
                         return RegExp(
-                          r'^[A-Za-z0-9]{8}$',
-                        ).hasMatch(value.trim())
+                              r'^[A-Za-z0-9]{8}$',
+                            ).hasMatch(value.trim())
                             ? null
                             : 'Use the 8-character company number';
                       },
@@ -104,7 +104,9 @@ class OwnershipEntitiesScreen extends ConsumerWidget {
     if (saved != true) return;
     final organisation = await ref.read(organisationProvider.future);
     if (organisation == null) return;
-    await ref.read(portfolioRepositoryProvider).createOwnershipEntity(
+    await ref
+        .read(portfolioRepositoryProvider)
+        .createOwnershipEntity(
           organisationId: organisation.id,
           entityType: type,
           legalName: name.text,

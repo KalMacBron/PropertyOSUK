@@ -33,42 +33,41 @@ class _AppShell extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) => Scaffold(
-        appBar: AppBar(
-          title: const Text('PropertyOS'),
-          actions: [
-            IconButton(
-              tooltip: 'Sign out',
-              onPressed: () =>
-                  AuthRepository(ref.read(supabaseProvider)).signOut(),
-              icon: const Icon(Icons.logout),
-            ),
-            const SizedBox(width: 8),
-          ],
+    appBar: AppBar(
+      title: const Text('PropertyOS'),
+      actions: [
+        IconButton(
+          tooltip: 'Sign out',
+          onPressed: () => AuthRepository(ref.read(supabaseProvider)).signOut(),
+          icon: const Icon(Icons.logout),
         ),
-        drawer: NavigationDrawer(
-          children: [
-            const Padding(
-              padding: EdgeInsets.fromLTRB(28, 20, 16, 12),
-              child: Text('Portfolio'),
-            ),
-            const NavigationDrawerDestination(
-              icon: Icon(Icons.today_outlined),
-              label: Text('Today'),
-            ),
-            const NavigationDrawerDestination(
-              icon: Icon(Icons.home_work_outlined),
-              label: Text('Properties'),
-            ),
-            const NavigationDrawerDestination(
-              icon: Icon(Icons.account_balance_outlined),
-              label: Text('Ownership'),
-            ),
-          ],
-          onDestinationSelected: (index) {
-            Navigator.of(context).pop();
-            context.go(['/today', '/properties', '/ownership'][index]);
-          },
+        const SizedBox(width: 8),
+      ],
+    ),
+    drawer: NavigationDrawer(
+      children: [
+        const Padding(
+          padding: EdgeInsets.fromLTRB(28, 20, 16, 12),
+          child: Text('Portfolio'),
         ),
-        body: child,
-      );
+        const NavigationDrawerDestination(
+          icon: Icon(Icons.today_outlined),
+          label: Text('Today'),
+        ),
+        const NavigationDrawerDestination(
+          icon: Icon(Icons.home_work_outlined),
+          label: Text('Properties'),
+        ),
+        const NavigationDrawerDestination(
+          icon: Icon(Icons.account_balance_outlined),
+          label: Text('Ownership'),
+        ),
+      ],
+      onDestinationSelected: (index) {
+        Navigator.of(context).pop();
+        context.go(['/today', '/properties', '/ownership'][index]);
+      },
+    ),
+    body: child,
+  );
 }
