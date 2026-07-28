@@ -36,6 +36,7 @@ jobs:
         run: flutter pub get
 
       - name: Build Flutter Web
+        # Repository secrets are compiled into the browser-safe Alpha build.
         run: >
           flutter build web --release
           --dart-define=SUPABASE_URL="${{ secrets.SUPABASE_URL }}"
