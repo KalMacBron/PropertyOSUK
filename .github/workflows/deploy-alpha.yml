@@ -44,6 +44,17 @@ jobs:
           --dart-define=SUPABASE_URL="${{ secrets.SUPABASE_URL }}"
           --dart-define=SUPABASE_PUBLISHABLE_KEY="${{ secrets.SUPABASE_PUBLISHABLE_KEY }}"
 
+      - name: Version Flutter application bundle
+        # Hostinger CDN can retain main.dart.js despite no-cache headers.
+        # Give every application bundle an immutable URL and update the loader manifest.
+        shell: bash
+        run: |
+          build_id="${GITHUB_SHA::12}"
+          versioned_bundle="main.dart.${build_id}.js"
+          mv build/web/main.dart.js "build/web/${versioned_bundle}"
+          sed -i "s/main\.dart\.js/${versioned_bundle}/g" build/web/flutter_bootstrap.js
+          grep -F "${versioned_bundle}" build/web/flutter_bootstrap.js
+
       - name: Deploy to Hostinger
         uses: SamKirkland/FTP-Deploy-Action@v4.3.6
         with:
