@@ -45,6 +45,9 @@ jobs:
           supabase test db supabase/tests/002_compliance_evidence_security.sql
           supabase test db supabase/tests/003_documents_api_privileges.sql
           supabase test db supabase/tests/004_ai_certificate_processing_security.sql
+      - name: Stop local Supabase
+        if: always()
+        run: supabase stop --no-backup
 
   edge-functions:
     runs-on: ubuntu-latest
@@ -62,6 +65,3 @@ jobs:
             exit 1
           }
       - run: deno check supabase/functions/certificate-processing/index.ts
-      - name: Stop local Supabase
-        if: always()
-        run: supabase stop --no-backup
