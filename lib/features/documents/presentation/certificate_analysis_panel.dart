@@ -142,9 +142,7 @@ class _CertificateAnalysisPanelState
                 : const Icon(Icons.auto_awesome_outlined),
             label: Text(latest == null ? 'Analyse' : 'Analyse again'),
           ),
-        if (latest != null &&
-            latest.status == 'completed' &&
-            widget.canAnalyse)
+        if (latest != null && latest.status == 'completed' && widget.canAnalyse)
           TextButton(
             onPressed: _working ? null : () => _review(latest),
             child: const Text('Review'),
@@ -253,15 +251,20 @@ class _CertificateReviewDialogState extends State<_CertificateReviewDialog> {
                 label: 'Issue date',
                 selected: _useIssue,
                 controller: _issue,
-                existing: widget.existing.issueDate?.toIso8601String().split('T').first,
+                existing: widget.existing.issueDate
+                    ?.toIso8601String()
+                    .split('T')
+                    .first,
                 onChanged: (value) => setState(() => _useIssue = value),
               ),
               _ReviewField(
                 label: 'Expiry date',
                 selected: _useExpiry,
                 controller: _expiry,
-                existing:
-                    widget.existing.expiryDate?.toIso8601String().split('T').first,
+                existing: widget.existing.expiryDate
+                    ?.toIso8601String()
+                    .split('T')
+                    .first,
                 onChanged: (value) => setState(() => _useExpiry = value),
               ),
               _ReviewField(
