@@ -45,7 +45,7 @@ void main() {
       id: 'record-id',
       propertyId: 'property-id',
       requirementTypeId: 'requirement-id',
-      reviewDate: null,
+      reviewDate: DateTime(2026, 8, 28),
     );
     expect(reviewRecord.statusOn(today), ComplianceStatus.notRecorded);
   });
