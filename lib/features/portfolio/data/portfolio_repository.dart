@@ -1,9 +1,20 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class OrganisationSummary {
-  const OrganisationSummary({required this.id, required this.name});
+  const OrganisationSummary({
+    required this.id,
+    required this.name,
+    required this.role,
+  });
+
   final String id;
   final String name;
+  final String role;
+
+  bool get canUploadEvidence =>
+      role == 'owner' || role == 'admin' || role == 'member';
+
+  bool get canDeleteEvidence => role == 'owner' || role == 'admin';
 }
 
 class OwnershipEntity {
@@ -38,7 +49,7 @@ class PortfolioRepository {
   Future<OrganisationSummary?> currentOrganisation() async {
     final rows = await _client
         .from('organisation_members')
-        .select('organisation_id, organisations(name)')
+        .select('organisation_id, role, organisations(name)')
         .eq('user_id', _userId)
         .limit(1);
     if (rows.isEmpty) return null;
@@ -47,6 +58,7 @@ class PortfolioRepository {
     return OrganisationSummary(
       id: row['organisation_id'] as String,
       name: organisation['name'] as String,
+      role: row['role'] as String,
     );
   }
 
@@ -57,7 +69,7 @@ class PortfolioRepository {
       'create_organisation',
       params: {'organisation_name': name.trim(), 'organisation_slug': slug},
     );
-    return OrganisationSummary(id: id, name: name.trim());
+    return OrganisationSummary(id: id, name: name.trim(), role: 'owner');
   }
 
   Future<List<OwnershipEntity>> listOwnershipEntities(
