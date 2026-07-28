@@ -168,14 +168,16 @@ Deno.serve(async (req: Request) => {
     return response(origin, 404, { error: "document_not_found", requestId });
   }
 
-  const relation = document.property_compliance_records as {
+  const relations = document.property_compliance_records as unknown as Array<{
     id: string;
     organisation_id: string;
     property_id: string;
-    compliance_requirement_types: { code: string };
-  };
-  const requirementCode = relation.compliance_requirement_types.code;
+    compliance_requirement_types: Array<{ code: string }>;
+  }>;
+  const relation = relations[0];
+  const requirementCode = relation?.compliance_requirement_types[0]?.code;
   if (
+    typeof requirementCode !== "string" ||
     !supportedCodes.has(requirementCode) ||
     !supportedMimes.has(document.mime_type) ||
     document.size_bytes < 1 || document.size_bytes > 10 * 1024 * 1024 ||
