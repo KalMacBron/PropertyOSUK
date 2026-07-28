@@ -59,12 +59,16 @@ List<ComplianceDashboardItem> buildDashboardItems({
           ? null
           : DateTime(dueDate.year, dueDate.month, dueDate.day);
       final days = due?.difference(day).inDays;
-      final status = switch (days) {
-        null => DashboardStatus.missingInformation,
-        < 0 => DashboardStatus.overdue,
-        <= warningDays => DashboardStatus.expiringSoon,
-        _ => DashboardStatus.compliant,
-      };
+      final DashboardStatus status;
+      if (days == null) {
+        status = DashboardStatus.missingInformation;
+      } else if (days < 0) {
+        status = DashboardStatus.overdue;
+      } else if (days <= warningDays) {
+        status = DashboardStatus.expiringSoon;
+      } else {
+        status = DashboardStatus.compliant;
+      }
       items.add(
         ComplianceDashboardItem(
           property: property,
