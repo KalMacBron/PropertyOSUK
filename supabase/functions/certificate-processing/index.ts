@@ -16,7 +16,7 @@ function response(origin: string | null, status: number, body: unknown) {
   if (origin && corsOrigins.has(origin)) {
     headers["access-control-allow-origin"] = origin;
     headers["access-control-allow-headers"] =
-      "authorization, apikey, content-type";
+      "authorization, x-client-info, apikey, content-type";
     headers["access-control-allow-methods"] = "POST, OPTIONS";
     headers.vary = "Origin";
   }
@@ -83,7 +83,7 @@ Deno.serve(async (req: Request) => {
     if (origin && corsOrigins.has(origin)) {
       headers["access-control-allow-origin"] = origin;
       headers["access-control-allow-headers"] =
-        "authorization, apikey, content-type";
+        "authorization, x-client-info, apikey, content-type";
       headers["access-control-allow-methods"] = "POST, OPTIONS";
       headers.vary = "Origin";
     }
