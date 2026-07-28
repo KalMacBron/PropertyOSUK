@@ -89,10 +89,17 @@ class DocumentRepository {
       .createSignedUrl(evidence.storagePath, 60);
 
   Future<void> deleteEvidence(ComplianceEvidence evidence) async {
-    await _client.storage
-        .from(evidence.storageBucket)
-        .remove([evidence.storagePath]);
     await _client.from('documents').delete().eq('id', evidence.id);
+    try {
+      await _client.storage
+          .from(evidence.storageBucket)
+          .remove([evidence.storagePath]);
+    } catch (_) {
+      throw const EvidenceCleanupException(
+        'The evidence was removed from PropertyOS, but storage cleanup could '
+        'not be completed. Please ask an administrator to check the upload.',
+      );
+    }
   }
 
   String _newUuid() {
@@ -115,5 +122,10 @@ class EvidenceValidationException implements Exception {
 
 class EvidenceUploadException implements Exception {
   const EvidenceUploadException(this.message);
+  final String message;
+}
+
+class EvidenceCleanupException implements Exception {
+  const EvidenceCleanupException(this.message);
   final String message;
 }
