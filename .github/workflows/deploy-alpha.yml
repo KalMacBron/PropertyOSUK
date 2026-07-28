@@ -19,7 +19,7 @@ concurrency:
 
 jobs:
   deploy:
-    if: github.head_ref == 'agent/auth-property-onboarding'
+    if: github.head_ref == 'feature/property-compliance-register'
     runs-on: ubuntu-latest
     environment:
       name: alpha
