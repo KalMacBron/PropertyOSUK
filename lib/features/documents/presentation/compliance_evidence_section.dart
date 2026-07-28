@@ -255,7 +255,8 @@ class ComplianceEvidenceSection extends ConsumerWidget {
                                   children: [
                                     IconButton(
                                       tooltip: 'View or download evidence',
-                                      onPressed: () => _open(context, ref, file),
+                                      onPressed: () =>
+                                          _open(context, ref, file),
                                       icon: const Icon(Icons.open_in_new),
                                     ),
                                     if (organisation.canDeleteEvidence)

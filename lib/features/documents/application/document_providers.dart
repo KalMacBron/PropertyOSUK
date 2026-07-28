@@ -26,8 +26,9 @@ class EvidenceQuery {
   int get hashCode => Object.hash(organisationId, complianceRecordId);
 }
 
-final complianceEvidenceProvider = FutureProvider.family<
-    List<ComplianceEvidence>, EvidenceQuery>((ref, query) {
+final complianceEvidenceProvider =
+    FutureProvider.family<List<ComplianceEvidence>, EvidenceQuery>(
+        (ref, query) {
   return ref.watch(documentRepositoryProvider).listComplianceEvidence(
         query.organisationId,
         query.complianceRecordId,
