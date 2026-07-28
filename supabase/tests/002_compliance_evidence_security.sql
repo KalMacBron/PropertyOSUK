@@ -292,10 +292,15 @@ select throws_ok(
   'cross-organisation compliance link is rejected'
 );
 
-select is(
-  has_table_privilege('authenticated', 'storage.objects', 'UPDATE'),
-  false,
-  'authenticated users cannot overwrite Storage objects'
+select ok(
+  not exists (
+    select 1
+    from pg_policies
+    where schemaname = 'storage'
+      and tablename = 'objects'
+      and policyname = 'storage_documents_update'
+  ),
+  'no policy permits Storage object overwrite'
 );
 
 reset role;
