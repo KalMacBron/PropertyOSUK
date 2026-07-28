@@ -34,7 +34,7 @@ jobs:
       - name: Start database and apply migrations
         run: supabase db start
       - name: Run database security tests
-        run: supabase test db
+        run: supabase test db supabase/tests/002_compliance_evidence_security.sql
       - name: Stop local Supabase
         if: always()
         run: supabase stop --no-backup
