@@ -86,7 +86,10 @@ Deno.serve(async (req: Request) => {
 
   const authHeader = req.headers.get("authorization");
   if (!authHeader?.startsWith("Bearer ")) {
-    return response(origin, 401, { error: "authentication_required", requestId });
+    return response(origin, 401, {
+      error: "authentication_required",
+      requestId,
+    });
   }
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
@@ -98,8 +101,9 @@ Deno.serve(async (req: Request) => {
     auth: { persistSession: false },
   });
   const token = authHeader.slice(7);
-  const { data: userData, error: userError } =
-    await userClient.auth.getUser(token);
+  const { data: userData, error: userError } = await userClient.auth.getUser(
+    token,
+  );
   if (userError || !userData.user) {
     return response(origin, 401, { error: "invalid_session", requestId });
   }
@@ -114,8 +118,13 @@ Deno.serve(async (req: Request) => {
   if (body.action === "confirm") {
     const analysisId = body.analysisId;
     const values = body.values;
-    if (typeof analysisId !== "string" || typeof values !== "object" || !values) {
-      return response(origin, 400, { error: "invalid_confirmation", requestId });
+    if (
+      typeof analysisId !== "string" || typeof values !== "object" || !values
+    ) {
+      return response(origin, 400, {
+        error: "invalid_confirmation",
+        requestId,
+      });
     }
     const { data, error } = await admin.rpc("confirm_certificate_analysis", {
       target_analysis_id: analysisId,
@@ -132,9 +141,14 @@ Deno.serve(async (req: Request) => {
     return response(origin, 200, { analysis: data, requestId });
   }
 
-  if (body.action !== "analyse" || typeof body.documentId !== "string" ||
-      typeof body.idempotencyKey !== "string") {
-    return response(origin, 400, { error: "invalid_analysis_request", requestId });
+  if (
+    body.action !== "analyse" || typeof body.documentId !== "string" ||
+    typeof body.idempotencyKey !== "string"
+  ) {
+    return response(origin, 400, {
+      error: "invalid_analysis_request",
+      requestId,
+    });
   }
 
   const { data: document, error: documentError } = await userClient
@@ -161,11 +175,13 @@ Deno.serve(async (req: Request) => {
     compliance_requirement_types: { code: string };
   };
   const requirementCode = relation.compliance_requirement_types.code;
-  if (!supportedCodes.has(requirementCode) ||
-      !supportedMimes.has(document.mime_type) ||
-      document.size_bytes < 1 || document.size_bytes > 10 * 1024 * 1024 ||
-      relation.organisation_id !== document.organisation_id ||
-      relation.property_id !== document.property_id) {
+  if (
+    !supportedCodes.has(requirementCode) ||
+    !supportedMimes.has(document.mime_type) ||
+    document.size_bytes < 1 || document.size_bytes > 10 * 1024 * 1024 ||
+    relation.organisation_id !== document.organisation_id ||
+    relation.property_id !== document.property_id
+  ) {
     return response(origin, 422, { error: "unsupported_document", requestId });
   }
 
@@ -176,7 +192,10 @@ Deno.serve(async (req: Request) => {
     .eq("user_id", userData.user.id)
     .single();
   if (!membership || !["owner", "admin", "member"].includes(membership.role)) {
-    return response(origin, 403, { error: "analysis_not_permitted", requestId });
+    return response(origin, 403, {
+      error: "analysis_not_permitted",
+      requestId,
+    });
   }
 
   const { data: reservation, error: reservationError } = await admin.rpc(
@@ -226,7 +245,10 @@ Deno.serve(async (req: Request) => {
   const openAIKey = Deno.env.get("OPENAI_API_KEY");
   if (!openAIKey) {
     await admin.from("certificate_analyses").delete().eq("id", reservation.id);
-    return response(origin, 503, { error: "analysis_not_configured", requestId });
+    return response(origin, 503, {
+      error: "analysis_not_configured",
+      requestId,
+    });
   }
 
   try {
@@ -283,9 +305,10 @@ Deno.serve(async (req: Request) => {
     if (updateError) throw new Error("analysis_save_failed");
     return response(origin, 200, { analysis: completed, requestId });
   } catch (error) {
-    const code = error instanceof Error && error.message === "unreadable_document"
-      ? "unreadable_document"
-      : "provider_failed";
+    const code =
+      error instanceof Error && error.message === "unreadable_document"
+        ? "unreadable_document"
+        : "provider_failed";
     await admin.from("certificate_analyses").update({
       status: "failed",
       failure_code: code,
