@@ -171,7 +171,7 @@ class _RequirementRow extends ConsumerWidget {
     if (record == null) return;
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (_) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         title: const Text('Remove compliance record?'),
         content: Text(
           'Remove ${requirement.name} from ${property.name}? '
@@ -179,11 +179,11 @@ class _RequirementRow extends ConsumerWidget {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context, false),
+            onPressed: () => Navigator.pop(dialogContext, false),
             child: const Text('Cancel'),
           ),
           FilledButton(
-            onPressed: () => Navigator.pop(context, true),
+            onPressed: () => Navigator.pop(dialogContext, true),
             child: const Text('Remove'),
           ),
         ],
@@ -193,6 +193,11 @@ class _RequirementRow extends ConsumerWidget {
     try {
       await ref.read(complianceRepositoryProvider).deleteRecord(record.id);
       refreshCompliance(ref);
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${requirement.name} removed.')),
+        );
+      }
     } catch (_) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
