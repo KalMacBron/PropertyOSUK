@@ -45,9 +45,8 @@ class ComplianceRecordScreen extends ConsumerWidget {
               final property = properties
                   .where((value) => value.id == propertyId)
                   .firstOrNull;
-              final requirement = types
-                  .where((value) => value.id == requirementId)
-                  .firstOrNull;
+              final requirement =
+                  types.where((value) => value.id == requirementId).firstOrNull;
               if (property == null || requirement == null) {
                 return const _MessageCard(
                   message: 'This compliance record is no longer available.',
