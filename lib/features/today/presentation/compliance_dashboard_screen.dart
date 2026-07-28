@@ -59,8 +59,7 @@ class _ComplianceDashboardScreenState
               status: _status,
               onWarningDaysChanged: (value) =>
                   setState(() => _warningDays = value),
-              onPropertyChanged: (value) =>
-                  setState(() => _propertyId = value),
+              onPropertyChanged: (value) => setState(() => _propertyId = value),
               onRequirementChanged: (value) =>
                   setState(() => _requirementId = value),
               onStatusChanged: (value) => setState(() => _status = value),
@@ -346,7 +345,8 @@ class _ActionCard extends StatelessWidget {
         isThreeLine: true,
         leading: CircleAvatar(
           backgroundColor: _statusColour(item.status).withValues(alpha: 0.14),
-          child: Icon(_statusIcon(item.status), color: _statusColour(item.status)),
+          child:
+              Icon(_statusIcon(item.status), color: _statusColour(item.status)),
         ),
         title: Text(
           item.requirement.name,
