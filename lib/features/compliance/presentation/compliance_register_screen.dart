@@ -5,6 +5,7 @@ import 'package:property_os/features/compliance/application/compliance_providers
 import 'package:property_os/features/compliance/domain/compliance_models.dart';
 import 'package:property_os/features/documents/presentation/compliance_evidence_section.dart';
 import 'package:property_os/features/portfolio/application/portfolio_providers.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ComplianceRegisterScreen extends ConsumerWidget {
   const ComplianceRegisterScreen({super.key});
@@ -197,6 +198,19 @@ class _RequirementRow extends ConsumerWidget {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('${requirement.name} removed.')),
+        );
+      }
+    } on PostgrestException catch (error) {
+      if (context.mounted) {
+        final hasEvidence = error.code == '23503';
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              hasEvidence
+                  ? 'Remove the attached evidence before deleting this record.'
+                  : 'The compliance record could not be removed.',
+            ),
+          ),
         );
       }
     } catch (_) {
