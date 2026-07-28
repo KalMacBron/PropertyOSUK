@@ -23,7 +23,8 @@ void main() {
   });
 
   test('limits analysis to supported certificate categories', () {
-    expect(analysableRequirementCodes, containsAll(['gas_safety', 'eicr', 'epc']));
+    expect(
+        analysableRequirementCodes, containsAll(['gas_safety', 'eicr', 'epc']));
     expect(analysableRequirementCodes, isNot(contains('smoke_alarms')));
     expect(analysableRequirementCodes, isNot(contains('co_alarms')));
   });
