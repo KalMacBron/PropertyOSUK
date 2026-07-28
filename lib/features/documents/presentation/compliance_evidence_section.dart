@@ -290,7 +290,8 @@ class ComplianceEvidenceSection extends ConsumerWidget {
                                       evidence: file,
                                       requirementCode: requirementCode,
                                       existingRecord: existingRecord,
-                                      canAnalyse: organisation.canUploadEvidence,
+                                      canAnalyse:
+                                          organisation.canUploadEvidence,
                                     ),
                                   ],
                                 ),
