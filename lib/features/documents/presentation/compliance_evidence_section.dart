@@ -150,11 +150,21 @@ class ComplianceEvidenceSection extends ConsumerWidget {
         ),
       );
       if (context.mounted) _message(context, 'Evidence deleted.');
+    } on EvidenceCleanupException catch (error) {
+      ref.invalidate(
+        complianceEvidenceProvider(
+          EvidenceQuery(
+            organisationId: organisationId,
+            complianceRecordId: complianceRecordId,
+          ),
+        ),
+      );
+      if (context.mounted) _message(context, error.message);
     } catch (_) {
       if (context.mounted) {
         _message(
           context,
-          'The evidence could not be deleted. Nothing else was changed; try again.',
+          'The evidence could not be deleted. Please try again.',
         );
       }
     }
