@@ -25,6 +25,26 @@ belong in the backlog unless they block an Alpha acceptance outcome.
   portfolio data.
 - Migrations are immutable after they have been applied to a shared environment.
 
+## Multi-agent workflow
+
+Use the project agents in `.codex/agents/` for milestone work when Karl asks
+for the PropertyOS multi-agent workflow or explicitly asks for delegation.
+
+- Delegate independent discovery and review in parallel.
+- Keep the primary agent responsible for the implementation contract, sequencing
+  and consolidated recommendation.
+- Use only one write-enabled implementation owner at a time. The Flutter and
+  Supabase engineers must not edit overlapping files concurrently.
+- Keep Product Lead, Solution Architect, QA, Security and Release Manager
+  read-only.
+- Follow `docs/Codex_Multi_Agent_Development_Workflow.md` for handoffs and
+  approval gates.
+
+Karl must explicitly approve milestone scope, material architecture or database
+decisions, movement of a draft PR to ready, merge into `main`, and production
+deployment. An unresolved high-severity security finding blocks PR readiness
+unless Karl explicitly accepts it.
+
 ## Required checks
 
 Run the available subset before committing:
