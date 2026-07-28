@@ -11,3 +11,5 @@ final currentUserProvider = Provider<User?>((ref) {
   ref.watch(authStateProvider);
   return ref.watch(supabaseProvider).auth.currentUser;
 });
+
+final passwordRecoveryProvider = StateProvider<bool>((ref) => false);
