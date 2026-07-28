@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:property_os/features/compliance/application/compliance_providers.dart';
 import 'package:property_os/features/compliance/domain/compliance_models.dart';
 import 'package:property_os/features/documents/application/certificate_analysis_providers.dart';
+import 'package:property_os/features/documents/data/certificate_analysis_repository.dart';
 import 'package:property_os/features/documents/domain/certificate_analysis.dart';
 import 'package:property_os/features/documents/domain/compliance_evidence.dart';
 
