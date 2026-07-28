@@ -15,10 +15,29 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
 
-  <link rel="manifest" href="manifest.json?v=20260728_1">
+  <link rel="manifest" href="manifest.json?v=20260728_2">
   <title>PropertyOS Alpha</title>
 </head>
 <body>
-  <script src="flutter_bootstrap.js?v=20260728_1" async></script>
+  <script>
+    (async () => {
+      if ('serviceWorker' in navigator) {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(
+          registrations.map((registration) => registration.unregister()),
+        );
+      }
+
+      if ('caches' in window) {
+        const cacheNames = await caches.keys();
+        await Promise.all(cacheNames.map((name) => caches.delete(name)));
+      }
+
+      const bootstrap = document.createElement('script');
+      bootstrap.src = 'flutter_bootstrap.js?v=20260728_2';
+      bootstrap.async = true;
+      document.body.appendChild(bootstrap);
+    })();
+  </script>
 </body>
 </html>
