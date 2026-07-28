@@ -2,7 +2,9 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:property_os/features/compliance/domain/compliance_models.dart';
 import 'package:property_os/features/documents/application/document_providers.dart';
+import 'package:property_os/features/documents/presentation/certificate_analysis_panel.dart';
 import 'package:property_os/features/documents/data/document_repository.dart';
 import 'package:property_os/features/documents/domain/compliance_evidence.dart';
 import 'package:property_os/features/portfolio/application/portfolio_providers.dart';
@@ -12,11 +14,15 @@ class ComplianceEvidenceSection extends ConsumerWidget {
   const ComplianceEvidenceSection({
     required this.propertyId,
     required this.complianceRecordId,
+    required this.requirementCode,
+    required this.existingRecord,
     super.key,
   });
 
   final String propertyId;
   final String complianceRecordId;
+  final String requirementCode;
+  final ComplianceRecord existingRecord;
 
   Future<void> _upload(
     BuildContext context,
@@ -280,6 +286,12 @@ class ComplianceEvidenceSection extends ConsumerWidget {
                                         ),
                                         icon: const Icon(Icons.delete_outline),
                                       ),
+                                    CertificateAnalysisPanel(
+                                      evidence: file,
+                                      requirementCode: requirementCode,
+                                      existingRecord: existingRecord,
+                                      canAnalyse: organisation.canUploadEvidence,
+                                    ),
                                   ],
                                 ),
                               ),
