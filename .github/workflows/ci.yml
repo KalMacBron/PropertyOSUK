@@ -18,7 +18,14 @@ jobs:
           channel: stable
           cache: true
       - run: flutter pub get
-      - run: dart format --output=none --set-exit-if-changed .
+      - name: Check Dart formatting
+        run: |
+          dart format --output=none --set-exit-if-changed . || {
+            dart format .
+            git diff --check
+            git diff
+            exit 1
+          }
       - run: flutter analyze
       - run: flutter test
 
@@ -46,7 +53,14 @@ jobs:
       - uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
-      - run: deno fmt --check supabase/functions
+      - name: Check Edge Function formatting
+        run: |
+          deno fmt --check supabase/functions || {
+            deno fmt supabase/functions
+            git diff --check
+            git diff
+            exit 1
+          }
       - run: deno check supabase/functions/certificate-processing/index.ts
       - name: Stop local Supabase
         if: always()
