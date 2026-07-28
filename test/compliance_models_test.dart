@@ -41,7 +41,7 @@ void main() {
   });
 
   test('review date is used when expiry is absent', () {
-    const reviewRecord = ComplianceRecord(
+    final reviewRecord = ComplianceRecord(
       id: 'record-id',
       propertyId: 'property-id',
       requirementTypeId: 'requirement-id',
