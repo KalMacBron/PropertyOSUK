@@ -241,16 +241,16 @@ class _Filters extends StatelessWidget {
               SizedBox(
                 width: 230,
                 child: DropdownButtonFormField<String?>(
-                  value: propertyId,
+                  initialValue: propertyId,
                   decoration: const InputDecoration(labelText: 'Property'),
                   items: [
                     const DropdownMenuItem<String?>(
-                      value: null,
+                      initialValue: null,
                       child: Text('All properties'),
                     ),
                     ...properties.map(
                       (property) => DropdownMenuItem<String?>(
-                        value: property.id,
+                        initialValue: property.id,
                         child: Text(
                           property.name,
                           overflow: TextOverflow.ellipsis,
@@ -264,17 +264,17 @@ class _Filters extends StatelessWidget {
               SizedBox(
                 width: 230,
                 child: DropdownButtonFormField<String?>(
-                  value: requirementId,
+                  initialValue: requirementId,
                   decoration:
                       const InputDecoration(labelText: 'Compliance type'),
                   items: [
                     const DropdownMenuItem<String?>(
-                      value: null,
+                      initialValue: null,
                       child: Text('All compliance types'),
                     ),
                     ...requirements.map(
                       (requirement) => DropdownMenuItem<String?>(
-                        value: requirement.id,
+                        initialValue: requirement.id,
                         child: Text(
                           requirement.name,
                           overflow: TextOverflow.ellipsis,
@@ -288,16 +288,16 @@ class _Filters extends StatelessWidget {
               SizedBox(
                 width: 200,
                 child: DropdownButtonFormField<DashboardStatus?>(
-                  value: status,
+                  initialValue: status,
                   decoration: const InputDecoration(labelText: 'Status'),
                   items: [
                     const DropdownMenuItem<DashboardStatus?>(
-                      value: null,
+                      initialValue: null,
                       child: Text('All statuses'),
                     ),
                     ...DashboardStatus.values.map(
                       (value) => DropdownMenuItem<DashboardStatus?>(
-                        value: value,
+                        initialValue: value,
                         child: Text(_statusLabel(value)),
                       ),
                     ),
@@ -308,7 +308,7 @@ class _Filters extends StatelessWidget {
               SizedBox(
                 width: 170,
                 child: DropdownButtonFormField<int>(
-                  value: warningDays,
+                  initialValue: warningDays,
                   decoration: const InputDecoration(labelText: 'Expiry window'),
                   items: const [
                     DropdownMenuItem(value: 30, child: Text('Next 30 days')),
