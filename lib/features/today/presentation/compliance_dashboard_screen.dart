@@ -292,7 +292,7 @@ class _Filters extends StatelessWidget {
                   decoration: const InputDecoration(labelText: 'Status'),
                   items: [
                     const DropdownMenuItem<DashboardStatus?>(
-                      initialValue: null,
+                      value: null,
                       child: Text('All statuses'),
                     ),
                     ...DashboardStatus.values.map(
