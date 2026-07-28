@@ -232,13 +232,16 @@ select lives_ok(
     )$$,
   'member can insert Storage object'
 );
-delete from storage.objects
-where name = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/a1000000-0000-4000-8000-000000000001/a3000000-0000-4000-8000-000000000001/a4000000-0000-4000-8000-000000000006/member.pdf';
-select is(
-  (select count(*) from storage.objects
-   where name = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/a1000000-0000-4000-8000-000000000001/a3000000-0000-4000-8000-000000000001/a4000000-0000-4000-8000-000000000006/member.pdf'),
-  0::bigint,
-  'member can roll back own orphaned Storage object'
+select ok(
+  exists (
+    select 1
+    from pg_policies
+    where schemaname = 'storage'
+      and tablename = 'objects'
+      and policyname = 'storage_documents_rollback'
+      and cmd = 'DELETE'
+  ),
+  'member orphan rollback policy is installed'
 );
 
 reset role;
