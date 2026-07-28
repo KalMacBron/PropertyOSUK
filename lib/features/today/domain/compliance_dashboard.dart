@@ -120,12 +120,16 @@ DashboardCounts dashboardCounts(Iterable<ComplianceDashboardItem> items) {
     switch (item.status) {
       case DashboardStatus.overdue:
         overdue++;
+        break;
       case DashboardStatus.expiringSoon:
         expiringSoon++;
+        break;
       case DashboardStatus.compliant:
         compliant++;
+        break;
       case DashboardStatus.missingInformation:
         missingInformation++;
+        break;
     }
   }
   return DashboardCounts(
