@@ -3,18 +3,22 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:property_os/core/database/supabase_provider.dart';
 import 'package:property_os/features/auth/data/auth_repository.dart';
+import 'package:property_os/features/compliance/presentation/compliance_record_screen.dart';
 import 'package:property_os/features/compliance/presentation/compliance_register_screen.dart';
 import 'package:property_os/features/ownership/presentation/ownership_entities_screen.dart';
 import 'package:property_os/features/properties/presentation/properties_screen.dart';
-import 'package:property_os/features/today/presentation/today_screen.dart';
+import 'package:property_os/features/today/presentation/compliance_dashboard_screen.dart';
 
 final propertyOsRouter = GoRouter(
-  initialLocation: '/compliance',
+  initialLocation: '/today',
   routes: [
     ShellRoute(
       builder: (context, state, child) => _AppShell(child: child),
       routes: [
-        GoRoute(path: '/today', builder: (_, __) => const TodayScreen()),
+        GoRoute(
+          path: '/today',
+          builder: (_, __) => const ComplianceDashboardScreen(),
+        ),
         GoRoute(
           path: '/properties',
           builder: (_, __) => const PropertiesScreen(),
@@ -22,6 +26,13 @@ final propertyOsRouter = GoRouter(
         GoRoute(
           path: '/compliance',
           builder: (_, __) => const ComplianceRegisterScreen(),
+        ),
+        GoRoute(
+          path: '/compliance-record/:propertyId/:requirementId',
+          builder: (_, state) => ComplianceRecordScreen(
+            propertyId: state.pathParameters['propertyId']!,
+            requirementId: state.pathParameters['requirementId']!,
+          ),
         ),
         GoRoute(
           path: '/ownership',
@@ -57,8 +68,8 @@ class _AppShell extends ConsumerWidget {
               child: Text('Portfolio'),
             ),
             const NavigationDrawerDestination(
-              icon: Icon(Icons.today_outlined),
-              label: Text('Today'),
+              icon: Icon(Icons.dashboard_outlined),
+              label: Text('Dashboard'),
             ),
             const NavigationDrawerDestination(
               icon: Icon(Icons.home_work_outlined),
