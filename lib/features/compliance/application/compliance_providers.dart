@@ -10,12 +10,12 @@ final complianceRepositoryProvider = Provider<ComplianceRepository>(
 
 final complianceRequirementsProvider =
     FutureProvider<List<ComplianceRequirement>>((ref) async {
-      final organisation = await ref.watch(organisationProvider.future);
-      if (organisation == null) return [];
-      return ref
-          .watch(complianceRepositoryProvider)
-          .listRequirements(organisation.id);
-    });
+  final organisation = await ref.watch(organisationProvider.future);
+  if (organisation == null) return [];
+  return ref
+      .watch(complianceRepositoryProvider)
+      .listRequirements(organisation.id);
+});
 
 final compliancePortfolioProvider = FutureProvider<List<PropertyCompliance>>((
   ref,

@@ -61,8 +61,7 @@ class _RegisterContent extends ConsumerWidget {
     final counts = {for (final status in ComplianceStatus.values) status: 0};
     for (final property in properties) {
       for (final requirement in requirements) {
-        final status =
-            property.recordFor(requirement.id)?.statusOn(today) ??
+        final status = property.recordFor(requirement.id)?.statusOn(today) ??
             ComplianceStatus.notRecorded;
         counts[status] = counts[status]! + 1;
       }
@@ -140,9 +139,7 @@ class _RequirementRow extends ConsumerWidget {
     );
     if (draft == null) return;
     try {
-      await ref
-          .read(complianceRepositoryProvider)
-          .saveRecord(
+      await ref.read(complianceRepositoryProvider).saveRecord(
             organisationId: organisation.id,
             propertyId: property.id,
             requirementTypeId: requirement.id,
@@ -216,7 +213,7 @@ class _RequirementRow extends ConsumerWidget {
     final subtitle = date == null
         ? requirement.description
         : '${record!.expiryDate != null ? 'Expires' : 'Review'} '
-              '${DateFormat('dd/MM/yyyy').format(date)}';
+            '${DateFormat('dd/MM/yyyy').format(date)}';
 
     return ListTile(
       leading: _StatusDot(status: status),
@@ -271,11 +268,11 @@ class _ComplianceDialogState extends State<_ComplianceDialog> {
       widget.requirement.code == 'co_alarms';
 
   Future<DateTime?> _pick(DateTime? value) => showDatePicker(
-    context: context,
-    initialDate: value ?? DateTime.now(),
-    firstDate: DateTime(2000),
-    lastDate: DateTime.now().add(const Duration(days: 3650)),
-  );
+        context: context,
+        initialDate: value ?? DateTime.now(),
+        firstDate: DateTime(2000),
+        lastDate: DateTime.now().add(const Duration(days: 3650)),
+      );
 
   @override
   void dispose() {
@@ -286,96 +283,97 @@ class _ComplianceDialogState extends State<_ComplianceDialog> {
 
   @override
   Widget build(BuildContext context) => AlertDialog(
-    title: Text(widget.requirement.name),
-    content: SizedBox(
-      width: 520,
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(widget.requirement.description),
-            const SizedBox(height: 20),
-            _DateField(
-              label: 'Issue or check date',
-              value: _issueDate,
-              onTap: () async {
-                final value = await _pick(_issueDate);
-                if (value != null) setState(() => _issueDate = value);
-              },
-            ),
-            const SizedBox(height: 12),
-            _DateField(
-              label: _usesReviewDate ? 'Next review date' : 'Expiry date',
-              value: _usesReviewDate ? _reviewDate : _expiryDate,
-              onTap: () async {
-                final value = await _pick(
-                  _usesReviewDate ? _reviewDate : _expiryDate,
-                );
-                if (value != null) {
-                  setState(() {
-                    if (_usesReviewDate) {
-                      _reviewDate = value;
-                      _expiryDate = null;
-                    } else {
-                      _expiryDate = value;
-                      _reviewDate = null;
-                    }
-                  });
-                }
-              },
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: _reference,
-              decoration: const InputDecoration(
-                labelText: 'Reference number (optional)',
-              ),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: _notes,
-              maxLines: 3,
-              decoration: const InputDecoration(labelText: 'Notes (optional)'),
-            ),
-          ],
-        ),
-      ),
-    ),
-    actions: [
-      TextButton(
-        onPressed: () => Navigator.pop(context),
-        child: const Text('Cancel'),
-      ),
-      FilledButton(
-        onPressed: () {
-          final actionDate = _usesReviewDate ? _reviewDate : _expiryDate;
-          if (actionDate == null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  _usesReviewDate
-                      ? 'Choose a review date.'
-                      : 'Choose an expiry date.',
+        title: Text(widget.requirement.name),
+        content: SizedBox(
+          width: 520,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(widget.requirement.description),
+                const SizedBox(height: 20),
+                _DateField(
+                  label: 'Issue or check date',
+                  value: _issueDate,
+                  onTap: () async {
+                    final value = await _pick(_issueDate);
+                    if (value != null) setState(() => _issueDate = value);
+                  },
                 ),
-              ),
-            );
-            return;
-          }
-          Navigator.pop(
-            context,
-            _ComplianceDraft(
-              issueDate: _issueDate,
-              expiryDate: _expiryDate,
-              reviewDate: _reviewDate,
-              referenceNumber: _reference.text,
-              notes: _notes.text,
+                const SizedBox(height: 12),
+                _DateField(
+                  label: _usesReviewDate ? 'Next review date' : 'Expiry date',
+                  value: _usesReviewDate ? _reviewDate : _expiryDate,
+                  onTap: () async {
+                    final value = await _pick(
+                      _usesReviewDate ? _reviewDate : _expiryDate,
+                    );
+                    if (value != null) {
+                      setState(() {
+                        if (_usesReviewDate) {
+                          _reviewDate = value;
+                          _expiryDate = null;
+                        } else {
+                          _expiryDate = value;
+                          _reviewDate = null;
+                        }
+                      });
+                    }
+                  },
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: _reference,
+                  decoration: const InputDecoration(
+                    labelText: 'Reference number (optional)',
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: _notes,
+                  maxLines: 3,
+                  decoration:
+                      const InputDecoration(labelText: 'Notes (optional)'),
+                ),
+              ],
             ),
-          );
-        },
-        child: const Text('Save record'),
-      ),
-    ],
-  );
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () {
+              final actionDate = _usesReviewDate ? _reviewDate : _expiryDate;
+              if (actionDate == null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      _usesReviewDate
+                          ? 'Choose a review date.'
+                          : 'Choose an expiry date.',
+                    ),
+                  ),
+                );
+                return;
+              }
+              Navigator.pop(
+                context,
+                _ComplianceDraft(
+                  issueDate: _issueDate,
+                  expiryDate: _expiryDate,
+                  reviewDate: _reviewDate,
+                  referenceNumber: _reference.text,
+                  notes: _notes.text,
+                ),
+              );
+            },
+            child: const Text('Save record'),
+          ),
+        ],
+      );
 }
 
 class _ComplianceDraft {
@@ -407,17 +405,17 @@ class _DateField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => OutlinedButton.icon(
-    onPressed: onTap,
-    icon: const Icon(Icons.calendar_today_outlined),
-    label: Align(
-      alignment: Alignment.centerLeft,
-      child: Text(
-        value == null
-            ? label
-            : '$label: ${DateFormat('dd/MM/yyyy').format(value!)}',
-      ),
-    ),
-  );
+        onPressed: onTap,
+        icon: const Icon(Icons.calendar_today_outlined),
+        label: Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            value == null
+                ? label
+                : '$label: ${DateFormat('dd/MM/yyyy').format(value!)}',
+          ),
+        ),
+      );
 }
 
 class _SummaryCard extends StatelessWidget {
@@ -427,32 +425,32 @@ class _SummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SizedBox(
-    width: 180,
-    child: Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            _StatusDot(status: status),
-            const SizedBox(width: 12),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+        width: 180,
+        child: Card(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
               children: [
-                Text(
-                  '$count',
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w700,
-                  ),
+                _StatusDot(status: status),
+                const SizedBox(width: 12),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '$count',
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    Text(_statusLabel(status)),
+                  ],
                 ),
-                Text(_statusLabel(status)),
               ],
             ),
-          ],
+          ),
         ),
-      ),
-    ),
-  );
+      );
 }
 
 class _StatusChip extends StatelessWidget {
@@ -461,10 +459,10 @@ class _StatusChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Chip(
-    avatar: _StatusDot(status: status),
-    label: Text(_statusLabel(status)),
-    visualDensity: VisualDensity.compact,
-  );
+        avatar: _StatusDot(status: status),
+        label: Text(_statusLabel(status)),
+        visualDensity: VisualDensity.compact,
+      );
 }
 
 class _StatusDot extends StatelessWidget {
@@ -473,23 +471,23 @@ class _StatusDot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Icon(
-    Icons.circle,
-    size: 12,
-    color: switch (status) {
-      ComplianceStatus.compliant => Colors.green.shade700,
-      ComplianceStatus.dueSoon => Colors.amber.shade800,
-      ComplianceStatus.overdue => Colors.red.shade700,
-      ComplianceStatus.notRecorded => Colors.grey.shade600,
-    },
-  );
+        Icons.circle,
+        size: 12,
+        color: switch (status) {
+          ComplianceStatus.compliant => Colors.green.shade700,
+          ComplianceStatus.dueSoon => Colors.amber.shade800,
+          ComplianceStatus.overdue => Colors.red.shade700,
+          ComplianceStatus.notRecorded => Colors.grey.shade600,
+        },
+      );
 }
 
 String _statusLabel(ComplianceStatus status) => switch (status) {
-  ComplianceStatus.compliant => 'Compliant',
-  ComplianceStatus.dueSoon => 'Due soon',
-  ComplianceStatus.overdue => 'Overdue',
-  ComplianceStatus.notRecorded => 'Not recorded',
-};
+      ComplianceStatus.compliant => 'Compliant',
+      ComplianceStatus.dueSoon => 'Due soon',
+      ComplianceStatus.overdue => 'Overdue',
+      ComplianceStatus.notRecorded => 'Not recorded',
+    };
 
 class _ErrorCard extends StatelessWidget {
   const _ErrorCard({required this.message, required this.retry});
@@ -498,14 +496,14 @@ class _ErrorCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Card(
-    child: Padding(
-      padding: const EdgeInsets.all(24),
-      child: Row(
-        children: [
-          Expanded(child: Text(message)),
-          TextButton(onPressed: retry, child: const Text('Try again')),
-        ],
-      ),
-    ),
-  );
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Row(
+            children: [
+              Expanded(child: Text(message)),
+              TextButton(onPressed: retry, child: const Text('Try again')),
+            ],
+          ),
+        ),
+      );
 }

@@ -5,11 +5,11 @@ void main() {
   final today = DateTime(2026, 7, 28);
 
   ComplianceRecord record(DateTime? dueDate) => ComplianceRecord(
-    id: 'record-id',
-    propertyId: 'property-id',
-    requirementTypeId: 'requirement-id',
-    expiryDate: dueDate,
-  );
+        id: 'record-id',
+        propertyId: 'property-id',
+        requirementTypeId: 'requirement-id',
+        expiryDate: dueDate,
+      );
 
   test('missing applicable date is not recorded', () {
     expect(record(null).statusOn(today), ComplianceStatus.notRecorded);

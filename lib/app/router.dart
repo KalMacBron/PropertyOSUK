@@ -38,47 +38,48 @@ class _AppShell extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) => Scaffold(
-    appBar: AppBar(
-      title: const Text('PropertyOS'),
-      actions: [
-        IconButton(
-          tooltip: 'Sign out',
-          onPressed: () => AuthRepository(ref.read(supabaseProvider)).signOut(),
-          icon: const Icon(Icons.logout),
+        appBar: AppBar(
+          title: const Text('PropertyOS'),
+          actions: [
+            IconButton(
+              tooltip: 'Sign out',
+              onPressed: () =>
+                  AuthRepository(ref.read(supabaseProvider)).signOut(),
+              icon: const Icon(Icons.logout),
+            ),
+            const SizedBox(width: 8),
+          ],
         ),
-        const SizedBox(width: 8),
-      ],
-    ),
-    drawer: NavigationDrawer(
-      children: [
-        const Padding(
-          padding: EdgeInsets.fromLTRB(28, 20, 16, 12),
-          child: Text('Portfolio'),
+        drawer: NavigationDrawer(
+          children: [
+            const Padding(
+              padding: EdgeInsets.fromLTRB(28, 20, 16, 12),
+              child: Text('Portfolio'),
+            ),
+            const NavigationDrawerDestination(
+              icon: Icon(Icons.today_outlined),
+              label: Text('Today'),
+            ),
+            const NavigationDrawerDestination(
+              icon: Icon(Icons.home_work_outlined),
+              label: Text('Properties'),
+            ),
+            const NavigationDrawerDestination(
+              icon: Icon(Icons.fact_check_outlined),
+              label: Text('Compliance'),
+            ),
+            const NavigationDrawerDestination(
+              icon: Icon(Icons.account_balance_outlined),
+              label: Text('Ownership'),
+            ),
+          ],
+          onDestinationSelected: (index) {
+            Navigator.of(context).pop();
+            context.go(
+              ['/today', '/properties', '/compliance', '/ownership'][index],
+            );
+          },
         ),
-        const NavigationDrawerDestination(
-          icon: Icon(Icons.today_outlined),
-          label: Text('Today'),
-        ),
-        const NavigationDrawerDestination(
-          icon: Icon(Icons.home_work_outlined),
-          label: Text('Properties'),
-        ),
-        const NavigationDrawerDestination(
-          icon: Icon(Icons.fact_check_outlined),
-          label: Text('Compliance'),
-        ),
-        const NavigationDrawerDestination(
-          icon: Icon(Icons.account_balance_outlined),
-          label: Text('Ownership'),
-        ),
-      ],
-      onDestinationSelected: (index) {
-        Navigator.of(context).pop();
-        context.go(
-          ['/today', '/properties', '/compliance', '/ownership'][index],
-        );
-      },
-    ),
-    body: child,
-  );
+        body: child,
+      );
 }
