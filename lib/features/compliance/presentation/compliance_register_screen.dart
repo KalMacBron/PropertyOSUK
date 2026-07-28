@@ -229,11 +229,18 @@ class _RequirementRow extends ConsumerWidget {
     final record = property.recordFor(requirement.id);
     final status =
         record?.statusOn(DateTime.now()) ?? ComplianceStatus.notRecorded;
-    final date = record?.applicableDate;
-    final subtitle = date == null
-        ? requirement.description
-        : '${record!.expiryDate != null ? 'Expires' : 'Review'} '
-            '${DateFormat('dd/MM/yyyy').format(date)}';
+    final summary = <String>[
+      if (record?.issueDate != null)
+        'Checked ${DateFormat('dd/MM/yyyy').format(record!.issueDate!)}',
+      if (record?.expiryDate != null)
+        'Expires ${DateFormat('dd/MM/yyyy').format(record!.expiryDate!)}',
+      if (record?.reviewDate != null)
+        'Review ${DateFormat('dd/MM/yyyy').format(record!.reviewDate!)}',
+      if (record?.referenceNumber?.trim().isNotEmpty ?? false)
+        'Ref: ${record!.referenceNumber!.trim()}',
+    ];
+    final subtitle =
+        summary.isEmpty ? requirement.description : summary.join(' · ');
 
     return Column(
       children: [
@@ -267,6 +274,8 @@ class _RequirementRow extends ConsumerWidget {
           ComplianceEvidenceSection(
             propertyId: property.id,
             complianceRecordId: record.id,
+            requirementCode: requirement.code,
+            existingRecord: record,
           ),
       ],
     );
