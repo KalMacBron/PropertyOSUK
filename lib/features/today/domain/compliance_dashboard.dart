@@ -87,8 +87,7 @@ int compareDashboardItems(
 ) {
   int rank(ComplianceDashboardItem item) {
     if (item.status == DashboardStatus.overdue) return 0;
-    if (item.status == DashboardStatus.expiringSoon &&
-        item.daysUntilDue == 0) {
+    if (item.status == DashboardStatus.expiringSoon && item.daysUntilDue == 0) {
       return 1;
     }
     if (item.status == DashboardStatus.expiringSoon) return 2;
