@@ -35,8 +35,19 @@ jobs:
         run: supabase db start
       - name: Run database security tests
         run: |
-          supabase test db supabase/tests/002_compliance_evidence_security.sql
-          supabase test db supabase/tests/003_documents_api_privileges.sql
+          for test_file in supabase/tests/*.sql; do
+            supabase test db "$test_file"
+          done
+
+  edge-functions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - run: deno fmt --check supabase/functions
+      - run: deno check supabase/functions/certificate-processing/index.ts
       - name: Stop local Supabase
         if: always()
         run: supabase stop --no-backup
