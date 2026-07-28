@@ -245,12 +245,12 @@ class _Filters extends StatelessWidget {
                   decoration: const InputDecoration(labelText: 'Property'),
                   items: [
                     const DropdownMenuItem<String?>(
-                      initialValue: null,
+                      value: null,
                       child: Text('All properties'),
                     ),
                     ...properties.map(
                       (property) => DropdownMenuItem<String?>(
-                        initialValue: property.id,
+                        value: property.id,
                         child: Text(
                           property.name,
                           overflow: TextOverflow.ellipsis,
@@ -269,12 +269,12 @@ class _Filters extends StatelessWidget {
                       const InputDecoration(labelText: 'Compliance type'),
                   items: [
                     const DropdownMenuItem<String?>(
-                      initialValue: null,
+                      value: null,
                       child: Text('All compliance types'),
                     ),
                     ...requirements.map(
                       (requirement) => DropdownMenuItem<String?>(
-                        initialValue: requirement.id,
+                        value: requirement.id,
                         child: Text(
                           requirement.name,
                           overflow: TextOverflow.ellipsis,
@@ -297,7 +297,7 @@ class _Filters extends StatelessWidget {
                     ),
                     ...DashboardStatus.values.map(
                       (value) => DropdownMenuItem<DashboardStatus?>(
-                        initialValue: value,
+                        value: value,
                         child: Text(_statusLabel(value)),
                       ),
                     ),
