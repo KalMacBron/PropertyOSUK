@@ -12,5 +12,14 @@ class AuthRepository {
     );
   }
 
+  Future<void> requestPasswordReset({required String email}) =>
+      _client.auth.resetPasswordForEmail(
+        email.trim(),
+        redirectTo: Uri.base.origin,
+      );
+
+  Future<void> updatePassword(String password) =>
+      _client.auth.updateUser(UserAttributes(password: password));
+
   Future<void> signOut() => _client.auth.signOut();
 }
