@@ -3,9 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:property_os/app/router.dart';
 import 'package:property_os/app/theme.dart';
 import 'package:property_os/features/auth/application/auth_state.dart';
+import 'package:property_os/features/auth/presentation/password_recovery_screen.dart';
 import 'package:property_os/features/auth/presentation/sign_in_screen.dart';
 import 'package:property_os/features/portfolio/application/portfolio_providers.dart';
 import 'package:property_os/features/portfolio/presentation/workspace_setup_screen.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class PropertyOsApp extends StatelessWidget {
   const PropertyOsApp({super.key});
@@ -20,7 +22,21 @@ class _AuthenticatedApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.watch(authStateProvider);
+    ref.listen(authStateProvider, (_, next) {
+      if (next.value?.event == AuthChangeEvent.passwordRecovery) {
+        ref.read(passwordRecoveryProvider.notifier).state = true;
+      }
+    });
+    final recoveringPassword = ref.watch(passwordRecoveryProvider);
+    if (recoveringPassword) {
+      return MaterialApp(
+        title: 'PropertyOS',
+        debugShowCheckedModeBanner: false,
+        theme: buildPropertyOsTheme(),
+        home: const PasswordRecoveryScreen(),
+      );
+    }
+
     final user = ref.watch(currentUserProvider);
     if (user == null) {
       return MaterialApp(
