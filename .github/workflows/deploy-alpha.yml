@@ -37,8 +37,10 @@ jobs:
 
       - name: Build Flutter Web
         # Repository secrets are compiled into the browser-safe Alpha build.
+        # Alpha deliberately disables the PWA worker so deployments cannot serve stale code.
         run: >
           flutter build web --release
+          --pwa-strategy=none
           --dart-define=SUPABASE_URL="${{ secrets.SUPABASE_URL }}"
           --dart-define=SUPABASE_PUBLISHABLE_KEY="${{ secrets.SUPABASE_PUBLISHABLE_KEY }}"
 
