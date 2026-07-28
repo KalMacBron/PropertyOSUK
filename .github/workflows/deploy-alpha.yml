@@ -19,7 +19,7 @@ concurrency:
 
 jobs:
   deploy:
-    if: github.head_ref == 'feature/ai-certificate-processing'
+    if: github.head_ref == 'feature/compliance-dashboard'
     runs-on: ubuntu-latest
     environment:
       name: alpha
