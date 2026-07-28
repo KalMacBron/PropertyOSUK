@@ -267,6 +267,8 @@ class _RequirementRow extends ConsumerWidget {
           ComplianceEvidenceSection(
             propertyId: property.id,
             complianceRecordId: record.id,
+            requirementCode: requirement.code,
+            existingRecord: record,
           ),
       ],
     );
