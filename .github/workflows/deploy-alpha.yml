@@ -56,6 +56,8 @@ jobs:
           grep -F "${versioned_bundle}" build/web/flutter_bootstrap.js
 
       - name: Deploy to Hostinger
+        # Keep the previous Alpha release intact until replacement files arrive.
+        # Incremental sync also avoids Hostinger's FTPS connection cap on full clean uploads.
         uses: SamKirkland/FTP-Deploy-Action@v4.3.6
         with:
           server: 147.93.88.23
@@ -65,4 +67,3 @@ jobs:
           protocol: ftps
           local-dir: build/web/
           server-dir: /public_html/alpha/
-          dangerous-clean-slate: true
