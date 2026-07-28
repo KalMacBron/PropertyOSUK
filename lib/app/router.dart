@@ -3,12 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:property_os/core/database/supabase_provider.dart';
 import 'package:property_os/features/auth/data/auth_repository.dart';
+import 'package:property_os/features/compliance/presentation/compliance_register_screen.dart';
 import 'package:property_os/features/ownership/presentation/ownership_entities_screen.dart';
 import 'package:property_os/features/properties/presentation/properties_screen.dart';
 import 'package:property_os/features/today/presentation/today_screen.dart';
 
 final propertyOsRouter = GoRouter(
-  initialLocation: '/properties',
+  initialLocation: '/compliance',
   routes: [
     ShellRoute(
       builder: (context, state, child) => _AppShell(child: child),
@@ -17,6 +18,10 @@ final propertyOsRouter = GoRouter(
         GoRoute(
           path: '/properties',
           builder: (_, __) => const PropertiesScreen(),
+        ),
+        GoRoute(
+          path: '/compliance',
+          builder: (_, __) => const ComplianceRegisterScreen(),
         ),
         GoRoute(
           path: '/ownership',
@@ -60,13 +65,19 @@ class _AppShell extends ConsumerWidget {
               label: Text('Properties'),
             ),
             const NavigationDrawerDestination(
+              icon: Icon(Icons.fact_check_outlined),
+              label: Text('Compliance'),
+            ),
+            const NavigationDrawerDestination(
               icon: Icon(Icons.account_balance_outlined),
               label: Text('Ownership'),
             ),
           ],
           onDestinationSelected: (index) {
             Navigator.of(context).pop();
-            context.go(['/today', '/properties', '/ownership'][index]);
+            context.go(
+              ['/today', '/properties', '/compliance', '/ownership'][index],
+            );
           },
         ),
         body: child,
