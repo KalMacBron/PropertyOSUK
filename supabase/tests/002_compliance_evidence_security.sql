@@ -292,10 +292,9 @@ select throws_ok(
   'cross-organisation compliance link is rejected'
 );
 
-select hasnt_table_privilege(
-  'authenticated',
-  'storage.objects',
-  'UPDATE',
+select is(
+  has_table_privilege('authenticated', 'storage.objects', 'UPDATE'),
+  false,
   'authenticated users cannot overwrite Storage objects'
 );
 
