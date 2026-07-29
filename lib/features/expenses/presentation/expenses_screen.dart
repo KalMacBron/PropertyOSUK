@@ -103,7 +103,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
   }
 
   Future<void> _pickEvidence(PropertyExpense expense) async {
-    final picked = await FilePicker.platform.pickFiles(
+    final picked = await FilePicker.instance.pickFiles(
       withData: true,
       type: FileType.custom,
       allowedExtensions: const ['pdf', 'jpg', 'jpeg', 'png'],
