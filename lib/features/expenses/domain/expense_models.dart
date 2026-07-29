@@ -229,7 +229,8 @@ String pounds(int pence) => '£${(pence / 100).toStringAsFixed(2)}';
 
 String csvForExpenses(Iterable<PropertyExpense> expenses) {
   String cell(Object? value) {
-    final text = value?.toString() ?? '';
+    var text = value?.toString() ?? '';
+    if (RegExp(r'^[=+\-@]').hasMatch(text)) text = "'$text";
     return '"${text.replaceAll('"', '""')}"';
   }
 
