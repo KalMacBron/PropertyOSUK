@@ -102,10 +102,10 @@ class PropertyExpense {
       id: json['id'] as String,
       organisationId: json['organisation_id'] as String,
       propertyId: json['property_id'] as String,
-      propertyName: (property['display_name'] as String?)?.trim().isNotEmpty ==
-              true
-          ? property['display_name'] as String
-          : property['address_line_1'] as String,
+      propertyName:
+          (property['display_name'] as String?)?.trim().isNotEmpty == true
+              ? property['display_name'] as String
+              : property['address_line_1'] as String,
       ownershipEntityId: json['ownership_entity_id'] as String,
       ownershipEntityName: owner['legal_name'] as String,
       expenseDate: DateTime.parse(json['expense_date'] as String),
@@ -212,15 +212,16 @@ class ExpenseFilters {
 int parsePoundsToPence(String input) {
   final value = input.trim();
   if (!RegExp(r'^\d+(\.\d{1,2})?$').hasMatch(value)) {
-    throw const FormatException('Enter a valid amount with up to two decimals.');
+    throw const FormatException(
+        'Enter a valid amount with up to two decimals.');
   }
   final parts = value.split('.');
   final pounds = int.parse(parts.first);
-  final pennies = parts.length == 1
-      ? 0
-      : int.parse(parts.last.padRight(2, '0'));
+  final pennies =
+      parts.length == 1 ? 0 : int.parse(parts.last.padRight(2, '0'));
   final result = pounds * 100 + pennies;
-  if (result <= 0) throw const FormatException('Amount must be greater than £0.');
+  if (result <= 0)
+    throw const FormatException('Amount must be greater than £0.');
   return result;
 }
 
