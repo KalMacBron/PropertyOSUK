@@ -94,7 +94,8 @@ class PropertyExpense {
 
   factory PropertyExpense.fromJson(Map<String, dynamic> json) {
     final property = json['properties'] as Map<String, dynamic>;
-    final owner = json['ownership_entities'] as Map<String, dynamic>;
+    final ownership = json['expense_ownership'] as Map<String, dynamic>;
+    final owner = ownership['ownership_entities'] as Map<String, dynamic>;
     final compliance =
         json['property_compliance_records'] as Map<String, dynamic>?;
     final documents = json['documents'] as List<dynamic>? ?? [];
