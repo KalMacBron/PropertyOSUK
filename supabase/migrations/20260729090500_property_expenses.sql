@@ -218,6 +218,9 @@ $$;
 
 revoke all on function public.can_access_expense_evidence(text, public.member_role[])
   from public, anon, authenticated;
+grant execute
+  on function public.can_access_expense_evidence(text, public.member_role[])
+  to authenticated;
 
 drop policy if exists storage_documents_select on storage.objects;
 create policy storage_documents_select
