@@ -220,8 +220,9 @@ int parsePoundsToPence(String input) {
   final pennies =
       parts.length == 1 ? 0 : int.parse(parts.last.padRight(2, '0'));
   final result = pounds * 100 + pennies;
-  if (result <= 0)
+  if (result <= 0) {
     throw const FormatException('Amount must be greater than £0.');
+  }
   return result;
 }
 
