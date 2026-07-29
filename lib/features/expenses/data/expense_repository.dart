@@ -95,16 +95,18 @@ class ExpenseRepository {
           .single();
       return row['id'] as String;
     }
+    values.remove('organisation_id');
     await _client.from('property_expenses').update(values).eq('id', id);
     return id;
   }
 
   Future<void> deleteExpense(PropertyExpense expense) async {
     final evidence = expense.evidence;
-    await _client.from('property_expenses').delete().eq('id', expense.id);
     if (evidence != null) {
+      await _client.from('documents').delete().eq('id', evidence.id);
       await _client.storage.from(evidence.bucket).remove([evidence.path]);
     }
+    await _client.from('property_expenses').delete().eq('id', expense.id);
   }
 
   Future<void> uploadEvidence({
