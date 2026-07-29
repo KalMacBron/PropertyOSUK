@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:property_os/features/compliance/application/compliance_providers.dart';
+import 'package:property_os/features/portfolio/application/portfolio_providers.dart';
 import 'package:property_os/features/today/domain/compliance_dashboard.dart';
 
 class ComplianceRecordScreen extends ConsumerWidget {
@@ -19,6 +20,7 @@ class ComplianceRecordScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final requirements = ref.watch(complianceRequirementsProvider);
     final portfolio = ref.watch(compliancePortfolioProvider);
+    final organisation = ref.watch(organisationProvider);
     return ListView(
       padding: const EdgeInsets.all(24),
       children: [
@@ -59,6 +61,8 @@ class ComplianceRecordScreen extends ConsumerWidget {
                 today: europeLondonToday(),
                 warningDays: 30,
               ).single;
+              final canRecordExpense =
+                  organisation.valueOrNull?.role != 'viewer' && record != null;
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -70,8 +74,10 @@ class ComplianceRecordScreen extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text('${property.name} · ${property.address}, '
-                      '${property.postcode}'),
+                  Text(
+                    '${property.name} · ${property.address}, '
+                    '${property.postcode}',
+                  ),
                   const SizedBox(height: 20),
                   Card(
                     child: Padding(
@@ -119,13 +125,25 @@ class ComplianceRecordScreen extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: FilledButton.icon(
-                      onPressed: () => context.go('/compliance'),
-                      icon: const Icon(Icons.fact_check_outlined),
-                      label: const Text('Manage in compliance register'),
-                    ),
+                  Wrap(
+                    spacing: 12,
+                    runSpacing: 12,
+                    children: [
+                      FilledButton.icon(
+                        onPressed: () => context.go('/compliance'),
+                        icon: const Icon(Icons.fact_check_outlined),
+                        label: const Text('Manage in compliance register'),
+                      ),
+                      if (canRecordExpense)
+                        OutlinedButton.icon(
+                          onPressed: () => context.go(
+                            '/expenses?propertyId=${property.id}'
+                            '&complianceRecordId=${record.id}&create=true',
+                          ),
+                          icon: const Icon(Icons.receipt_long_outlined),
+                          label: const Text('Record expense'),
+                        ),
+                    ],
                   ),
                 ],
               );
@@ -139,7 +157,6 @@ class ComplianceRecordScreen extends ConsumerWidget {
 
 class _Detail extends StatelessWidget {
   const _Detail({required this.label, required this.value});
-
   final String label;
   final String value;
 
@@ -162,7 +179,6 @@ class _Detail extends StatelessWidget {
 
 class _MessageCard extends StatelessWidget {
   const _MessageCard({required this.message});
-
   final String message;
 
   @override
