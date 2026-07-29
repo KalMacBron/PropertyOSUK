@@ -162,8 +162,7 @@ class ExpenseRepository {
     return trimmed == null || trimmed.isEmpty ? null : trimmed;
   }
 
-  String _date(DateTime value) =>
-      '${value.year.toString().padLeft(4, '0')}-'
+  String _date(DateTime value) => '${value.year.toString().padLeft(4, '0')}-'
       '${value.month.toString().padLeft(2, '0')}-'
       '${value.day.toString().padLeft(2, '0')}';
 
