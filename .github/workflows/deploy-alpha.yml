@@ -19,34 +19,26 @@ concurrency:
 
 jobs:
   deploy:
-    if: github.head_ref == 'feature/compliance-dashboard'
+    if: github.head_ref == 'feature/property-expenses'
     runs-on: ubuntu-latest
     environment:
       name: alpha
       url: https://alpha.propertyosuk.com
     steps:
       - uses: actions/checkout@v4
-
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
           cache: true
-
       - name: Install dependencies
         run: flutter pub get
-
       - name: Build Flutter Web
-        # Repository secrets are compiled into the browser-safe Alpha build.
-        # Alpha deliberately disables the PWA worker so deployments cannot serve stale code.
         run: >
           flutter build web --release
           --pwa-strategy=none
           --dart-define=SUPABASE_URL="${{ secrets.SUPABASE_URL }}"
           --dart-define=SUPABASE_PUBLISHABLE_KEY="${{ secrets.SUPABASE_PUBLISHABLE_KEY }}"
-
       - name: Version Flutter application bundle
-        # Hostinger CDN can retain main.dart.js despite no-cache headers.
-        # Give every application bundle an immutable URL and update the loader manifest.
         shell: bash
         run: |
           build_id="${GITHUB_SHA::12}"
@@ -54,10 +46,7 @@ jobs:
           mv build/web/main.dart.js "build/web/${versioned_bundle}"
           sed -i "s/main\.dart\.js/${versioned_bundle}/g" build/web/flutter_bootstrap.js
           grep -F "${versioned_bundle}" build/web/flutter_bootstrap.js
-
       - name: Deploy to Hostinger
-        # Keep the previous Alpha release intact until replacement files arrive.
-        # Incremental sync also avoids Hostinger's FTPS connection cap on full clean uploads.
         uses: SamKirkland/FTP-Deploy-Action@v4.3.6
         with:
           server: 147.93.88.23
