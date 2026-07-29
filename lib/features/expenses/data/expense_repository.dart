@@ -30,11 +30,17 @@ class ExpenseRepository {
     final rows = await _client
         .from('property_expenses')
         .select(
-          '*, properties(display_name, address_line_1), '
-          'ownership_entities(legal_name), '
-          'property_compliance_records(reference_number, '
-          'compliance_requirement_types(name)), '
-          'documents(id, original_filename, storage_bucket, storage_path)',
+          '*, '
+          'properties!expenses_property_organisation_fkey('
+          'display_name, address_line_1), '
+          'expense_ownership:property_ownerships!expenses_ownership_fkey('
+          'ownership_entities!'
+          'property_ownerships_ownership_entity_id_organisation_id_fkey('
+          'legal_name)), '
+          'property_compliance_records!expenses_compliance_fkey('
+          'reference_number, compliance_requirement_types(name)), '
+          'documents!documents_expense_fkey('
+          'id, original_filename, storage_bucket, storage_path)',
         )
         .eq('organisation_id', organisationId)
         .order('expense_date', ascending: false)
