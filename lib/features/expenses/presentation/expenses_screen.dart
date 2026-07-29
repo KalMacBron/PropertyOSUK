@@ -120,7 +120,8 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
     try {
       await ref.read(expenseRepositoryProvider).uploadEvidence(
             expense: expense,
-            file: EvidenceFile(name: file.name, mimeType: mime, bytes: file.bytes!),
+            file: EvidenceFile(
+                name: file.name, mimeType: mime, bytes: file.bytes!),
           );
       refreshExpenses(ref);
     } on ExpenseValidationException catch (error) {
@@ -136,8 +137,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
   }
 
   Future<void> _viewEvidence(ExpenseEvidence evidence) async {
-    final url =
-        await ref.read(expenseRepositoryProvider).evidenceUrl(evidence);
+    final url = await ref.read(expenseRepositoryProvider).evidenceUrl(evidence);
     await launchUrl(Uri.parse(url), webOnlyWindowName: '_blank');
   }
 
@@ -167,8 +167,8 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
     final properties = ref.watch(expensePropertiesProvider);
     final expenses = ref.watch(expensesProvider);
     final canWrite = organisation.valueOrNull?.role != 'viewer';
-    final canDelete = const ['owner', 'admin']
-        .contains(organisation.valueOrNull?.role);
+    final canDelete =
+        const ['owner', 'admin'].contains(organisation.valueOrNull?.role);
 
     if (widget.openCreate && !_openedInitialDialog) {
       _openedInitialDialog = true;
@@ -365,7 +365,8 @@ class _ExpenseContent extends StatelessWidget {
                   },
                   onChanged: onPayment,
                 ),
-                _DateFilter(label: 'From', value: filters.from, changed: onFrom),
+                _DateFilter(
+                    label: 'From', value: filters.from, changed: onFrom),
                 _DateFilter(label: 'To', value: filters.to, changed: onTo),
                 TextButton.icon(
                   onPressed: onClear,
@@ -410,7 +411,8 @@ class _ExpenseContent extends StatelessWidget {
               child: Card(
                 child: ExpansionTile(
                   leading: CircleAvatar(
-                    child: Text('£', style: Theme.of(context).textTheme.titleMedium),
+                    child: Text('£',
+                        style: Theme.of(context).textTheme.titleMedium),
                   ),
                   title: Text(
                     '${expense.description} · ${pounds(expense.amountPence)}',
@@ -508,8 +510,7 @@ class _ExpenseDialog extends StatefulWidget {
 
 class _ExpenseDialogState extends State<_ExpenseDialog> {
   final _key = GlobalKey<FormState>();
-  late String _propertyId =
-      widget.expense?.propertyId ??
+  late String _propertyId = widget.expense?.propertyId ??
       widget.initialPropertyId ??
       widget.properties.first.id;
   late String _ownerId = widget.expense?.ownershipEntityId ??
@@ -523,13 +524,11 @@ class _ExpenseDialogState extends State<_ExpenseDialog> {
       (widget.initialComplianceRecordId == null
           ? 'repairs_maintenance'
           : 'compliance_certificates');
-  late String _vatTreatment =
-      widget.expense?.vatTreatment ?? 'not_specified';
+  late String _vatTreatment = widget.expense?.vatTreatment ?? 'not_specified';
   late String _paymentStatus = widget.expense?.paymentStatus ?? 'paid';
   late String? _complianceId =
       widget.expense?.complianceRecordId ?? widget.initialComplianceRecordId;
-  late final _supplier =
-      TextEditingController(text: widget.expense?.supplier);
+  late final _supplier = TextEditingController(text: widget.expense?.supplier);
   late final _description =
       TextEditingController(text: widget.expense?.description);
   late final _amount = TextEditingController(
@@ -566,7 +565,8 @@ class _ExpenseDialogState extends State<_ExpenseDialog> {
     setState(() => _saving = true);
     try {
       final total = parsePoundsToPence(_amount.text);
-      final vat = _vat.text.trim().isEmpty ? null : parsePoundsToPence(_vat.text);
+      final vat =
+          _vat.text.trim().isEmpty ? null : parsePoundsToPence(_vat.text);
       if (vat != null && vat > total) {
         throw const FormatException('VAT cannot exceed the total amount.');
       }
@@ -728,8 +728,8 @@ class _ExpenseDialogState extends State<_ExpenseDialog> {
                     keyboardType: const TextInputType.numberWithOptions(
                       decimal: true,
                     ),
-                    decoration:
-                        const InputDecoration(labelText: 'VAT amount (optional)'),
+                    decoration: const InputDecoration(
+                        labelText: 'VAT amount (optional)'),
                   ),
                   const SizedBox(height: 12),
                   DropdownButtonFormField<String>(
@@ -748,7 +748,8 @@ class _ExpenseDialogState extends State<_ExpenseDialog> {
                   ),
                   const SizedBox(height: 12),
                   DropdownButtonFormField<String?>(
-                    key: ValueKey('compliance-$_propertyId-${_compliance.length}'),
+                    key: ValueKey(
+                        'compliance-$_propertyId-${_compliance.length}'),
                     initialValue: _complianceId,
                     decoration: const InputDecoration(
                       labelText: 'Compliance record (optional)',
@@ -759,8 +760,9 @@ class _ExpenseDialogState extends State<_ExpenseDialog> {
                         child: Text('Not linked'),
                       ),
                       ..._compliance.map((record) {
-                        final requirement = record['compliance_requirement_types']
-                            as Map<String, dynamic>;
+                        final requirement =
+                            record['compliance_requirement_types']
+                                as Map<String, dynamic>;
                         final reference = record['reference_number'] as String?;
                         return DropdownMenuItem<String?>(
                           value: record['id'] as String,
@@ -856,7 +858,9 @@ class _DateFilter extends StatelessWidget {
         },
         icon: const Icon(Icons.date_range_outlined),
         label: Text(
-          value == null ? label : '$label ${DateFormat('dd/MM/yy').format(value!)}',
+          value == null
+              ? label
+              : '$label ${DateFormat('dd/MM/yy').format(value!)}',
         ),
       );
 }
