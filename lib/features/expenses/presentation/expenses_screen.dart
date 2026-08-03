@@ -29,21 +29,8 @@ class ExpensesScreen extends ConsumerStatefulWidget {
 
 class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
   late String? _propertyId = widget.initialPropertyId;
-  String? _ownerId;
-  String? _category;
-  String? _paymentStatus;
-  DateTime? _from;
-  DateTime? _to;
   bool _openedInitialDialog = false;
-
-  ExpenseFilters get _filters => ExpenseFilters(
-        propertyId: _propertyId,
-        ownerId: _ownerId,
-        category: _category,
-        paymentStatus: _paymentStatus,
-        from: _from,
-        to: _to,
-      );
+  bool _deleting = false;
 
   Future<void> _openForm({
     PropertyExpense? expense,
@@ -53,6 +40,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
     final organisation = await ref.read(organisationProvider.future);
     final properties = await ref.read(expensePropertiesProvider.future);
     if (!mounted || organisation == null || properties.isEmpty) return;
+
     final saved = await showDialog<bool>(
       context: context,
       barrierDismissible: false,
@@ -65,6 +53,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
         repository: ref.read(expenseRepositoryProvider),
       ),
     );
+
     if (saved == true) refreshExpenses(ref);
   }
 
@@ -83,22 +72,39 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
             onPressed: () => Navigator.pop(context, false),
             child: const Text('Cancel'),
           ),
-          FilledButton(
+          FilledButton.icon(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Delete'),
+            icon: const Icon(Icons.delete_outline),
+            label: const Text('Delete'),
           ),
         ],
       ),
     );
+
     if (confirmed != true) return;
+    setState(() => _deleting = true);
     try {
       await ref.read(expenseRepositoryProvider).deleteExpense(expense);
       refreshExpenses(ref);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Expense deleted.')),
+        );
+      }
+    } on ExpenseValidationException catch (error) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(error.message)),
+        );
+      }
     } catch (_) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('The expense could not be deleted.')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('The expense could not be deleted.')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _deleting = false);
     }
   }
 
@@ -110,18 +116,22 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
     );
     final file = picked?.files.single;
     if (file == null || file.bytes == null) return;
-    final extension = file.extension?.toLowerCase();
-    final mime = switch (extension) {
+
+    final mime = switch (file.extension?.toLowerCase()) {
       'pdf' => 'application/pdf',
       'jpg' || 'jpeg' => 'image/jpeg',
       'png' => 'image/png',
       _ => 'application/octet-stream',
     };
+
     try {
       await ref.read(expenseRepositoryProvider).uploadEvidence(
             expense: expense,
             file: EvidenceFile(
-                name: file.name, mimeType: mime, bytes: file.bytes!),
+              name: file.name,
+              mimeType: mime,
+              bytes: file.bytes!,
+            ),
           );
       refreshExpenses(ref);
     } on ExpenseValidationException catch (error) {
@@ -148,11 +158,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
 
   Future<void> _export(List<PropertyExpense> expenses) async {
     final csv = csvForExpenses(expenses);
-    final uri = Uri.dataFromString(
-      csv,
-      mimeType: 'text/csv',
-      encoding: utf8,
-    );
+    final uri = Uri.dataFromString(csv, mimeType: 'text/csv', encoding: utf8);
     final opened = await launchUrl(uri, webOnlyWindowName: '_blank');
     if (!opened && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -205,6 +211,10 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
               ),
           ],
         ),
+        if (_deleting) ...[
+          const SizedBox(height: 16),
+          const LinearProgressIndicator(),
+        ],
         const SizedBox(height: 24),
         properties.when(
           loading: () => const Center(child: CircularProgressIndicator()),
@@ -219,34 +229,73 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
               ),
             ),
             data: (allExpenses) {
-              final filtered = allExpenses.where(_filters.matches).toList();
-              return _ExpenseContent(
-                properties: propertyItems,
-                allExpenses: allExpenses,
-                expenses: filtered,
-                filters: _filters,
-                canWrite: canWrite,
-                canDelete: canDelete,
-                onProperty: (value) => setState(() => _propertyId = value),
-                onOwner: (value) => setState(() => _ownerId = value),
-                onCategory: (value) => setState(() => _category = value),
-                onPayment: (value) => setState(() => _paymentStatus = value),
-                onFrom: (value) => setState(() => _from = value),
-                onTo: (value) => setState(() => _to = value),
-                onClear: () => setState(() {
-                  _propertyId = null;
-                  _ownerId = null;
-                  _category = null;
-                  _paymentStatus = null;
-                  _from = null;
-                  _to = null;
-                }),
-                onEdit: (expense) => _openForm(expense: expense),
-                onDelete: _delete,
-                onUpload: _pickEvidence,
-                onViewEvidence: _viewEvidence,
-                onRemoveEvidence: _removeEvidence,
-                onExport: () => _export(filtered),
+              final filtered = _propertyId == null
+                  ? allExpenses
+                  : allExpenses
+                      .where((expense) => expense.propertyId == _propertyId)
+                      .toList();
+              final total = filtered.fold<int>(
+                0,
+                (sum, expense) => sum + expense.amountPence,
+              );
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _Filters(
+                    properties: propertyItems,
+                    selectedPropertyId: _propertyId,
+                    onPropertyChanged: (value) =>
+                        setState(() => _propertyId = value),
+                    onClear: () => setState(() => _propertyId = null),
+                  ),
+                  const SizedBox(height: 16),
+                  Wrap(
+                    spacing: 12,
+                    runSpacing: 12,
+                    children: [
+                      _Summary(label: 'Total expenditure', value: pounds(total)),
+                      _Summary(label: 'Expenses', value: '${filtered.length}'),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: OutlinedButton.icon(
+                      onPressed: filtered.isEmpty ? null : () => _export(filtered),
+                      icon: const Icon(Icons.download_outlined),
+                      label: const Text('Export filtered CSV'),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  if (filtered.isEmpty)
+                    const _Message('No expenses match these filters.')
+                  else
+                    ...filtered.map(
+                      (expense) => Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: _ExpenseCard(
+                          expense: expense,
+                          canWrite: canWrite,
+                          canDelete: canDelete,
+                          deleting: _deleting,
+                          onEdit: () => _openForm(expense: expense),
+                          onDelete: () => _delete(expense),
+                          onUpload: () => _pickEvidence(expense),
+                          onViewEvidence: expense.evidence == null
+                              ? null
+                              : () => _viewEvidence(expense.evidence!),
+                          onRemoveEvidence: expense.evidence == null
+                              ? null
+                              : () => _removeEvidence(expense.evidence!),
+                        ),
+                      ),
+                    ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Categories are organisational labels only. PropertyOS does not '
+                    'determine tax deductibility or produce accounts.',
+                  ),
+                ],
               );
             },
           ),
@@ -256,235 +305,165 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
   }
 }
 
-class _ExpenseContent extends StatelessWidget {
-  const _ExpenseContent({
+class _Filters extends StatelessWidget {
+  const _Filters({
     required this.properties,
-    required this.allExpenses,
-    required this.expenses,
-    required this.filters,
+    required this.selectedPropertyId,
+    required this.onPropertyChanged,
+    required this.onClear,
+  });
+
+  final List<ExpenseProperty> properties;
+  final String? selectedPropertyId;
+  final ValueChanged<String?> onPropertyChanged;
+  final VoidCallback onClear;
+
+  @override
+  Widget build(BuildContext context) => Card(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Wrap(
+            spacing: 12,
+            runSpacing: 12,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              SizedBox(
+                width: 260,
+                child: DropdownButtonFormField<String?>(
+                  initialValue: selectedPropertyId,
+                  decoration: const InputDecoration(labelText: 'Property'),
+                  items: [
+                    const DropdownMenuItem<String?>(
+                      value: null,
+                      child: Text('All properties'),
+                    ),
+                    ...properties.map(
+                      (property) => DropdownMenuItem<String?>(
+                        value: property.id,
+                        child: Text(property.name),
+                      ),
+                    ),
+                  ],
+                  onChanged: onPropertyChanged,
+                ),
+              ),
+              TextButton.icon(
+                onPressed: onClear,
+                icon: const Icon(Icons.filter_alt_off_outlined),
+                label: const Text('Clear filters'),
+              ),
+            ],
+          ),
+        ),
+      );
+}
+
+class _ExpenseCard extends StatelessWidget {
+  const _ExpenseCard({
+    required this.expense,
     required this.canWrite,
     required this.canDelete,
-    required this.onProperty,
-    required this.onOwner,
-    required this.onCategory,
-    required this.onPayment,
-    required this.onFrom,
-    required this.onTo,
-    required this.onClear,
+    required this.deleting,
     required this.onEdit,
     required this.onDelete,
     required this.onUpload,
     required this.onViewEvidence,
     required this.onRemoveEvidence,
-    required this.onExport,
   });
 
-  final List<ExpenseProperty> properties;
-  final List<PropertyExpense> allExpenses;
-  final List<PropertyExpense> expenses;
-  final ExpenseFilters filters;
+  final PropertyExpense expense;
   final bool canWrite;
   final bool canDelete;
-  final ValueChanged<String?> onProperty;
-  final ValueChanged<String?> onOwner;
-  final ValueChanged<String?> onCategory;
-  final ValueChanged<String?> onPayment;
-  final ValueChanged<DateTime?> onFrom;
-  final ValueChanged<DateTime?> onTo;
-  final VoidCallback onClear;
-  final ValueChanged<PropertyExpense> onEdit;
-  final ValueChanged<PropertyExpense> onDelete;
-  final ValueChanged<PropertyExpense> onUpload;
-  final ValueChanged<ExpenseEvidence> onViewEvidence;
-  final ValueChanged<ExpenseEvidence> onRemoveEvidence;
-  final VoidCallback onExport;
+  final bool deleting;
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
+  final VoidCallback onUpload;
+  final VoidCallback? onViewEvidence;
+  final VoidCallback? onRemoveEvidence;
 
   @override
-  Widget build(BuildContext context) {
-    if (properties.isEmpty) {
-      return const _Message('Add a property before recording expenses.');
-    }
-    final owners = <String, String>{};
-    for (final property in properties) {
-      for (final owner in property.owners) {
-        owners[owner.id] = owner.name;
-      }
-    }
-    final total = expenses.fold<int>(0, (sum, item) => sum + item.amountPence);
-    final categoryTotals = <String, int>{};
-    for (final expense in expenses) {
-      categoryTotals.update(
-        expense.category,
-        (value) => value + expense.amountPence,
-        ifAbsent: () => expense.amountPence,
-      );
-    }
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Wrap(
-              spacing: 12,
-              runSpacing: 12,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: [
-                _Dropdown(
-                  label: 'Property',
-                  value: filters.propertyId,
-                  allLabel: 'All properties',
-                  values: {for (final p in properties) p.id: p.name},
-                  onChanged: onProperty,
-                ),
-                _Dropdown(
-                  label: 'Ownership entity',
-                  value: filters.ownerId,
-                  allLabel: 'All entities',
-                  values: owners,
-                  onChanged: onOwner,
-                ),
-                _Dropdown(
-                  label: 'Category',
-                  value: filters.category,
-                  allLabel: 'All categories',
-                  values: {
-                    for (final category in expenseCategories)
-                      category.code: category.label,
-                  },
-                  onChanged: onCategory,
-                ),
-                _Dropdown(
-                  label: 'Payment status',
-                  value: filters.paymentStatus,
-                  allLabel: 'All statuses',
-                  values: const {
-                    'paid': 'Paid',
-                    'unpaid': 'Unpaid',
-                    'reimbursed': 'Reimbursed',
-                  },
-                  onChanged: onPayment,
-                ),
-                _DateFilter(
-                    label: 'From', value: filters.from, changed: onFrom),
-                _DateFilter(label: 'To', value: filters.to, changed: onTo),
-                TextButton.icon(
-                  onPressed: onClear,
-                  icon: const Icon(Icons.filter_alt_off_outlined),
-                  label: const Text('Clear filters'),
-                ),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(height: 16),
-        Wrap(
-          spacing: 12,
-          runSpacing: 12,
-          children: [
-            _Summary(label: 'Total expenditure', value: pounds(total)),
-            _Summary(label: 'Expenses', value: '${expenses.length}'),
-            ...categoryTotals.entries.map(
-              (entry) => _Summary(
-                label: expenseCategoryLabel(entry.key),
-                value: pounds(entry.value),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 20),
-        Align(
-          alignment: Alignment.centerRight,
-          child: OutlinedButton.icon(
-            onPressed: expenses.isEmpty ? null : onExport,
-            icon: const Icon(Icons.download_outlined),
-            label: const Text('Export filtered CSV'),
-          ),
-        ),
-        const SizedBox(height: 12),
-        if (expenses.isEmpty)
-          const _Message('No expenses match these filters.')
-        else
-          ...expenses.map(
-            (expense) => Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: Card(
-                child: ExpansionTile(
-                  leading: CircleAvatar(
-                    child: Text('£',
-                        style: Theme.of(context).textTheme.titleMedium),
+  Widget build(BuildContext context) => Card(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CircleAvatar(
+                    child: Text('£', style: Theme.of(context).textTheme.titleMedium),
                   ),
-                  title: Text(
-                    '${expense.description} · ${pounds(expense.amountPence)}',
-                    style: const TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                  subtitle: Text(
-                    '${expense.propertyName} · '
-                    '${DateFormat('dd/MM/yyyy').format(expense.expenseDate)} · '
-                    '${expenseCategoryLabel(expense.category)}',
-                  ),
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                      child: Wrap(
-                        spacing: 16,
-                        runSpacing: 8,
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        children: [
-                          Text('Owner: ${expense.ownershipEntityName}'),
-                          Text('Status: ${expense.paymentStatus}'),
-                          if (expense.supplier != null)
-                            Text('Supplier: ${expense.supplier}'),
-                          if (expense.complianceRequirement != null)
-                            Text(
-                              'Compliance: ${expense.complianceRequirement}',
-                            ),
-                          if (expense.evidence == null && canWrite)
-                            TextButton.icon(
-                              onPressed: () => onUpload(expense),
-                              icon: const Icon(Icons.attach_file),
-                              label: const Text('Add evidence'),
-                            ),
-                          if (expense.evidence != null) ...[
-                            TextButton.icon(
-                              onPressed: () =>
-                                  onViewEvidence(expense.evidence!),
-                              icon: const Icon(Icons.open_in_new),
-                              label: Text(expense.evidence!.filename),
-                            ),
-                            if (canDelete)
-                              TextButton(
-                                onPressed: () =>
-                                    onRemoveEvidence(expense.evidence!),
-                                child: const Text('Remove evidence'),
-                              ),
-                          ],
-                          if (canWrite)
-                            TextButton(
-                              onPressed: () => onEdit(expense),
-                              child: const Text('Edit'),
-                            ),
-                          if (canDelete)
-                            TextButton(
-                              onPressed: () => onDelete(expense),
-                              child: const Text('Delete'),
-                            ),
-                        ],
-                      ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${expense.description} · ${pounds(expense.amountPence)}',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          '${expense.propertyName} · '
+                          '${DateFormat('dd/MM/yyyy').format(expense.expenseDate)} · '
+                          '${expenseCategoryLabel(expense.category)}',
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                  if (canWrite)
+                    IconButton(
+                      tooltip: 'Edit expense',
+                      onPressed: deleting ? null : onEdit,
+                      icon: const Icon(Icons.edit_outlined),
+                    ),
+                  if (canDelete)
+                    IconButton(
+                      tooltip: 'Delete expense',
+                      onPressed: deleting ? null : onDelete,
+                      icon: const Icon(Icons.delete_outline),
+                    ),
+                ],
               ),
-            ),
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 16,
+                runSpacing: 8,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  Text('Owner: ${expense.ownershipEntityName}'),
+                  Text('Status: ${expense.paymentStatus}'),
+                  if (expense.supplier != null) Text('Supplier: ${expense.supplier}'),
+                  if (expense.complianceRequirement != null)
+                    Text('Compliance: ${expense.complianceRequirement}'),
+                  if (expense.evidence == null && canWrite)
+                    TextButton.icon(
+                      onPressed: onUpload,
+                      icon: const Icon(Icons.attach_file),
+                      label: const Text('Add evidence'),
+                    ),
+                  if (expense.evidence != null) ...[
+                    TextButton.icon(
+                      onPressed: onViewEvidence,
+                      icon: const Icon(Icons.open_in_new),
+                      label: Text(expense.evidence!.filename),
+                    ),
+                    if (canDelete)
+                      TextButton(
+                        onPressed: onRemoveEvidence,
+                        child: const Text('Remove evidence'),
+                      ),
+                  ],
+                ],
+              ),
+            ],
           ),
-        const SizedBox(height: 8),
-        const Text(
-          'Categories are organisational labels only. PropertyOS does not '
-          'determine tax deductibility or produce accounts.',
         ),
-      ],
-    );
-  }
+      );
 }
 
 class _ExpenseDialog extends StatefulWidget {
@@ -510,15 +489,12 @@ class _ExpenseDialog extends StatefulWidget {
 
 class _ExpenseDialogState extends State<_ExpenseDialog> {
   final _key = GlobalKey<FormState>();
+
   late String _propertyId = widget.expense?.propertyId ??
       widget.initialPropertyId ??
       widget.properties.first.id;
   late String _ownerId = widget.expense?.ownershipEntityId ??
-      _ownersFor(widget.expense?.propertyId ??
-              widget.initialPropertyId ??
-              widget.properties.first.id)
-          .first
-          .id;
+      _ownersFor(_propertyId).first.id;
   late DateTime _date = widget.expense?.expenseDate ?? DateTime.now();
   late String _category = widget.expense?.category ??
       (widget.initialComplianceRecordId == null
@@ -528,6 +504,7 @@ class _ExpenseDialogState extends State<_ExpenseDialog> {
   late String _paymentStatus = widget.expense?.paymentStatus ?? 'paid';
   late String? _complianceId =
       widget.expense?.complianceRecordId ?? widget.initialComplianceRecordId;
+
   late final _supplier = TextEditingController(text: widget.expense?.supplier);
   late final _description =
       TextEditingController(text: widget.expense?.description);
@@ -542,6 +519,7 @@ class _ExpenseDialogState extends State<_ExpenseDialog> {
         : (widget.expense!.vatAmountPence! / 100).toStringAsFixed(2),
   );
   late final _notes = TextEditingController(text: widget.expense?.notes);
+
   List<Map<String, dynamic>> _compliance = const [];
   bool _saving = false;
 
@@ -552,6 +530,16 @@ class _ExpenseDialogState extends State<_ExpenseDialog> {
   void initState() {
     super.initState();
     _loadCompliance();
+  }
+
+  @override
+  void dispose() {
+    _supplier.dispose();
+    _description.dispose();
+    _amount.dispose();
+    _vat.dispose();
+    _notes.dispose();
+    super.dispose();
   }
 
   Future<void> _loadCompliance() async {
@@ -602,267 +590,192 @@ class _ExpenseDialogState extends State<_ExpenseDialog> {
   }
 
   @override
-  Widget build(BuildContext context) => AlertDialog(
-        title: Text(widget.expense == null ? 'Record expense' : 'Edit expense'),
-        content: SizedBox(
-          width: 620,
-          child: Form(
-            key: _key,
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  DropdownButtonFormField<String>(
-                    initialValue: _propertyId,
-                    decoration: const InputDecoration(labelText: 'Property'),
-                    items: widget.properties
-                        .map((item) => DropdownMenuItem(
-                              value: item.id,
-                              child: Text(item.name),
-                            ))
-                        .toList(),
-                    onChanged: (value) {
-                      if (value == null) return;
-                      setState(() {
-                        _propertyId = value;
-                        _ownerId = _ownersFor(value).first.id;
-                        _complianceId = null;
-                        _compliance = const [];
-                      });
-                      _loadCompliance();
-                    },
+  Widget build(BuildContext context) {
+    if (_ownersFor(_propertyId).isEmpty) {
+      return const AlertDialog(
+        title: Text('Record expense'),
+        content: Text('This property needs an ownership entity before expenses can be recorded.'),
+      );
+    }
+
+    return AlertDialog(
+      title: Text(widget.expense == null ? 'Record expense' : 'Edit expense'),
+      content: SizedBox(
+        width: 620,
+        child: Form(
+          key: _key,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                DropdownButtonFormField<String>(
+                  initialValue: _propertyId,
+                  decoration: const InputDecoration(labelText: 'Property'),
+                  items: widget.properties
+                      .map((item) => DropdownMenuItem(
+                            value: item.id,
+                            child: Text(item.name),
+                          ))
+                      .toList(),
+                  onChanged: (value) {
+                    if (value == null) return;
+                    setState(() {
+                      _propertyId = value;
+                      _ownerId = _ownersFor(value).first.id;
+                      _complianceId = null;
+                      _compliance = const [];
+                    });
+                    _loadCompliance();
+                  },
+                ),
+                const SizedBox(height: 12),
+                DropdownButtonFormField<String>(
+                  key: ValueKey('owner-$_propertyId'),
+                  initialValue: _ownerId,
+                  decoration: const InputDecoration(labelText: 'Ownership entity'),
+                  items: _ownersFor(_propertyId)
+                      .map((owner) => DropdownMenuItem(
+                            value: owner.id,
+                            child: Text(owner.name),
+                          ))
+                      .toList(),
+                  onChanged: (value) => _ownerId = value!,
+                ),
+                const SizedBox(height: 12),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Expense date'),
+                  subtitle: Text(DateFormat('dd/MM/yyyy').format(_date)),
+                  trailing: const Icon(Icons.calendar_today_outlined),
+                  onTap: () async {
+                    final selected = await showDatePicker(
+                      context: context,
+                      firstDate: DateTime(2000),
+                      lastDate: DateTime.now().add(const Duration(days: 365)),
+                      initialDate: _date,
+                    );
+                    if (selected != null) setState(() => _date = selected);
+                  },
+                ),
+                TextFormField(
+                  controller: _supplier,
+                  decoration: const InputDecoration(labelText: 'Supplier (optional)'),
+                ),
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: _description,
+                  decoration: const InputDecoration(labelText: 'Description'),
+                  validator: _required,
+                ),
+                const SizedBox(height: 12),
+                DropdownButtonFormField<String>(
+                  initialValue: _category,
+                  decoration: const InputDecoration(labelText: 'Category'),
+                  items: expenseCategories
+                      .map((category) => DropdownMenuItem(
+                            value: category.code,
+                            child: Text(category.label),
+                          ))
+                      .toList(),
+                  onChanged: (value) => _category = value!,
+                ),
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: _amount,
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
+                  decoration: const InputDecoration(labelText: 'Total amount (£)'),
+                  validator: (value) {
+                    try {
+                      parsePoundsToPence(value ?? '');
+                      return null;
+                    } on FormatException catch (error) {
+                      return error.message;
+                    }
+                  },
+                ),
+                const SizedBox(height: 12),
+                DropdownButtonFormField<String>(
+                  initialValue: _vatTreatment,
+                  decoration: const InputDecoration(labelText: 'VAT treatment'),
+                  items: const [
+                    DropdownMenuItem(value: 'not_specified', child: Text('Not specified')),
+                    DropdownMenuItem(value: 'included', child: Text('VAT included')),
+                    DropdownMenuItem(value: 'excluded', child: Text('VAT excluded')),
+                  ],
+                  onChanged: (value) => _vatTreatment = value!,
+                ),
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: _vat,
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
+                  decoration:
+                      const InputDecoration(labelText: 'VAT amount (optional)'),
+                ),
+                const SizedBox(height: 12),
+                DropdownButtonFormField<String>(
+                  initialValue: _paymentStatus,
+                  decoration: const InputDecoration(labelText: 'Payment status'),
+                  items: const [
+                    DropdownMenuItem(value: 'paid', child: Text('Paid')),
+                    DropdownMenuItem(value: 'unpaid', child: Text('Unpaid')),
+                    DropdownMenuItem(value: 'reimbursed', child: Text('Reimbursed')),
+                  ],
+                  onChanged: (value) => _paymentStatus = value!,
+                ),
+                const SizedBox(height: 12),
+                DropdownButtonFormField<String?>(
+                  key: ValueKey('compliance-$_propertyId-${_compliance.length}'),
+                  initialValue: _complianceId,
+                  decoration: const InputDecoration(
+                    labelText: 'Compliance record (optional)',
                   ),
-                  const SizedBox(height: 12),
-                  DropdownButtonFormField<String>(
-                    key: ValueKey('owner-$_propertyId'),
-                    initialValue: _ownerId,
-                    decoration:
-                        const InputDecoration(labelText: 'Ownership entity'),
-                    items: _ownersFor(_propertyId)
-                        .map((owner) => DropdownMenuItem(
-                              value: owner.id,
-                              child: Text(owner.name),
-                            ))
-                        .toList(),
-                    onChanged: (value) => _ownerId = value!,
-                  ),
-                  const SizedBox(height: 12),
-                  ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: const Text('Expense date'),
-                    subtitle: Text(DateFormat('dd/MM/yyyy').format(_date)),
-                    trailing: const Icon(Icons.calendar_today_outlined),
-                    onTap: () async {
-                      final selected = await showDatePicker(
-                        context: context,
-                        firstDate: DateTime(2000),
-                        lastDate: DateTime.now().add(const Duration(days: 365)),
-                        initialDate: _date,
+                  items: [
+                    const DropdownMenuItem<String?>(
+                      value: null,
+                      child: Text('Not linked'),
+                    ),
+                    ..._compliance.map((record) {
+                      final requirement = record['compliance_requirement_types']
+                          as Map<String, dynamic>;
+                      final reference = record['reference_number'] as String?;
+                      return DropdownMenuItem<String?>(
+                        value: record['id'] as String,
+                        child: Text(
+                          '${requirement['name']}'
+                          '${reference == null ? '' : ' · $reference'}',
+                        ),
                       );
-                      if (selected != null) setState(() => _date = selected);
-                    },
-                  ),
-                  TextFormField(
-                    controller: _supplier,
-                    decoration:
-                        const InputDecoration(labelText: 'Supplier (optional)'),
-                  ),
-                  const SizedBox(height: 12),
-                  TextFormField(
-                    controller: _description,
-                    decoration: const InputDecoration(labelText: 'Description'),
-                    validator: _required,
-                  ),
-                  const SizedBox(height: 12),
-                  DropdownButtonFormField<String>(
-                    initialValue: _category,
-                    decoration: const InputDecoration(labelText: 'Category'),
-                    items: expenseCategories
-                        .map((category) => DropdownMenuItem(
-                              value: category.code,
-                              child: Text(category.label),
-                            ))
-                        .toList(),
-                    onChanged: (value) => _category = value!,
-                  ),
-                  const SizedBox(height: 12),
-                  TextFormField(
-                    controller: _amount,
-                    keyboardType: const TextInputType.numberWithOptions(
-                      decimal: true,
-                    ),
-                    decoration:
-                        const InputDecoration(labelText: 'Total amount (£)'),
-                    validator: (value) {
-                      try {
-                        parsePoundsToPence(value ?? '');
-                        return null;
-                      } on FormatException catch (error) {
-                        return error.message;
-                      }
-                    },
-                  ),
-                  const SizedBox(height: 12),
-                  DropdownButtonFormField<String>(
-                    initialValue: _vatTreatment,
-                    decoration:
-                        const InputDecoration(labelText: 'VAT treatment'),
-                    items: const [
-                      DropdownMenuItem(
-                        value: 'not_specified',
-                        child: Text('Not specified'),
-                      ),
-                      DropdownMenuItem(
-                        value: 'included',
-                        child: Text('VAT included'),
-                      ),
-                      DropdownMenuItem(
-                        value: 'excluded',
-                        child: Text('VAT excluded'),
-                      ),
-                    ],
-                    onChanged: (value) => _vatTreatment = value!,
-                  ),
-                  const SizedBox(height: 12),
-                  TextFormField(
-                    controller: _vat,
-                    keyboardType: const TextInputType.numberWithOptions(
-                      decimal: true,
-                    ),
-                    decoration: const InputDecoration(
-                        labelText: 'VAT amount (optional)'),
-                  ),
-                  const SizedBox(height: 12),
-                  DropdownButtonFormField<String>(
-                    initialValue: _paymentStatus,
-                    decoration:
-                        const InputDecoration(labelText: 'Payment status'),
-                    items: const [
-                      DropdownMenuItem(value: 'paid', child: Text('Paid')),
-                      DropdownMenuItem(value: 'unpaid', child: Text('Unpaid')),
-                      DropdownMenuItem(
-                        value: 'reimbursed',
-                        child: Text('Reimbursed'),
-                      ),
-                    ],
-                    onChanged: (value) => _paymentStatus = value!,
-                  ),
-                  const SizedBox(height: 12),
-                  DropdownButtonFormField<String?>(
-                    key: ValueKey(
-                        'compliance-$_propertyId-${_compliance.length}'),
-                    initialValue: _complianceId,
-                    decoration: const InputDecoration(
-                      labelText: 'Compliance record (optional)',
-                    ),
-                    items: [
-                      const DropdownMenuItem<String?>(
-                        value: null,
-                        child: Text('Not linked'),
-                      ),
-                      ..._compliance.map((record) {
-                        final requirement =
-                            record['compliance_requirement_types']
-                                as Map<String, dynamic>;
-                        final reference = record['reference_number'] as String?;
-                        return DropdownMenuItem<String?>(
-                          value: record['id'] as String,
-                          child: Text(
-                            '${requirement['name']}'
-                            '${reference == null ? '' : ' · $reference'}',
-                          ),
-                        );
-                      }),
-                    ],
-                    onChanged: (value) => _complianceId = value,
-                  ),
-                  const SizedBox(height: 12),
-                  TextFormField(
-                    controller: _notes,
-                    maxLines: 3,
-                    decoration:
-                        const InputDecoration(labelText: 'Notes (optional)'),
-                  ),
-                ],
-              ),
+                    }),
+                  ],
+                  onChanged: (value) => _complianceId = value,
+                ),
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: _notes,
+                  maxLines: 3,
+                  decoration: const InputDecoration(labelText: 'Notes (optional)'),
+                ),
+              ],
             ),
           ),
         ),
-        actions: [
-          TextButton(
-            onPressed: _saving ? null : () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            onPressed: _saving ? null : _save,
-            child: Text(_saving ? 'Saving…' : 'Save expense'),
-          ),
-        ],
-      );
+      ),
+      actions: [
+        TextButton(
+          onPressed: _saving ? null : () => Navigator.pop(context),
+          child: const Text('Cancel'),
+        ),
+        FilledButton(
+          onPressed: _saving ? null : _save,
+          child: Text(_saving ? 'Saving…' : 'Save expense'),
+        ),
+      ],
+    );
+  }
 
   String? _required(String? value) =>
       value == null || value.trim().isEmpty ? 'Required' : null;
-}
-
-class _Dropdown extends StatelessWidget {
-  const _Dropdown({
-    required this.label,
-    required this.value,
-    required this.allLabel,
-    required this.values,
-    required this.onChanged,
-  });
-  final String label;
-  final String? value;
-  final String allLabel;
-  final Map<String, String> values;
-  final ValueChanged<String?> onChanged;
-
-  @override
-  Widget build(BuildContext context) => SizedBox(
-        width: 220,
-        child: DropdownButtonFormField<String?>(
-          initialValue: value,
-          decoration: InputDecoration(labelText: label),
-          items: [
-            DropdownMenuItem<String?>(value: null, child: Text(allLabel)),
-            ...values.entries.map((entry) => DropdownMenuItem<String?>(
-                  value: entry.key,
-                  child: Text(entry.value, overflow: TextOverflow.ellipsis),
-                )),
-          ],
-          onChanged: onChanged,
-        ),
-      );
-}
-
-class _DateFilter extends StatelessWidget {
-  const _DateFilter({
-    required this.label,
-    required this.value,
-    required this.changed,
-  });
-  final String label;
-  final DateTime? value;
-  final ValueChanged<DateTime?> changed;
-
-  @override
-  Widget build(BuildContext context) => OutlinedButton.icon(
-        onPressed: () async {
-          final selected = await showDatePicker(
-            context: context,
-            firstDate: DateTime(2000),
-            lastDate: DateTime.now().add(const Duration(days: 365)),
-            initialDate: value ?? DateTime.now(),
-          );
-          if (selected != null) changed(selected);
-        },
-        icon: const Icon(Icons.date_range_outlined),
-        label: Text(
-          value == null
-              ? label
-              : '$label ${DateFormat('dd/MM/yy').format(value!)}',
-        ),
-      );
 }
 
 class _Summary extends StatelessWidget {
