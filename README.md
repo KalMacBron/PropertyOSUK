@@ -6,7 +6,9 @@ Private Alpha for KaelVaren's AI operating system for independent UK landlords.
 
 Deliver the first working vertical slice:
 
-`sign in → property → compliance record → document → Today warning → completed task → timeline`
+`sign in → property → compliance record → expenses → document evidence → Today warning → completed task → timeline`
+
+The current Alpha also validates the property-expenses layer so compliance work can be linked to cost and receipt evidence.
 
 See `docs/PropertyOS_Alpha_Build_Specification.md` for scope and acceptance criteria.
 
@@ -70,4 +72,3 @@ supabase test db
 - `production`: created only after Alpha security and recovery checks pass
 
 Use separate Supabase projects for development and production.
-
