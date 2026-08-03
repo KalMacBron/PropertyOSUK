@@ -2,13 +2,9 @@ name: Deploy Alpha
 
 on:
   workflow_dispatch:
-  pull_request:
+  push:
     branches:
       - main
-    types:
-      - opened
-      - synchronize
-      - reopened
 
 permissions:
   contents: read
@@ -19,7 +15,7 @@ concurrency:
 
 jobs:
   deploy:
-    if: github.head_ref == 'feature/compliance-dashboard'
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment:
       name: alpha
@@ -54,6 +50,19 @@ jobs:
           mv build/web/main.dart.js "build/web/${versioned_bundle}"
           sed -i "s/main\.dart\.js/${versioned_bundle}/g" build/web/flutter_bootstrap.js
           grep -F "${versioned_bundle}" build/web/flutter_bootstrap.js
+
+      - name: Write alpha version metadata
+        shell: bash
+        run: |
+          cat > build/web/version.json <<EOF
+          {
+            "environment": "alpha",
+            "commit": "${GITHUB_SHA}",
+            "build": "${GITHUB_SHA::12}",
+            "deployedAt": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          }
+          EOF
+          cat build/web/version.json
 
       - name: Deploy to Hostinger
         # Keep the previous Alpha release intact until replacement files arrive.
