@@ -108,11 +108,29 @@ class ExpenseRepository {
 
   Future<void> deleteExpense(PropertyExpense expense) async {
     final evidence = expense.evidence;
-    if (evidence != null) {
-      await _client.from('documents').delete().eq('id', evidence.id);
-      await _client.storage.from(evidence.bucket).remove([evidence.path]);
+
+    final deleted = await _client
+        .from('property_expenses')
+        .delete()
+        .eq('id', expense.id)
+        .eq('organisation_id', expense.organisationId)
+        .select('id')
+        .maybeSingle();
+
+    if (deleted == null) {
+      throw const ExpenseValidationException(
+        'This expense could not be deleted. Check your access level and try again.',
+      );
     }
-    await _client.from('property_expenses').delete().eq('id', expense.id);
+
+    if (evidence != null) {
+      try {
+        await _client.storage.from(evidence.bucket).remove([evidence.path]);
+      } catch (_) {
+        // The database row is the source of truth. If object cleanup fails, do not
+        // restore the deleted expense or strand the user on the expenses screen.
+      }
+    }
   }
 
   Future<void> uploadEvidence({

@@ -61,8 +61,11 @@ class ComplianceRecordScreen extends ConsumerWidget {
                 today: europeLondonToday(),
                 warningDays: 30,
               ).single;
-              final canRecordExpense =
-                  organisation.valueOrNull?.role != 'viewer' && record != null;
+              final canRecordExpense = organisation.valueOrNull?.role != 'viewer';
+              final expenseRoute = record == null
+                  ? '/expenses?propertyId=${property.id}&create=true'
+                  : '/expenses?propertyId=${property.id}'
+                      '&complianceRecordId=${record.id}&create=true';
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -117,7 +120,7 @@ class ComplianceRecordScreen extends ConsumerWidget {
                       padding: const EdgeInsets.all(20),
                       child: Text(
                         record == null
-                            ? 'No confirmed record exists for this requirement.'
+                            ? 'No confirmed record exists for this requirement yet. You can still record a related property expense and link it later once the compliance record exists.'
                             : (record.notes?.trim().isNotEmpty == true
                                 ? record.notes!.trim()
                                 : 'No notes recorded.'),
@@ -136,12 +139,13 @@ class ComplianceRecordScreen extends ConsumerWidget {
                       ),
                       if (canRecordExpense)
                         OutlinedButton.icon(
-                          onPressed: () => context.go(
-                            '/expenses?propertyId=${property.id}'
-                            '&complianceRecordId=${record.id}&create=true',
-                          ),
+                          onPressed: () => context.go(expenseRoute),
                           icon: const Icon(Icons.receipt_long_outlined),
-                          label: const Text('Record expense'),
+                          label: Text(
+                            record == null
+                                ? 'Record property expense'
+                                : 'Record compliance expense',
+                          ),
                         ),
                     ],
                   ),
