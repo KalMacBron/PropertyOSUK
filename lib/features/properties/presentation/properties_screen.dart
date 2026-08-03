@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:property_os/features/portfolio/application/portfolio_providers.dart';
 import 'package:property_os/features/portfolio/data/portfolio_repository.dart';
 
@@ -99,6 +100,13 @@ class PropertiesScreen extends ConsumerWidget {
                           '${item['address_line_1']}, ${item['town_or_city']}, ${item['postcode']}\nOwner: $ownerNames',
                         ),
                         isThreeLine: true,
+                        trailing: IconButton(
+                          tooltip: 'View property expenses',
+                          icon: const Icon(Icons.receipt_long_outlined),
+                          onPressed: () => context.go(
+                            '/expenses?propertyId=${item['id']}',
+                          ),
+                        ),
                       );
                     }).toList(),
                   ),
