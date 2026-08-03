@@ -5,6 +5,7 @@ import 'package:property_os/core/database/supabase_provider.dart';
 import 'package:property_os/features/auth/data/auth_repository.dart';
 import 'package:property_os/features/compliance/presentation/compliance_record_screen.dart';
 import 'package:property_os/features/compliance/presentation/compliance_register_screen.dart';
+import 'package:property_os/features/expenses/presentation/expenses_screen.dart';
 import 'package:property_os/features/ownership/presentation/ownership_entities_screen.dart';
 import 'package:property_os/features/properties/presentation/properties_screen.dart';
 import 'package:property_os/features/today/presentation/compliance_dashboard_screen.dart';
@@ -32,6 +33,15 @@ final propertyOsRouter = GoRouter(
           builder: (_, state) => ComplianceRecordScreen(
             propertyId: state.pathParameters['propertyId']!,
             requirementId: state.pathParameters['requirementId']!,
+          ),
+        ),
+        GoRoute(
+          path: '/expenses',
+          builder: (_, state) => ExpensesScreen(
+            initialPropertyId: state.uri.queryParameters['propertyId'],
+            initialComplianceRecordId:
+                state.uri.queryParameters['complianceRecordId'],
+            openCreate: state.uri.queryParameters['create'] == 'true',
           ),
         ),
         GoRoute(
@@ -80,6 +90,10 @@ class _AppShell extends ConsumerWidget {
               label: Text('Compliance'),
             ),
             const NavigationDrawerDestination(
+              icon: Icon(Icons.receipt_long_outlined),
+              label: Text('Expenses'),
+            ),
+            const NavigationDrawerDestination(
               icon: Icon(Icons.account_balance_outlined),
               label: Text('Ownership'),
             ),
@@ -87,7 +101,13 @@ class _AppShell extends ConsumerWidget {
           onDestinationSelected: (index) {
             Navigator.of(context).pop();
             context.go(
-              ['/today', '/properties', '/compliance', '/ownership'][index],
+              [
+                '/today',
+                '/properties',
+                '/compliance',
+                '/expenses',
+                '/ownership',
+              ][index],
             );
           },
         ),
