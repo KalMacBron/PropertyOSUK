@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:property_os/features/compliance/application/compliance_providers.dart';
 import 'package:property_os/features/compliance/domain/compliance_models.dart';
@@ -224,6 +225,15 @@ class _RequirementRow extends ConsumerWidget {
     }
   }
 
+  void _recordExpense(BuildContext context) {
+    final record = property.recordFor(requirement.id);
+    final route = record == null
+        ? '/expenses?propertyId=${property.id}&create=true'
+        : '/expenses?propertyId=${property.id}'
+            '&complianceRecordId=${record.id}&create=true';
+    context.go(route);
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final record = property.recordFor(requirement.id);
@@ -249,9 +259,15 @@ class _RequirementRow extends ConsumerWidget {
           title: Text(requirement.name),
           subtitle: Text(subtitle),
           trailing: Wrap(
+            spacing: 8,
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               _StatusChip(status: status),
+              TextButton.icon(
+                onPressed: () => _recordExpense(context),
+                icon: const Icon(Icons.receipt_long_outlined),
+                label: const Text('Record expense'),
+              ),
               IconButton(
                 tooltip: record == null ? 'Add record' : 'Edit record',
                 onPressed: () => _edit(context, ref),
