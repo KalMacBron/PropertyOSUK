@@ -11,6 +11,35 @@ import 'package:property_os/features/expenses/domain/expense_models.dart';
 import 'package:property_os/features/portfolio/application/portfolio_providers.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+Future<bool> showExpenseDeleteConfirmation(
+  BuildContext context,
+  PropertyExpense expense,
+) async {
+  final confirmed = await showDialog<bool>(
+    context: context,
+    builder: (dialogContext) => AlertDialog(
+      title: const Text('Delete expense?'),
+      content: Text(
+        '${DateFormat('dd/MM/yyyy').format(expense.expenseDate)} · '
+        '${expense.propertyName}\n${expense.description}\n'
+        '${pounds(expense.amountPence)}',
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(dialogContext, false),
+          child: const Text('Cancel'),
+        ),
+        FilledButton.icon(
+          onPressed: () => Navigator.pop(dialogContext, true),
+          icon: const Icon(Icons.delete_outline),
+          label: const Text('Delete'),
+        ),
+      ],
+    ),
+  );
+  return confirmed ?? false;
+}
+
 class ExpensesScreen extends ConsumerStatefulWidget {
   const ExpensesScreen({
     this.initialPropertyId,
@@ -58,30 +87,9 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
   }
 
   Future<void> _delete(PropertyExpense expense) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Delete expense?'),
-        content: Text(
-          '${DateFormat('dd/MM/yyyy').format(expense.expenseDate)} · '
-          '${expense.propertyName}\n${expense.description}\n'
-          '${pounds(expense.amountPence)}',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
-          ),
-          FilledButton.icon(
-            onPressed: () => Navigator.pop(context, true),
-            icon: const Icon(Icons.delete_outline),
-            label: const Text('Delete'),
-          ),
-        ],
-      ),
-    );
+    final confirmed = await showExpenseDeleteConfirmation(context, expense);
 
-    if (confirmed != true) return;
+    if (!confirmed) return;
     setState(() => _deleting = true);
     try {
       await ref.read(expenseRepositoryProvider).deleteExpense(expense);

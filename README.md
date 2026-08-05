@@ -10,7 +10,9 @@ Deliver the first working vertical slice:
 
 The current Alpha also validates the property-expenses layer so compliance work can be linked to cost and receipt evidence.
 
-See `docs/PropertyOS_Alpha_Build_Specification.md` for scope and acceptance criteria.
+Start with `docs/HANDOVER.md` for the current operational baseline. See
+`docs/PropertyOS_Alpha_Build_Specification.md` for the frozen Alpha scope and
+acceptance criteria.
 
 ## Stack
 
@@ -50,7 +52,7 @@ Example:
 ```bash
 flutter run -d chrome \
   --dart-define=SUPABASE_URL=http://127.0.0.1:54321 \
-  --dart-define=SUPABASE_ANON_KEY=YOUR_LOCAL_ANON_KEY
+  --dart-define=SUPABASE_PUBLISHABLE_KEY=YOUR_LOCAL_PUBLISHABLE_KEY
 ```
 
 Never commit `.env`, service-role keys or OpenAI credentials.
