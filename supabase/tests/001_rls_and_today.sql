@@ -9,8 +9,35 @@ select col_is_fk(
   'public', 'ownership_entities', 'organisation_id',
   'ownership entities are organisation scoped'
 );
-select col_is_fk(
-  'public', 'property_ownerships', 'property_id',
+select ok(
+  exists (
+    select 1
+    from pg_constraint constraint_record
+    join pg_class child_table
+      on child_table.oid = constraint_record.conrelid
+    join pg_namespace child_schema
+      on child_schema.oid = child_table.relnamespace
+    join pg_class parent_table
+      on parent_table.oid = constraint_record.confrelid
+    where constraint_record.contype = 'f'
+      and child_schema.nspname = 'public'
+      and child_table.relname = 'property_ownerships'
+      and parent_table.relname = 'properties'
+      and constraint_record.conkey = array[
+        (
+          select attribute.attnum
+          from pg_attribute attribute
+          where attribute.attrelid = child_table.oid
+            and attribute.attname = 'property_id'
+        ),
+        (
+          select attribute.attnum
+          from pg_attribute attribute
+          where attribute.attrelid = child_table.oid
+            and attribute.attname = 'organisation_id'
+        )
+      ]::smallint[]
+  ),
   'property ownership links to a property'
 );
 select is(

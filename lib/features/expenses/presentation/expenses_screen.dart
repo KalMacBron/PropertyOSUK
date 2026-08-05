@@ -261,7 +261,8 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
                     spacing: 12,
                     runSpacing: 12,
                     children: [
-                      _Summary(label: 'Total expenditure', value: pounds(total)),
+                      _Summary(
+                          label: 'Total expenditure', value: pounds(total)),
                       _Summary(label: 'Expenses', value: '${filtered.length}'),
                     ],
                   ),
@@ -269,7 +270,8 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
                   Align(
                     alignment: Alignment.centerRight,
                     child: OutlinedButton.icon(
-                      onPressed: filtered.isEmpty ? null : () => _export(filtered),
+                      onPressed:
+                          filtered.isEmpty ? null : () => _export(filtered),
                       icon: const Icon(Icons.download_outlined),
                       label: const Text('Export filtered CSV'),
                     ),
@@ -400,7 +402,8 @@ class _ExpenseCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CircleAvatar(
-                    child: Text('£', style: Theme.of(context).textTheme.titleMedium),
+                    child: Text('£',
+                        style: Theme.of(context).textTheme.titleMedium),
                   ),
                   const SizedBox(width: 14),
                   Expanded(
@@ -445,7 +448,8 @@ class _ExpenseCard extends StatelessWidget {
                 children: [
                   Text('Owner: ${expense.ownershipEntityName}'),
                   Text('Status: ${expense.paymentStatus}'),
-                  if (expense.supplier != null) Text('Supplier: ${expense.supplier}'),
+                  if (expense.supplier != null)
+                    Text('Supplier: ${expense.supplier}'),
                   if (expense.complianceRequirement != null)
                     Text('Compliance: ${expense.complianceRequirement}'),
                   if (expense.evidence == null && canWrite)
@@ -501,8 +505,8 @@ class _ExpenseDialogState extends State<_ExpenseDialog> {
   late String _propertyId = widget.expense?.propertyId ??
       widget.initialPropertyId ??
       widget.properties.first.id;
-  late String _ownerId = widget.expense?.ownershipEntityId ??
-      _ownersFor(_propertyId).first.id;
+  late String _ownerId =
+      widget.expense?.ownershipEntityId ?? _ownersFor(_propertyId).first.id;
   late DateTime _date = widget.expense?.expenseDate ?? DateTime.now();
   late String _category = widget.expense?.category ??
       (widget.initialComplianceRecordId == null
@@ -602,7 +606,8 @@ class _ExpenseDialogState extends State<_ExpenseDialog> {
     if (_ownersFor(_propertyId).isEmpty) {
       return const AlertDialog(
         title: Text('Record expense'),
-        content: Text('This property needs an ownership entity before expenses can be recorded.'),
+        content: Text(
+            'This property needs an ownership entity before expenses can be recorded.'),
       );
     }
 
@@ -639,7 +644,8 @@ class _ExpenseDialogState extends State<_ExpenseDialog> {
                 DropdownButtonFormField<String>(
                   key: ValueKey('owner-$_propertyId'),
                   initialValue: _ownerId,
-                  decoration: const InputDecoration(labelText: 'Ownership entity'),
+                  decoration:
+                      const InputDecoration(labelText: 'Ownership entity'),
                   items: _ownersFor(_propertyId)
                       .map((owner) => DropdownMenuItem(
                             value: owner.id,
@@ -666,7 +672,8 @@ class _ExpenseDialogState extends State<_ExpenseDialog> {
                 ),
                 TextFormField(
                   controller: _supplier,
-                  decoration: const InputDecoration(labelText: 'Supplier (optional)'),
+                  decoration:
+                      const InputDecoration(labelText: 'Supplier (optional)'),
                 ),
                 const SizedBox(height: 12),
                 TextFormField(
@@ -691,7 +698,8 @@ class _ExpenseDialogState extends State<_ExpenseDialog> {
                   controller: _amount,
                   keyboardType:
                       const TextInputType.numberWithOptions(decimal: true),
-                  decoration: const InputDecoration(labelText: 'Total amount (£)'),
+                  decoration:
+                      const InputDecoration(labelText: 'Total amount (£)'),
                   validator: (value) {
                     try {
                       parsePoundsToPence(value ?? '');
@@ -706,9 +714,12 @@ class _ExpenseDialogState extends State<_ExpenseDialog> {
                   initialValue: _vatTreatment,
                   decoration: const InputDecoration(labelText: 'VAT treatment'),
                   items: const [
-                    DropdownMenuItem(value: 'not_specified', child: Text('Not specified')),
-                    DropdownMenuItem(value: 'included', child: Text('VAT included')),
-                    DropdownMenuItem(value: 'excluded', child: Text('VAT excluded')),
+                    DropdownMenuItem(
+                        value: 'not_specified', child: Text('Not specified')),
+                    DropdownMenuItem(
+                        value: 'included', child: Text('VAT included')),
+                    DropdownMenuItem(
+                        value: 'excluded', child: Text('VAT excluded')),
                   ],
                   onChanged: (value) => _vatTreatment = value!,
                 ),
@@ -723,17 +734,20 @@ class _ExpenseDialogState extends State<_ExpenseDialog> {
                 const SizedBox(height: 12),
                 DropdownButtonFormField<String>(
                   initialValue: _paymentStatus,
-                  decoration: const InputDecoration(labelText: 'Payment status'),
+                  decoration:
+                      const InputDecoration(labelText: 'Payment status'),
                   items: const [
                     DropdownMenuItem(value: 'paid', child: Text('Paid')),
                     DropdownMenuItem(value: 'unpaid', child: Text('Unpaid')),
-                    DropdownMenuItem(value: 'reimbursed', child: Text('Reimbursed')),
+                    DropdownMenuItem(
+                        value: 'reimbursed', child: Text('Reimbursed')),
                   ],
                   onChanged: (value) => _paymentStatus = value!,
                 ),
                 const SizedBox(height: 12),
                 DropdownButtonFormField<String?>(
-                  key: ValueKey('compliance-$_propertyId-${_compliance.length}'),
+                  key:
+                      ValueKey('compliance-$_propertyId-${_compliance.length}'),
                   initialValue: _complianceId,
                   decoration: const InputDecoration(
                     labelText: 'Compliance record (optional)',
@@ -762,7 +776,8 @@ class _ExpenseDialogState extends State<_ExpenseDialog> {
                 TextFormField(
                   controller: _notes,
                   maxLines: 3,
-                  decoration: const InputDecoration(labelText: 'Notes (optional)'),
+                  decoration:
+                      const InputDecoration(labelText: 'Notes (optional)'),
                 ),
               ],
             ),

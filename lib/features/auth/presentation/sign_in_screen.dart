@@ -116,7 +116,8 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                     submitting: _submitting,
                     error: _error,
                     notice: _notice,
-                    onTogglePassword: () => setState(() => _obscure = !_obscure),
+                    onTogglePassword: () =>
+                        setState(() => _obscure = !_obscure),
                     onSignIn: _signIn,
                     onResetPassword: _requestPasswordReset,
                   ),
@@ -184,7 +185,8 @@ class _HeroSection extends StatelessWidget {
                             onViewBriefing: onViewBriefing,
                           ),
                         ),
-                        SizedBox(width: narrow ? 0 : 52, height: narrow ? 36 : 0),
+                        SizedBox(
+                            width: narrow ? 0 : 52, height: narrow ? 36 : 0),
                         Expanded(
                           flex: narrow ? 0 : 10,
                           child: _HeroPreview(form: form),
@@ -271,7 +273,8 @@ class _HeroCopy extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
               color: const Color(0xFF22C55E).withOpacity(0.12),
-              border: Border.all(color: const Color(0xFFA7F3D0).withOpacity(0.25)),
+              border:
+                  Border.all(color: const Color(0xFFA7F3D0).withOpacity(0.25)),
               borderRadius: BorderRadius.circular(999),
             ),
             child: const Text(
@@ -311,7 +314,8 @@ class _HeroCopy extends StatelessWidget {
                 style: FilledButton.styleFrom(
                   backgroundColor: Colors.white,
                   foregroundColor: const Color(0xFF071827),
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
                 ),
                 onPressed: onEnterAlpha,
                 icon: const Icon(Icons.arrow_forward),
@@ -321,7 +325,8 @@ class _HeroCopy extends StatelessWidget {
                 style: OutlinedButton.styleFrom(
                   foregroundColor: Colors.white,
                   side: BorderSide(color: Colors.white.withOpacity(0.22)),
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
                 ),
                 onPressed: onViewBriefing,
                 child: const Text('View Daily Briefing'),
@@ -378,7 +383,8 @@ class _TodayPreviewCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const _StatusPill(label: 'Portfolio healthy', tone: _PillTone.good),
+              const _StatusPill(
+                  label: 'Portfolio healthy', tone: _PillTone.good),
               const SizedBox(height: 14),
               const Text(
                 'Good morning Karl.',
@@ -494,19 +500,22 @@ class _SignInCard extends StatelessWidget {
                     labelText: 'Password',
                     suffixIcon: IconButton(
                       onPressed: onTogglePassword,
-                      icon: Icon(obscure ? Icons.visibility : Icons.visibility_off),
+                      icon: Icon(
+                          obscure ? Icons.visibility : Icons.visibility_off),
                     ),
                   ),
                   onFieldSubmitted: (_) => onSignIn(),
-                  validator: (value) =>
-                      value == null || value.isEmpty ? 'Enter your password' : null,
+                  validator: (value) => value == null || value.isEmpty
+                      ? 'Enter your password'
+                      : null,
                 ),
                 if (error != null)
                   Padding(
                     padding: const EdgeInsets.only(top: 12),
                     child: Text(
                       error!,
-                      style: TextStyle(color: Theme.of(context).colorScheme.error),
+                      style:
+                          TextStyle(color: Theme.of(context).colorScheme.error),
                     ),
                   ),
                 if (notice != null)
@@ -515,7 +524,8 @@ class _SignInCard extends StatelessWidget {
                     child: Text(
                       notice!,
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: Theme.of(context).colorScheme.primary),
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary),
                     ),
                   ),
                 const SizedBox(height: 22),
@@ -554,10 +564,24 @@ class _ProblemGrid extends StatelessWidget {
   Widget build(BuildContext context) => const _ResponsiveGrid(
         minItemWidth: 240,
         children: [
-          _InfoCard(icon: 'X', title: 'Spreadsheets', body: 'Static trackers that quietly go stale.'),
-          _InfoCard(icon: '@', title: 'Email threads', body: 'Repairs, renewals and tenant messages buried in the inbox swamp.'),
-          _InfoCard(icon: 'PDF', title: 'Certificates', body: 'Gas Safety, EPC and EICR dates hiding inside documents.'),
-          _InfoCard(icon: '!', title: 'Deadlines', body: 'Compliance reminders scattered across calendars, folders and memory.'),
+          _InfoCard(
+              icon: 'X',
+              title: 'Spreadsheets',
+              body: 'Static trackers that quietly go stale.'),
+          _InfoCard(
+              icon: '@',
+              title: 'Email threads',
+              body:
+                  'Repairs, renewals and tenant messages buried in the inbox swamp.'),
+          _InfoCard(
+              icon: 'PDF',
+              title: 'Certificates',
+              body: 'Gas Safety, EPC and EICR dates hiding inside documents.'),
+          _InfoCard(
+              icon: '!',
+              title: 'Deadlines',
+              body:
+                  'Compliance reminders scattered across calendars, folders and memory.'),
         ],
       );
 }
@@ -632,12 +656,36 @@ class _CapabilitiesSection extends StatelessWidget {
         child: _ResponsiveGrid(
           minItemWidth: 310,
           children: [
-            _InfoCard(icon: 'AI', title: 'Daily AI Briefing', body: 'Start each day with a clear summary of what needs attention across your portfolio.'),
-            _InfoCard(icon: 'D', title: 'Document Intelligence', body: 'Upload certificates, tenancy agreements, invoices and policies. PropertyOS extracts key facts.'),
-            _InfoCard(icon: 'C', title: 'Compliance Monitoring', body: 'Track EPCs, Gas Safety Certificates, EICRs, deposit protection, Right to Rent and alarms.'),
-            _InfoCard(icon: 'T', title: 'Property Timelines', body: 'Every property builds a complete operational history from documents, tasks and tenancy events.'),
-            _InfoCard(icon: '?', title: 'AI Portfolio Assistant', body: 'Ask questions such as “What expires next month?” or “Summarise 14 High Street.”'),
-            _InfoCard(icon: '→', title: 'Recommended Actions', body: 'PropertyOS highlights what to do next, why it matters and which evidence supports it.'),
+            _InfoCard(
+                icon: 'AI',
+                title: 'Daily AI Briefing',
+                body:
+                    'Start each day with a clear summary of what needs attention across your portfolio.'),
+            _InfoCard(
+                icon: 'D',
+                title: 'Document Intelligence',
+                body:
+                    'Upload certificates, tenancy agreements, invoices and policies. PropertyOS extracts key facts.'),
+            _InfoCard(
+                icon: 'C',
+                title: 'Compliance Monitoring',
+                body:
+                    'Track EPCs, Gas Safety Certificates, EICRs, deposit protection, Right to Rent and alarms.'),
+            _InfoCard(
+                icon: 'T',
+                title: 'Property Timelines',
+                body:
+                    'Every property builds a complete operational history from documents, tasks and tenancy events.'),
+            _InfoCard(
+                icon: '?',
+                title: 'AI Portfolio Assistant',
+                body:
+                    'Ask questions such as “What expires next month?” or “Summarise 14 High Street.”'),
+            _InfoCard(
+                icon: '→',
+                title: 'Recommended Actions',
+                body:
+                    'PropertyOS highlights what to do next, why it matters and which evidence supports it.'),
           ],
         ),
       );
@@ -693,7 +741,8 @@ class _DailyBriefingShowcase extends StatelessWidget {
                           SizedBox(height: 18),
                           Text(
                             'The Today view is the soul of PropertyOS: an operational briefing, not a dashboard shrine to unnecessary charts.',
-                            style: TextStyle(color: Color(0xFFC8D3DD), height: 1.65),
+                            style: TextStyle(
+                                color: Color(0xFFC8D3DD), height: 1.65),
                           ),
                         ],
                       ),
@@ -734,8 +783,10 @@ class _DailyBriefingCard extends StatelessWidget {
               Text('Your portfolio is mostly healthy today.'),
               SizedBox(height: 14),
               _BriefingLine('No urgent compliance failures were found.'),
-              _BriefingLine('Gas Safety Certificate for 14 High Street expires in 31 days.'),
-              _BriefingLine('The tenancy at Flat 3, Victoria Court ends in 47 days.'),
+              _BriefingLine(
+                  'Gas Safety Certificate for 14 High Street expires in 31 days.'),
+              _BriefingLine(
+                  'The tenancy at Flat 3, Victoria Court ends in 47 days.'),
               _BriefingLine('Two maintenance issues are awaiting action.'),
               _BriefingLine('Estimated monthly rent: £8,950.'),
               _BriefingLine('Estimated monthly cashflow: £4,180.'),
@@ -762,9 +813,21 @@ class _AudienceSection extends StatelessWidget {
         child: _ResponsiveGrid(
           minItemWidth: 310,
           children: [
-            _InfoCard(icon: '1', title: 'Professional Landlord', body: 'Runs a mature portfolio and wants confidence that nothing important has been missed.'),
-            _InfoCard(icon: '2', title: 'Growing Investor', body: 'Needs systems before spreadsheets and memory become unmanageable.'),
-            _InfoCard(icon: '3', title: 'Family Property Business', body: 'Wants a shared operational view across properties, documents, tasks and compliance.'),
+            _InfoCard(
+                icon: '1',
+                title: 'Professional Landlord',
+                body:
+                    'Runs a mature portfolio and wants confidence that nothing important has been missed.'),
+            _InfoCard(
+                icon: '2',
+                title: 'Growing Investor',
+                body:
+                    'Needs systems before spreadsheets and memory become unmanageable.'),
+            _InfoCard(
+                icon: '3',
+                title: 'Family Property Business',
+                body:
+                    'Wants a shared operational view across properties, documents, tasks and compliance.'),
           ],
         ),
       );
@@ -832,7 +895,8 @@ class _FinalCta extends StatelessWidget {
               style: FilledButton.styleFrom(
                 backgroundColor: Colors.white,
                 foregroundColor: const Color(0xFF071827),
-                padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 18),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 22, vertical: 18),
               ),
               onPressed: onEnterAlpha,
               icon: const Icon(Icons.arrow_forward),
@@ -911,7 +975,8 @@ class _ResponsiveGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) => LayoutBuilder(
         builder: (context, constraints) {
-          final count = (constraints.maxWidth / minItemWidth).floor().clamp(1, 4);
+          final count =
+              (constraints.maxWidth / minItemWidth).floor().clamp(1, 4);
           final width = (constraints.maxWidth - ((count - 1) * 16)) / count;
           return Wrap(
             spacing: 16,
@@ -925,7 +990,8 @@ class _ResponsiveGrid extends StatelessWidget {
 }
 
 class _InfoCard extends StatelessWidget {
-  const _InfoCard({required this.icon, required this.title, required this.body});
+  const _InfoCard(
+      {required this.icon, required this.title, required this.body});
 
   final String icon;
   final String title;
@@ -998,7 +1064,8 @@ class _CompareCard extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(24),
           side: BorderSide(
-            color: highlighted ? const Color(0xFFBBF7D0) : const Color(0xFFE4E7EC),
+            color:
+                highlighted ? const Color(0xFFBBF7D0) : const Color(0xFFE4E7EC),
           ),
         ),
         child: Padding(
@@ -1022,7 +1089,9 @@ class _CompareCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Icon(
-                        highlighted ? Icons.check_circle : Icons.circle_outlined,
+                        highlighted
+                            ? Icons.check_circle
+                            : Icons.circle_outlined,
                         size: 18,
                         color: highlighted
                             ? const Color(0xFF18A058)
@@ -1032,7 +1101,8 @@ class _CompareCard extends StatelessWidget {
                       Expanded(
                         child: Text(
                           item,
-                          style: const TextStyle(color: Color(0xFF667085), height: 1.35),
+                          style: const TextStyle(
+                              color: Color(0xFF667085), height: 1.35),
                         ),
                       ),
                     ],
@@ -1092,7 +1162,9 @@ class _BriefingLine extends StatelessWidget {
           children: [
             const Icon(Icons.check_circle, color: Color(0xFF18A058), size: 18),
             const SizedBox(width: 9),
-            Expanded(child: Text(text, style: const TextStyle(color: Color(0xFF667085)))),
+            Expanded(
+                child: Text(text,
+                    style: const TextStyle(color: Color(0xFF667085)))),
           ],
         ),
       );
@@ -1136,7 +1208,8 @@ class _BrandMark extends StatelessWidget {
         height: 38,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          gradient: const LinearGradient(colors: [Color(0xFF38BDF8), Color(0xFF22C55E)]),
+          gradient: const LinearGradient(
+              colors: [Color(0xFF38BDF8), Color(0xFF22C55E)]),
           borderRadius: BorderRadius.circular(12),
         ),
         child: const Text(
