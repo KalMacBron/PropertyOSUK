@@ -2,7 +2,7 @@
 
 Database and Row-Level Security tests for PropertyOS Alpha.
 
-This folder will hold pgTAP or equivalent SQL test suites covering:
+This folder contains pgTAP SQL suites covering:
 
 - Migration applies cleanly to an empty Supabase project.
 - SEC-01/SEC-02: RLS denies cross-organisation SELECT, INSERT, UPDATE and DELETE on every organisation-scoped table.
@@ -13,4 +13,14 @@ This folder will hold pgTAP or equivalent SQL test suites covering:
 
 See docs/testing/PropertyOS_Alpha_Test_Strategy.docx and docs/testing/PropertyOS_Alpha_Test_Cases.xlsx for the full test suite these scenarios are drawn from, especially the Security / RLS and Today sections.
 
-Run with: supabase test db
+CI and local verification run every SQL suite discovered in this directory:
+
+```bash
+supabase start
+supabase db reset
+supabase test db
+```
+
+Do not replace the directory-wide test command with a hand-maintained filename
+list: a new security suite must fail CI until it passes, not remain silently
+unexecuted.

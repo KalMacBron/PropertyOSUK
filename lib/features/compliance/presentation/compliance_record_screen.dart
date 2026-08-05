@@ -61,7 +61,8 @@ class ComplianceRecordScreen extends ConsumerWidget {
                 today: europeLondonToday(),
                 warningDays: 30,
               ).single;
-              final canRecordExpense = organisation.valueOrNull?.role != 'viewer';
+              final canRecordExpense =
+                  organisation.valueOrNull?.role != 'viewer';
               final expenseRoute = record == null
                   ? '/expenses?propertyId=${property.id}&create=true'
                   : '/expenses?propertyId=${property.id}'
