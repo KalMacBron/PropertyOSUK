@@ -272,9 +272,10 @@ class _HeroCopy extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
-              color: const Color(0xFF22C55E).withOpacity(0.12),
-              border:
-                  Border.all(color: const Color(0xFFA7F3D0).withOpacity(0.25)),
+              color: const Color(0xFF22C55E).withValues(alpha: 0.12),
+              border: Border.all(
+                color: const Color(0xFFA7F3D0).withValues(alpha: 0.25),
+              ),
               borderRadius: BorderRadius.circular(999),
             ),
             child: const Text(
@@ -324,7 +325,9 @@ class _HeroCopy extends StatelessWidget {
               OutlinedButton(
                 style: OutlinedButton.styleFrom(
                   foregroundColor: Colors.white,
-                  side: BorderSide(color: Colors.white.withOpacity(0.22)),
+                  side: BorderSide(
+                    color: Colors.white.withValues(alpha: 0.22),
+                  ),
                   padding:
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
                 ),
@@ -351,12 +354,12 @@ class _HeroPreview extends StatelessWidget {
   Widget build(BuildContext context) => Container(
         padding: const EdgeInsets.all(18),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.08),
-          border: Border.all(color: Colors.white.withOpacity(0.16)),
+          color: Colors.white.withValues(alpha: 0.08),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.16)),
           borderRadius: BorderRadius.circular(32),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.25),
+              color: Colors.black.withValues(alpha: 0.25),
               blurRadius: 46,
               offset: const Offset(0, 22),
             ),
@@ -383,8 +386,7 @@ class _TodayPreviewCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const _StatusPill(
-                  label: 'Portfolio healthy', tone: _PillTone.good),
+              const _StatusPill(label: 'Portfolio healthy'),
               const SizedBox(height: 14),
               const Text(
                 'Good morning Karl.',
@@ -710,7 +712,7 @@ class _DailyBriefingShowcase extends StatelessWidget {
               borderRadius: BorderRadius.circular(34),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.18),
+                  color: Colors.black.withValues(alpha: 0.18),
                   blurRadius: 44,
                   offset: const Offset(0, 20),
                 ),
@@ -1170,33 +1172,27 @@ class _BriefingLine extends StatelessWidget {
       );
 }
 
-enum _PillTone { good, warn }
-
 class _StatusPill extends StatelessWidget {
-  const _StatusPill({required this.label, required this.tone});
+  const _StatusPill({required this.label});
 
   final String label;
-  final _PillTone tone;
 
   @override
-  Widget build(BuildContext context) {
-    final good = tone == _PillTone.good;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: good ? const Color(0xFFDCFAE6) : const Color(0xFFFEF0C7),
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-          color: good ? const Color(0xFF067647) : const Color(0xFFB54708),
-          fontWeight: FontWeight.w800,
-          fontSize: 12,
+  Widget build(BuildContext context) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(
+          color: const Color(0xFFDCFAE6),
+          borderRadius: BorderRadius.circular(999),
         ),
-      ),
-    );
-  }
+        child: Text(
+          label,
+          style: const TextStyle(
+            color: Color(0xFF067647),
+            fontWeight: FontWeight.w800,
+            fontSize: 12,
+          ),
+        ),
+      );
 }
 
 class _BrandMark extends StatelessWidget {
