@@ -1,28 +1,29 @@
 # PropertyOS Current State
 
-**Baseline recorded:** 05/08/2026
+**Baseline recorded:** 06/08/2026
 
 ## Source and deployment facts
 
 | Item | Verified state |
 |---|---|
-| Repository `main` | `6fd767f862b4ef5923100eb5f7e8bcc25be9ee50` |
+| Repository `main` | `67f539804926270fb73ea5f28cb3e77368938905` |
 | `origin/main` at baseline | Same commit as local `main` |
 | Worktree at baseline review | Clean before documentation updates |
 | Alpha URL | `https://alpha.propertyosuk.com` |
-| Alpha `version.json` | Commit `6fd767f862b4ef5923100eb5f7e8bcc25be9ee50` |
-| Alpha deployment time | `2026-08-03T13:50:38Z` |
+| Alpha `version.json` | Commit `67f539804926270fb73ea5f28cb3e77368938905` |
+| Alpha deployment time | `2026-08-05T16:07:58Z` |
 | Deployment source | Push to `main` via `.github/workflows/deploy-alpha.yml` |
 | Production | Not evidenced as established or approved |
 
-The earlier handover evidence for deployed commit `a23abb7` is superseded by a
-direct check on 05/08/2026. The hosted Flutter Alpha now matches `main` at
-`6fd767f`.
+The hosted Flutter Alpha was directly verified after PR #20 merged and matches
+`main` at `67f5398`.
 
 This proves the frontend bundle version only. It does not by itself prove that
 the linked Supabase project has every migration and Edge Function from the same
-commit. GitHub Actions run metadata was not available during baseline review
-because the local `gh` authentication was invalid.
+commit. GitHub Actions run `31023681109` passed on the merge commit: Flutter
+format, analysis and tests; Edge Function format and type-check; clean database
+rebuild; and all six pgTAP suites (71 assertions). The Alpha deployment run
+`31023680833` also passed.
 
 ## Delivered implementation increments
 
@@ -36,32 +37,21 @@ because the local `gh` authentication was invalid.
 | Compliance dashboard and reminders | Merged |
 | Expense register, optional compliance link, receipt evidence and expense CSV | Merged |
 | Alpha landing page and deployment-from-main repair | Merged |
-| Expense action/delete Hotfixes 9.1–9.3 | Merged and frontend deployed |
+| Expense action/delete Hotfixes 9.1–9.3 | Merged, frontend deployed and accepted by Karl |
+| Milestone 10 database CI baseline | Merged and passing locally and in CI |
 
 “Merged” does not mean the frozen Alpha acceptance criteria are complete. The
 repository milestone numbers describe implementation increments and do not map
 one-to-one to the five milestones in the Alpha build specification.
 
-## Open UAT defect: expense deletion
+## Closed UAT defect: expense deletion
 
-Karl reported that deleting an expense from the Expenses screen still failed,
-including earlier behaviour in which the screen became blank. The relevant
-hotfixes are now deployed, but there is no recorded post-deployment acceptance
-result. Keep the defect open until observed behaviour passes.
-
-On 05/08/2026 the blank-screen cause was traced to the confirmation dialog
-closing the nested Expenses route instead of its root dialog. A local fix and
-widget regression test are present in the working tree but are not yet checked,
-committed, deployed or accepted in Alpha.
-
-Acceptance requires:
-
-1. As owner and member, create and delete a harmless Alpha expense.
-2. Keep the screen usable and show a clear result.
-3. Confirm the expense remains absent after refresh and a new session.
-4. Confirm the database/API no longer returns the row for the organisation.
-5. Confirm a viewer has no delete control and cannot delete through the API.
-6. Add or strengthen an automated regression test for the demonstrated cause.
+The blank-screen cause was traced to the confirmation dialog closing the nested
+Expenses route instead of its root dialog. Hotfix 9.3 corrected the dialog
+navigation and added widget regression coverage. Karl retested the deployed
+Alpha on 05/08/2026 and confirmed that expense deletion worked. Formal
+owner/member/viewer API evidence remains part of the wider role-separation
+acceptance gap below; the reported UI defect itself is closed.
 
 ## Material acceptance gaps
 
@@ -69,15 +59,16 @@ Acceptance requires:
 - Formal test tracker cases, including TC-000, remain `Not started`.
 - Tenancy, maintenance, general Tasks, property Timeline, Settings and complete
   organisation export are not exposed as routed application workflows.
-- CI does not currently execute `001_rls_and_today.sql` or
-  `002_auth_property_onboarding.sql`.
 - Backup/restore, deletion, accessibility, responsive and full role/tenant
   separation evidence is not recorded.
 - Private validation with real portfolio data is not documented as complete.
 
 ## Immediate priority
 
-First retest expense deletion against deployed `6fd767f`. Then establish a
-passing baseline by restoring omitted security suites to CI and implementing
-TC-000 end to end. Do not infer overall Alpha readiness from the number of
-merged implementation milestones.
+Pin the validated Flutter, Supabase CLI and Deno versions across local guidance,
+CI and Alpha deployment, then implement TC-000 end to end. Do not infer overall
+Alpha readiness from the number of merged implementation milestones.
+
+The toolchain slice upgrades the official checkout action and the Hostinger FTP
+deployment action to their Node.js 24 releases. CI must verify the exact pinned
+Flutter, Supabase CLI and Deno versions before this baseline is accepted.

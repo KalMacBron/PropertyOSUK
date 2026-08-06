@@ -1,8 +1,8 @@
 # PropertyOS Codex Handover
 
-**Baseline reviewed:** 05/08/2026  
-**Repository source of truth:** `KalMacBron/PropertyOSUK`  
-**Baseline repository head:** `6fd767f` — *Hotfix 9.3: Make expense delete explicit*
+**Baseline reviewed:** 06/08/2026
+**Repository source of truth:** `KalMacBron/PropertyOSUK`
+**Baseline repository head:** `67f5398` — *Merge PR #20: restore complete database CI*
 
 This is the entry point for a new PropertyOS engineering session. GitHub is the
 source of truth for code. The frozen Alpha boundary remains

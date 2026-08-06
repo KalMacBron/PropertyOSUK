@@ -5,14 +5,17 @@ The frozen Alpha scope and Karl's explicit milestone approvals remain controllin
 
 ## Now: establish a trustworthy Alpha baseline
 
-1. Retest the reported expense-deletion failure against deployed `6fd767f` and
-   close it only with recorded owner/member/viewer evidence.
-2. Restore omitted foundation/onboarding RLS and Today suites to CI.
-3. Implement and pass TC-000 across authentication, database, Storage, Today,
+1. Pin and verify the local, CI and Alpha build toolchain, including Node.js 24
+   releases of the checkout and FTPS deployment actions.
+2. Implement and pass TC-000 across authentication, database, Storage, Today,
    task completion, timeline and cross-organisation denial.
-4. Verify deployed Supabase migrations and the certificate-processing Edge
+3. Verify deployed Supabase migrations and the certificate-processing Edge
    Function match the tested source.
-5. Record formal acceptance results instead of relying on merged milestone names.
+4. Record formal acceptance results instead of relying on merged milestone names.
+
+Completed on 05/08/2026: Karl accepted the deployed expense-deletion fix, and
+PR #20 restored the foundation/onboarding RLS and Today suites to CI. The merge
+commit passed all six database suites (71 assertions).
 
 ## Next: complete the frozen private Alpha
 

@@ -21,12 +21,15 @@ jobs:
       name: alpha
       url: https://alpha.propertyosuk.com
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: subosito/flutter-action@v2
         with:
-          channel: stable
+          flutter-version: 3.44.8
           cache: true
+
+      - name: Report Flutter toolchain
+        run: flutter --version
 
       - name: Install dependencies
         run: flutter pub get
@@ -67,7 +70,7 @@ jobs:
       - name: Deploy to Hostinger
         # Keep the previous Alpha release intact until replacement files arrive.
         # Incremental sync also avoids Hostinger's FTPS connection cap on full clean uploads.
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
         with:
           server: 147.93.88.23
           username: u714985569.propertyosuk.com

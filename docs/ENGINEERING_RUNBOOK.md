@@ -2,7 +2,9 @@
 
 ## Local setup
 
-Install Flutter, Docker and the Supabase CLI. From the repository root:
+Install Flutter, Docker, the Supabase CLI and Deno. The validated versions are
+recorded in `../.tool-versions`; CI and Alpha deployment pin the same Flutter,
+Supabase CLI and Deno versions. From the repository root:
 
 ```bash
 cp .env.example .env

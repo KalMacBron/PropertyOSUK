@@ -12,11 +12,12 @@ jobs:
   flutter:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: subosito/flutter-action@v2
         with:
-          channel: stable
+          flutter-version: 3.44.8
           cache: true
+      - run: flutter --version
       - run: flutter pub get
       - name: Check Dart formatting
         run: |
@@ -32,10 +33,11 @@ jobs:
   database:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: supabase/setup-cli@v2
         with:
-          version: 2.110.0
+          version: 2.111.0
+      - run: supabase --version
       - name: Initialise local Supabase
         run: test -f supabase/config.toml || supabase init
       - name: Start database and apply migrations
@@ -51,10 +53,11 @@ jobs:
   edge-functions:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: denoland/setup-deno@v2
         with:
-          deno-version: v2.x
+          deno-version: v2.9.4
+      - run: deno --version
       - name: Check Edge Function formatting
         run: |
           deno fmt --check supabase/functions || {
