@@ -39,7 +39,8 @@ docs/                   Product and engineering specifications
 
 ## Local setup
 
-1. Install Flutter and the Supabase CLI.
+1. Install Flutter, Docker Desktop, the Supabase CLI and Deno. Match the exact
+   versions in `.tool-versions` when possible.
 2. Copy `.env.example` to `.env`.
 3. Run `supabase start`.
 4. Run `supabase db reset`.
@@ -65,6 +66,8 @@ flutter analyze
 flutter test
 supabase db reset
 supabase test db
+deno fmt --check supabase/functions
+deno check supabase/functions/certificate-processing/index.ts
 ```
 
 ## Environments
