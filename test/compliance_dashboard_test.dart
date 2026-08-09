@@ -8,12 +8,14 @@ void main() {
     code: 'gas_safety',
     name: 'Gas Safety Certificate',
     description: '',
+    defaultWarningDays: 45,
   );
   const eicr = ComplianceRequirement(
     id: 'eicr',
     code: 'eicr',
     name: 'Electrical inspection',
     description: '',
+    defaultWarningDays: 30,
   );
 
   PropertyCompliance property(List<ComplianceRecord> records) =>
@@ -100,12 +102,14 @@ void main() {
       code: 'epc',
       name: 'EPC',
       description: '',
+      defaultWarningDays: 30,
     );
     const smoke = ComplianceRequirement(
       id: 'smoke',
       code: 'smoke_alarms',
       name: 'Smoke alarms',
       description: '',
+      defaultWarningDays: 30,
     );
     final items = buildDashboardItems(
       properties: [

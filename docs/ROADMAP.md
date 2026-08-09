@@ -5,13 +5,17 @@ The frozen Alpha scope and Karl's explicit milestone approvals remain controllin
 
 ## Now: establish a trustworthy Alpha baseline
 
-1. Pin and verify the local, CI and Alpha build toolchain, including Node.js 24
-   releases of the checkout and FTPS deployment actions.
-2. Implement and pass TC-000 across authentication, database, Storage, Today,
-   task completion, timeline and cross-organisation denial.
-3. Verify deployed Supabase migrations and the certificate-processing Edge
+1. ~~Pin and verify the local, CI and Alpha build toolchain.~~ Completed in
+   PR #21.
+2. ~~Implement and pass TC-000 locally across authentication, database,
+   Storage, Today, task completion, timeline and cross-organisation denial.~~
+   Completed on `codex/milestone-10-tc000`; pending PR, deployment and Alpha UAT.
+3. Review, merge and deploy TC-000 through the approval gates, then execute the
+   same journey on Alpha.
+4. Verify deployed Supabase migrations and the certificate-processing Edge
    Function match the tested source.
-4. Record formal acceptance results instead of relying on merged milestone names.
+5. Continue recording formal acceptance results instead of relying on merged
+   milestone names.
 
 Completed on 05/08/2026: Karl accepted the deployed expense-deletion fix, and
 PR #20 restored the foundation/onboarding RLS and Today suites to CI. The merge
@@ -21,8 +25,8 @@ commit passed all six database suites (71 assertions).
 
 Subject to an approved implementation contract:
 
-- Complete Tasks and Timeline first, because they close the central
-  evidence-to-action vertical slice.
+- Extend the TC-000 task-completion and property-timeline foundation into the
+  remaining routed Tasks and Timeline workflows.
 - Add the routed tenancy and maintenance workflows already represented in the
   database foundation.
 - Complete organisation-scoped JSON/CSV export and authorised document export.

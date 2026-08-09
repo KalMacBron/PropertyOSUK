@@ -3,18 +3,27 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:property_os/features/compliance/application/compliance_providers.dart';
+import 'package:property_os/features/documents/presentation/compliance_evidence_section.dart';
 import 'package:property_os/features/portfolio/application/portfolio_providers.dart';
+import 'package:property_os/features/timeline/application/timeline_providers.dart';
+import 'package:property_os/features/timeline/presentation/property_timeline_section.dart';
+import 'package:property_os/features/today/application/today_providers.dart';
 import 'package:property_os/features/today/domain/compliance_dashboard.dart';
+import 'package:property_os/features/today/domain/today_action.dart';
 
 class ComplianceRecordScreen extends ConsumerWidget {
   const ComplianceRecordScreen({
     required this.propertyId,
     required this.requirementId,
+    this.todaySourceId,
+    this.todayDueDate,
     super.key,
   });
 
   final String propertyId;
   final String requirementId;
+  final String? todaySourceId;
+  final DateTime? todayDueDate;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -29,7 +38,7 @@ class ComplianceRecordScreen extends ConsumerWidget {
           child: TextButton.icon(
             onPressed: () => context.go('/today'),
             icon: const Icon(Icons.arrow_back),
-            label: const Text('Back to dashboard'),
+            label: const Text('Back to Today'),
           ),
         ),
         const SizedBox(height: 8),
@@ -59,7 +68,7 @@ class ComplianceRecordScreen extends ConsumerWidget {
                 properties: [property],
                 requirements: [requirement],
                 today: europeLondonToday(),
-                warningDays: 30,
+                warningDays: requirement.defaultWarningDays,
               ).single;
               final canRecordExpense =
                   organisation.valueOrNull?.role != 'viewer';
@@ -129,6 +138,36 @@ class ComplianceRecordScreen extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
+                  if (record != null)
+                    ComplianceEvidenceSection(
+                      propertyId: property.id,
+                      complianceRecordId: record.id,
+                      requirementCode: requirement.code,
+                      existingRecord: record,
+                    ),
+                  if (record != null) const SizedBox(height: 16),
+                  if (record != null &&
+                      canRecordExpense &&
+                      todaySourceId == record.id &&
+                      todayDueDate != null)
+                    _TodayCompletionCard(
+                      propertyId: property.id,
+                      action: TodayAction(
+                        sourceType: 'compliance',
+                        sourceId: record.id,
+                        title: 'Review ${requirement.name}',
+                        reason: 'due_soon',
+                        priority: 'medium',
+                        propertyId: property.id,
+                        requirementTypeId: requirement.id,
+                        dueDate: todayDueDate,
+                      ),
+                    ),
+                  if (record != null &&
+                      canRecordExpense &&
+                      todaySourceId == record.id &&
+                      todayDueDate != null)
+                    const SizedBox(height: 16),
                   Wrap(
                     spacing: 12,
                     runSpacing: 12,
@@ -150,6 +189,8 @@ class ComplianceRecordScreen extends ConsumerWidget {
                         ),
                     ],
                   ),
+                  const SizedBox(height: 16),
+                  PropertyTimelineSection(propertyId: property.id),
                 ],
               );
             },
@@ -158,6 +199,83 @@ class ComplianceRecordScreen extends ConsumerWidget {
       ],
     );
   }
+}
+
+class _TodayCompletionCard extends ConsumerStatefulWidget {
+  const _TodayCompletionCard({
+    required this.propertyId,
+    required this.action,
+  });
+
+  final String propertyId;
+  final TodayAction action;
+
+  @override
+  ConsumerState<_TodayCompletionCard> createState() =>
+      _TodayCompletionCardState();
+}
+
+class _TodayCompletionCardState extends ConsumerState<_TodayCompletionCard> {
+  bool _saving = false;
+
+  Future<void> _complete() async {
+    setState(() => _saving = true);
+    try {
+      await ref
+          .read(todayRepositoryProvider)
+          .completeComplianceAction(widget.action);
+      ref.invalidate(todayActionsProvider);
+      ref.invalidate(propertyTimelineProvider(widget.propertyId));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Today action marked complete.')),
+        );
+        context.go('/today');
+      }
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'The Today action could not be completed. Try again.',
+            ),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => Card(
+        color: Theme.of(context).colorScheme.primaryContainer,
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Row(
+            children: [
+              const Expanded(
+                child: Text(
+                  'This recommended action is linked to this record and its '
+                  'evidence. Completing it records a management event; it does '
+                  'not certify compliance.',
+                ),
+              ),
+              const SizedBox(width: 16),
+              FilledButton.icon(
+                onPressed: _saving ? null : _complete,
+                icon: _saving
+                    ? const SizedBox.square(
+                        dimension: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.check_circle_outline),
+                label: const Text('Mark complete'),
+              ),
+            ],
+          ),
+        ),
+      );
 }
 
 class _Detail extends StatelessWidget {

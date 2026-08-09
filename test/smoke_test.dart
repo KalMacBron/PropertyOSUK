@@ -4,6 +4,8 @@ import 'package:property_os/features/today/domain/today_action.dart';
 void main() {
   test('Today action parses database output', () {
     final action = TodayAction.fromJson({
+      'source_type': 'compliance',
+      'source_id': 'record-id',
       'title': 'Review Gas Safety Certificate',
       'reason': 'due_soon',
       'priority': 'medium',

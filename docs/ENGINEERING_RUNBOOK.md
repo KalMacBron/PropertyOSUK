@@ -31,8 +31,20 @@ supabase db reset
 supabase test db
 ```
 
-Run `flutter test integration_test` when the integration environment is
-available. A skipped test is an uncompleted acceptance target, not a pass.
+For TC-000, start ChromeDriver 150 (or the version matching local Chrome), reset
+the disposable local database, and run:
+
+```bash
+chromedriver --port=4444
+flutter drive --driver=test_driver/integration_test.dart \
+  --target=integration_test/vertical_slice_test.dart -d chrome \
+  --dart-define=SUPABASE_URL=http://127.0.0.1:54321 \
+  --dart-define=SUPABASE_PUBLISHABLE_KEY=YOUR_LOCAL_PUBLISHABLE_KEY
+```
+
+Never run this destructive fixture journey against a shared or production
+project. A skipped integration test is an uncompleted acceptance target, not a
+pass.
 
 For Edge Function changes, also run:
 

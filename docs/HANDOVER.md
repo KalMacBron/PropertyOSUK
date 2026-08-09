@@ -1,8 +1,10 @@
 # PropertyOS Codex Handover
 
-**Baseline reviewed:** 06/08/2026
+**Baseline reviewed:** 07/08/2026
 **Repository source of truth:** `KalMacBron/PropertyOSUK`
-**Baseline repository head:** `67f5398` — *Merge PR #20: restore complete database CI*
+**Baseline `main`:** `f65568f` — *Merge PR #21: Milestone 10 toolchain baseline*
+**Active implementation:** `codex/milestone-10-tc000` — local acceptance passed,
+not merged or deployed
 
 This is the entry point for a new PropertyOS engineering session. GitHub is the
 source of truth for code. The frozen Alpha boundary remains
@@ -28,10 +30,20 @@ implementation and operational state without silently changing that scope.
 - `testing/PropertyOS_Alpha_Test_Strategy.docx`
 - `testing/PropertyOS_Alpha_Test_Cases.xlsx`
 
-The test strategy and tracker are planning artefacts from 27/07/2026. Their
+The test strategy and tracker originated as planning artefacts on 27/07/2026. Their
 milestone numbering and statements such as “no software has been built” are
-historical, not current-state evidence. The tracker has not yet recorded formal
-execution of the Alpha acceptance suite.
+historical, not current-state evidence. TC-000 now records a local automated
+`Pass`; all other tracker rows retain their existing execution state.
+
+## TC-000 handoff
+
+The active branch adds the database-backed Today feed, evidence deep link,
+durable compliance-action completion, property timeline display, explicit
+RLS-backed portfolio API grants, 21 focused pgTAP assertions, and a real Flutter
+Web integration test using two disposable organisations. Local evidence is 92
+database assertions, 24 Flutter unit/widget tests, clean analysis, and the full
+Chrome journey passing. The hosted Alpha remains at `f65568f` and does not
+contain TC-000.
 
 ## First-session verification
 
