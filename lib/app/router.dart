@@ -8,7 +8,7 @@ import 'package:property_os/features/compliance/presentation/compliance_register
 import 'package:property_os/features/expenses/presentation/expenses_screen.dart';
 import 'package:property_os/features/ownership/presentation/ownership_entities_screen.dart';
 import 'package:property_os/features/properties/presentation/properties_screen.dart';
-import 'package:property_os/features/today/presentation/compliance_dashboard_screen.dart';
+import 'package:property_os/features/today/presentation/today_screen.dart';
 
 final propertyOsRouter = GoRouter(
   initialLocation: '/today',
@@ -18,7 +18,7 @@ final propertyOsRouter = GoRouter(
       routes: [
         GoRoute(
           path: '/today',
-          builder: (_, __) => const ComplianceDashboardScreen(),
+          builder: (_, __) => const TodayScreen(),
         ),
         GoRoute(
           path: '/properties',
@@ -33,6 +33,12 @@ final propertyOsRouter = GoRouter(
           builder: (_, state) => ComplianceRecordScreen(
             propertyId: state.pathParameters['propertyId']!,
             requirementId: state.pathParameters['requirementId']!,
+            todaySourceId: state.uri.queryParameters['todaySourceId'],
+            todayDueDate: state.uri.queryParameters['todayDueDate'] == null
+                ? null
+                : DateTime.tryParse(
+                    state.uri.queryParameters['todayDueDate']!,
+                  ),
           ),
         ),
         GoRoute(
@@ -79,7 +85,7 @@ class _AppShell extends ConsumerWidget {
             ),
             const NavigationDrawerDestination(
               icon: Icon(Icons.dashboard_outlined),
-              label: Text('Dashboard'),
+              label: Text('Today'),
             ),
             const NavigationDrawerDestination(
               icon: Icon(Icons.home_work_outlined),

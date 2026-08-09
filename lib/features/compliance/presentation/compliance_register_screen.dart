@@ -237,8 +237,11 @@ class _RequirementRow extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final record = property.recordFor(requirement.id);
-    final status =
-        record?.statusOn(DateTime.now()) ?? ComplianceStatus.notRecorded;
+    final status = record?.statusOn(
+          DateTime.now(),
+          warningDays: requirement.defaultWarningDays,
+        ) ??
+        ComplianceStatus.notRecorded;
     final summary = <String>[
       if (record?.issueDate != null)
         'Checked ${DateFormat('dd/MM/yyyy').format(record!.issueDate!)}',

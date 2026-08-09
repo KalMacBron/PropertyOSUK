@@ -1,22 +1,23 @@
 # PropertyOS Current State
 
-**Baseline recorded:** 06/08/2026
+**Baseline recorded:** 07/08/2026
 
 ## Source and deployment facts
 
 | Item | Verified state |
 |---|---|
-| Repository `main` | `67f539804926270fb73ea5f28cb3e77368938905` |
+| Repository `main` | `f65568f8b7832144bf3be65d8cdea21c0d4c12b9` |
 | `origin/main` at baseline | Same commit as local `main` |
 | Worktree at baseline review | Clean before documentation updates |
 | Alpha URL | `https://alpha.propertyosuk.com` |
-| Alpha `version.json` | Commit `67f539804926270fb73ea5f28cb3e77368938905` |
-| Alpha deployment time | `2026-08-05T16:07:58Z` |
+| Alpha `version.json` | Commit `f65568f8b7832144bf3be65d8cdea21c0d4c12b9` |
+| Alpha deployment time | `2026-08-07T11:15:04Z` |
 | Deployment source | Push to `main` via `.github/workflows/deploy-alpha.yml` |
 | Production | Not evidenced as established or approved |
 
-The hosted Flutter Alpha was directly verified after PR #20 merged and matches
-`main` at `67f5398`.
+The hosted Flutter Alpha metadata was verified on 07/08/2026 after PR #21 and
+matches `main` at `f65568f`. TC-000 is implemented only on
+`codex/milestone-10-tc000` and is not yet deployed.
 
 This proves the frontend bundle version only. It does not by itself prove that
 the linked Supabase project has every migration and Edge Function from the same
@@ -53,10 +54,30 @@ Alpha on 05/08/2026 and confirmed that expense deletion worked. Formal
 owner/member/viewer API evidence remains part of the wider role-separation
 acceptance gap below; the reported UI defect itself is closed.
 
-## Material acceptance gaps
+## TC-000 local acceptance result
 
-- `integration_test/vertical_slice_test.dart` is empty and skipped.
-- Formal test tracker cases, including TC-000, remain `Not started`.
+TC-000 passes against a reset, disposable local Supabase stack in headless
+Chrome. The executable test creates two fictional users and organisations and
+verifies property onboarding, a Gas Safety expiry at today + 31 days,
+`due_soon`, private evidence Storage, the dated Today action and deep link,
+durable completion, the property timeline event, and denial of the same record,
+document, task and action IDs to the second organisation.
+
+Evidence recorded on 07/08/2026:
+
+- clean database rebuild;
+- seven pgTAP files, 92 assertions passing;
+- Flutter analysis clean and 24 unit/widget tests passing;
+- the TC-000 Flutter Web integration journey passing in Chrome;
+- TC-000 marked `Pass` in the authoritative test tracker.
+
+This is local acceptance evidence, not Alpha deployment or UAT evidence.
+
+## Remaining material acceptance gaps
+
+- TC-000 has not yet passed CI, been deployed with its database migration, or
+  been retested by Karl on the hosted Alpha.
+- Formal tracker cases other than TC-000 remain unexecuted.
 - Tenancy, maintenance, general Tasks, property Timeline, Settings and complete
   organisation export are not exposed as routed application workflows.
 - Backup/restore, deletion, accessibility, responsive and full role/tenant
@@ -65,10 +86,7 @@ acceptance gap below; the reported UI defect itself is closed.
 
 ## Immediate priority
 
-Pin the validated Flutter, Supabase CLI and Deno versions across local guidance,
-CI and Alpha deployment, then implement TC-000 end to end. Do not infer overall
-Alpha readiness from the number of merged implementation milestones.
-
-The toolchain slice upgrades the official checkout action and the Hostinger FTP
-deployment action to their Node.js 24 releases. CI must verify the exact pinned
-Flutter, Supabase CLI and Deno versions before this baseline is accepted.
+Review the TC-000 branch, run CI, and open a draft PR. After separate readiness,
+merge and deployment approvals, apply the migration and frontend together to
+Alpha and execute TC-000 UAT there. Do not infer overall Alpha readiness from
+the local TC-000 pass or the number of merged implementation milestones.

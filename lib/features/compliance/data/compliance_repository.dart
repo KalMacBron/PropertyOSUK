@@ -12,7 +12,7 @@ class ComplianceRepository {
   ) async {
     final rows = await _client
         .from('compliance_requirement_types')
-        .select('id, code, name, description')
+        .select('id, code, name, description, default_warning_days')
         .or('organisation_id.is.null,organisation_id.eq.$organisationId')
         .inFilter('code', trackedRequirementCodes.toList())
         .order('name');

@@ -14,6 +14,7 @@ class ComplianceRequirement {
     required this.code,
     required this.name,
     required this.description,
+    required this.defaultWarningDays,
   });
 
   factory ComplianceRequirement.fromJson(Map<String, dynamic> json) =>
@@ -22,12 +23,14 @@ class ComplianceRequirement {
         code: json['code'] as String,
         name: json['name'] as String,
         description: json['description'] as String? ?? '',
+        defaultWarningDays: json['default_warning_days'] as int,
       );
 
   final String id;
   final String code;
   final String name;
   final String description;
+  final int defaultWarningDays;
 }
 
 class ComplianceRecord {
@@ -65,13 +68,13 @@ class ComplianceRecord {
 
   DateTime? get applicableDate => expiryDate ?? reviewDate;
 
-  ComplianceStatus statusOn(DateTime today) {
+  ComplianceStatus statusOn(DateTime today, {int warningDays = 30}) {
     final dueDate = applicableDate;
     if (dueDate == null) return ComplianceStatus.notRecorded;
     final day = DateTime(today.year, today.month, today.day);
     final due = DateTime(dueDate.year, dueDate.month, dueDate.day);
     if (due.isBefore(day)) return ComplianceStatus.overdue;
-    if (!due.isAfter(day.add(const Duration(days: 30)))) {
+    if (!due.isAfter(day.add(Duration(days: warningDays)))) {
       return ComplianceStatus.dueSoon;
     }
     return ComplianceStatus.compliant;
