@@ -68,14 +68,33 @@ jobs:
           cat build/web/version.json
 
       - name: Deploy to Hostinger
+        id: hostinger_deploy
+        continue-on-error: true
         # Keep the previous Alpha release intact until replacement files arrive.
         # Incremental sync also avoids Hostinger's FTPS connection cap on full clean uploads.
         uses: SamKirkland/FTP-Deploy-Action@v4.4.0
         with:
-          server: 147.93.88.23
+          server: ftp.propertyosuk.com
           username: u714985569.propertyosuk.com
           password: ${{ secrets.HOSTINGER_FTP_PASSWORD }}
           port: 21
           protocol: ftps
+          timeout: 60000
+          local-dir: build/web/
+          server-dir: /public_html/alpha/
+
+      - name: Retry Hostinger deployment
+        if: steps.hostinger_deploy.outcome == 'failure'
+        # Hostinger occasionally drops GitHub-hosted runners before FTPS
+        # authentication. A fresh connection is safe because deployment is
+        # incremental and its state file is stored in the target directory.
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
+        with:
+          server: ftp.propertyosuk.com
+          username: u714985569.propertyosuk.com
+          password: ${{ secrets.HOSTINGER_FTP_PASSWORD }}
+          port: 21
+          protocol: ftps
+          timeout: 60000
           local-dir: build/web/
           server-dir: /public_html/alpha/
