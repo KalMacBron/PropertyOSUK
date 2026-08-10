@@ -9,9 +9,9 @@ The frozen Alpha scope and Karl's explicit milestone approvals remain controllin
    PR #21.
 2. ~~Implement and pass TC-000 locally across authentication, database,
    Storage, Today, task completion, timeline and cross-organisation denial.~~
-   Completed on `codex/milestone-10-tc000`; pending PR, deployment and Alpha UAT.
-3. Review, merge and deploy TC-000 through the approval gates, then execute the
-   same journey on Alpha.
+   Completed on `codex/milestone-10-tc000`.
+3. ~~Review, merge and deploy TC-000 through the approval gates, then execute
+   the same journey on Alpha.~~ Completed and deployed.
 4. Verify deployed Supabase migrations and the certificate-processing Edge
    Function match the tested source.
 5. Continue recording formal acceptance results instead of relying on merged
@@ -25,8 +25,8 @@ commit passed all six database suites (71 assertions).
 
 Subject to an approved implementation contract:
 
-- Extend the TC-000 task-completion and property-timeline foundation into the
-  remaining routed Tasks and Timeline workflows.
+- **In progress:** extend the TC-000 task-completion and property-timeline
+  foundation into a routed Tasks workspace with Today drill-downs.
 - Add the routed tenancy and maintenance workflows already represented in the
   database foundation.
 - Complete organisation-scoped JSON/CSV export and authorised document export.

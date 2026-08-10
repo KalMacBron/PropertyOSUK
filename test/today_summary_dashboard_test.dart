@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:property_os/app/theme.dart';
 import 'package:property_os/features/compliance/domain/compliance_models.dart';
 import 'package:property_os/features/portfolio/application/portfolio_providers.dart';
+import 'package:property_os/features/tasks/application/task_providers.dart';
+import 'package:property_os/features/tasks/domain/task_models.dart';
 import 'package:property_os/features/today/application/today_providers.dart';
 import 'package:property_os/features/today/domain/portfolio_summary.dart';
 import 'package:property_os/features/today/presentation/today_screen.dart';
@@ -88,6 +90,7 @@ void main() {
           ),
           todayActionsProvider.overrideWith((_) async => []),
           propertiesProvider.overrideWith((_) async => []),
+          tasksProvider.overrideWith((_) async => []),
         ],
         child: MaterialApp.router(
           theme: buildPropertyOsTheme(),
@@ -104,6 +107,68 @@ void main() {
     expect(
       router.routeInformationProvider.value.uri.toString(),
       '/compliance?status=notRecorded',
+    );
+  });
+
+  testWidgets('overdue task summary opens the filtered Tasks workspace',
+      (tester) async {
+    final router = GoRouter(
+      initialLocation: '/today',
+      routes: [
+        GoRoute(path: '/today', builder: (_, __) => const TodayScreen()),
+        GoRoute(
+          path: '/tasks',
+          builder: (_, __) => const Scaffold(body: Text('Tasks target')),
+        ),
+      ],
+    );
+    addTearDown(router.dispose);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          portfolioSummaryProvider.overrideWith(
+            (_) async => const PortfolioSummary(
+              propertyCount: 1,
+              compliant: 1,
+              dueSoon: 0,
+              overdue: 0,
+              notRecorded: 0,
+            ),
+          ),
+          todayActionsProvider.overrideWith((_) async => []),
+          propertiesProvider.overrideWith((_) async => []),
+          tasksProvider.overrideWith(
+            (_) async => [
+              PortfolioTask(
+                id: 'task-1',
+                organisationId: 'org-1',
+                propertyId: 'property-1',
+                propertyName: 'Oak House',
+                title: 'Arrange inspection',
+                priority: TaskPriority.high,
+                state: TaskState.open,
+                dueDate: DateTime.now().subtract(const Duration(days: 1)),
+                sourceType: 'manual',
+                createdAt: DateTime.now(),
+              ),
+            ],
+          ),
+        ],
+        child: MaterialApp.router(
+          theme: buildPropertyOsTheme(),
+          routerConfig: router,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('OVERDUE TASKS'));
+    await tester.pumpAndSettle();
+    expect(find.text('Tasks target'), findsOneWidget);
+    expect(
+      router.routeInformationProvider.value.uri.toString(),
+      '/tasks?filter=overdue',
     );
   });
 }

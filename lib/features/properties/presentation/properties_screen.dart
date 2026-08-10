@@ -7,7 +7,9 @@ import 'package:property_os/features/portfolio/application/portfolio_providers.d
 import 'package:property_os/features/portfolio/data/portfolio_repository.dart';
 
 class PropertiesScreen extends ConsumerWidget {
-  const PropertiesScreen({super.key});
+  const PropertiesScreen({this.initialPropertyId, super.key});
+
+  final String? initialPropertyId;
 
   Future<void> _addProperty(BuildContext context, WidgetRef ref) async {
     final organisation = await ref.read(organisationProvider.future);
@@ -71,29 +73,35 @@ class PropertiesScreen extends ConsumerWidget {
                         )
                         .whereType<String>()
                         .join(', ');
-                    return ListTile(
-                      contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 22, vertical: 10),
-                      leading: Container(
-                          width: 44,
-                          height: 44,
-                          color: const Color(0xFFF0F4F6),
-                          child: const Icon(Icons.home_outlined,
-                              color: PropertyOsColours.navy)),
-                      title: Text(
-                        (item['display_name'] as String?)?.isNotEmpty == true
-                            ? item['display_name'] as String
-                            : item['address_line_1'] as String,
-                      ),
-                      subtitle: Text(
-                        '${item['address_line_1']}, ${item['town_or_city']}, ${item['postcode']}\nOwner: $ownerNames',
-                      ),
-                      isThreeLine: true,
-                      trailing: IconButton(
-                        tooltip: 'View property expenses',
-                        icon: const Icon(Icons.receipt_long_outlined),
-                        onPressed: () => context.go(
-                          '/expenses?propertyId=${item['id']}',
+                    final selected = item['id'] == initialPropertyId;
+                    return Container(
+                      color: selected
+                          ? PropertyOsColours.amber.withValues(alpha: 0.12)
+                          : null,
+                      child: ListTile(
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 22, vertical: 10),
+                        leading: Container(
+                            width: 44,
+                            height: 44,
+                            color: const Color(0xFFF0F4F6),
+                            child: const Icon(Icons.home_outlined,
+                                color: PropertyOsColours.navy)),
+                        title: Text(
+                          (item['display_name'] as String?)?.isNotEmpty == true
+                              ? item['display_name'] as String
+                              : item['address_line_1'] as String,
+                        ),
+                        subtitle: Text(
+                          '${item['address_line_1']}, ${item['town_or_city']}, ${item['postcode']}\nOwner: $ownerNames',
+                        ),
+                        isThreeLine: true,
+                        trailing: IconButton(
+                          tooltip: 'View property expenses',
+                          icon: const Icon(Icons.receipt_long_outlined),
+                          onPressed: () => context.go(
+                            '/expenses?propertyId=${item['id']}',
+                          ),
                         ),
                       ),
                     );
