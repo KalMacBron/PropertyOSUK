@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:property_os/app/theme.dart';
+import 'package:property_os/features/portfolio/application/portfolio_providers.dart';
 import 'package:property_os/features/tasks/application/task_providers.dart';
 import 'package:property_os/features/tasks/domain/task_models.dart';
 import 'package:property_os/features/tasks/presentation/tasks_screen.dart';
@@ -57,7 +58,17 @@ void main() {
 
     await tester.pumpWidget(
       ProviderScope(
-        overrides: [tasksProvider.overrideWith((_) async => tasks)],
+        overrides: [
+          tasksProvider.overrideWith((_) async => tasks),
+          propertiesProvider.overrideWith(
+            (_) async => [
+              {
+                'id': 'property',
+                'address_line_1': 'Oak House',
+              },
+            ],
+          ),
+        ],
         child: MaterialApp.router(
           theme: buildPropertyOsTheme(),
           routerConfig: router,
@@ -68,6 +79,20 @@ void main() {
 
     expect(find.text('Overdue inspection'), findsOneWidget);
     expect(find.text('Completed inspection'), findsOneWidget);
+
+    await tester.tap(find.widgetWithText(OutlinedButton, 'Edit').first);
+    await tester.pumpAndSettle();
+    expect(find.text('Edit task'), findsOneWidget);
+    expect(find.widgetWithText(FilledButton, 'Save changes'), findsOneWidget);
+    expect(
+      tester
+          .widget<TextFormField>(find.byType(TextFormField).first)
+          .controller
+          ?.text,
+      'Overdue inspection',
+    );
+    await tester.tap(find.widgetWithText(TextButton, 'Cancel').last);
+    await tester.pumpAndSettle();
 
     await tester.tap(find.text('OVERDUE'));
     await tester.pumpAndSettle();

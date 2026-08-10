@@ -112,6 +112,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
               child: _TaskCard(
                 task: task,
                 busy: _busyTaskId == task.id,
+                onEdit: () => _showTaskDialog(task),
                 onComplete: task.isOpen
                     ? () => _transition(task, TaskState.completed)
                     : null,
@@ -193,14 +194,19 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
     }
   }
 
-  Future<void> _showCreateTask() async {
-    final created = await showDialog<bool>(
+  Future<void> _showCreateTask() => _showTaskDialog(null);
+
+  Future<void> _showTaskDialog(PortfolioTask? task) async {
+    final saved = await showDialog<bool>(
       context: context,
-      builder: (_) => const _CreateTaskDialog(),
+      builder: (_) => _TaskDialog(task: task),
     );
-    if (created == true) {
+    if (saved == true) {
       ref.invalidate(tasksProvider);
       ref.invalidate(todayActionsProvider);
+      if (task?.propertyId != null) {
+        ref.invalidate(propertyTimelineProvider(task!.propertyId!));
+      }
     }
   }
 }
@@ -276,6 +282,7 @@ class _TaskCard extends StatelessWidget {
   const _TaskCard({
     required this.task,
     required this.busy,
+    required this.onEdit,
     required this.onComplete,
     required this.onCancel,
     required this.onReopen,
@@ -283,6 +290,7 @@ class _TaskCard extends StatelessWidget {
   });
   final PortfolioTask task;
   final bool busy;
+  final VoidCallback onEdit;
   final VoidCallback? onComplete;
   final VoidCallback? onCancel;
   final VoidCallback? onReopen;
@@ -334,6 +342,11 @@ class _TaskCard extends StatelessWidget {
                     : 'Due ${_formatDate(task.dueDate!)}'),
                 TextButton(
                     onPressed: onOpenSource, child: const Text('Open source')),
+                OutlinedButton.icon(
+                  onPressed: busy ? null : onEdit,
+                  icon: const Icon(Icons.edit_outlined, size: 18),
+                  label: const Text('Edit'),
+                ),
                 if (busy)
                   const SizedBox.square(
                       dimension: 22,
@@ -367,20 +380,34 @@ class _Badge extends StatelessWidget {
       );
 }
 
-class _CreateTaskDialog extends ConsumerStatefulWidget {
-  const _CreateTaskDialog();
+class _TaskDialog extends ConsumerStatefulWidget {
+  const _TaskDialog({this.task});
+
+  final PortfolioTask? task;
+
   @override
-  ConsumerState<_CreateTaskDialog> createState() => _CreateTaskDialogState();
+  ConsumerState<_TaskDialog> createState() => _TaskDialogState();
 }
 
-class _CreateTaskDialogState extends ConsumerState<_CreateTaskDialog> {
+class _TaskDialogState extends ConsumerState<_TaskDialog> {
   final _formKey = GlobalKey<FormState>();
-  final _title = TextEditingController();
-  final _description = TextEditingController();
-  String? _propertyId;
-  TaskPriority _priority = TaskPriority.medium;
-  DateTime? _dueDate;
+  late final TextEditingController _title;
+  late final TextEditingController _description;
+  late String? _propertyId;
+  late TaskPriority _priority;
+  late DateTime? _dueDate;
   bool _saving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final task = widget.task;
+    _title = TextEditingController(text: task?.title);
+    _description = TextEditingController(text: task?.description);
+    _propertyId = task?.propertyId;
+    _priority = task?.priority ?? TaskPriority.medium;
+    _dueDate = task?.dueDate;
+  }
 
   @override
   void dispose() {
@@ -393,7 +420,7 @@ class _CreateTaskDialogState extends ConsumerState<_CreateTaskDialog> {
   Widget build(BuildContext context) {
     final properties = ref.watch(propertiesProvider);
     return AlertDialog(
-      title: const Text('New task'),
+      title: Text(widget.task == null ? 'New task' : 'Edit task'),
       content: SizedBox(
         width: 520,
         child: Form(
@@ -470,7 +497,11 @@ class _CreateTaskDialogState extends ConsumerState<_CreateTaskDialog> {
             child: const Text('Cancel')),
         FilledButton(
             onPressed: _saving ? null : _save,
-            child: Text(_saving ? 'Creating…' : 'Create task')),
+            child: Text(_saving
+                ? 'Saving…'
+                : widget.task == null
+                    ? 'Create task'
+                    : 'Save changes')),
       ],
     );
   }
@@ -492,21 +523,38 @@ class _CreateTaskDialogState extends ConsumerState<_CreateTaskDialog> {
     if (organisation == null) return;
     setState(() => _saving = true);
     try {
-      await ref.read(taskRepositoryProvider).createTask(
-            CreateTaskInput(
-              organisationId: organisation.id,
-              propertyId: _propertyId!,
-              title: _title.text.trim(),
-              description: _description.text.trim(),
-              priority: _priority,
-              dueDate: _dueDate,
-            ),
-          );
+      final repository = ref.read(taskRepositoryProvider);
+      if (widget.task == null) {
+        await repository.createTask(
+          CreateTaskInput(
+            organisationId: organisation.id,
+            propertyId: _propertyId!,
+            title: _title.text.trim(),
+            description: _description.text.trim(),
+            priority: _priority,
+            dueDate: _dueDate,
+          ),
+        );
+      } else {
+        await repository.updateTask(
+          UpdateTaskInput(
+            taskId: widget.task!.id,
+            propertyId: _propertyId!,
+            title: _title.text.trim(),
+            description: _description.text.trim(),
+            priority: _priority,
+            dueDate: _dueDate,
+          ),
+        );
+      }
       if (mounted) Navigator.pop(context, true);
     } catch (_) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('The task could not be created.')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(widget.task == null
+              ? 'The task could not be created.'
+              : 'The task could not be updated.'),
+        ));
         setState(() => _saving = false);
       }
     }
