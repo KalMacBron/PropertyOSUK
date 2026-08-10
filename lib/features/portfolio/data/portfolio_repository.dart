@@ -5,11 +5,13 @@ class OrganisationSummary {
     required this.id,
     required this.name,
     required this.role,
+    this.isActive = false,
   });
 
   final String id;
   final String name;
   final String role;
+  final bool isActive;
 
   bool get canUploadEvidence =>
       role == 'owner' || role == 'admin' || role == 'member';
@@ -46,21 +48,26 @@ class PortfolioRepository {
 
   String get _userId => _client.auth.currentUser!.id;
 
-  Future<OrganisationSummary?> currentOrganisation() async {
-    final rows = await _client
-        .from('organisation_members')
-        .select('organisation_id, role, organisations(name)')
-        .eq('user_id', _userId)
-        .limit(1);
-    if (rows.isEmpty) return null;
-    final row = rows.first;
-    final organisation = row['organisations'] as Map<String, dynamic>;
-    return OrganisationSummary(
-      id: row['organisation_id'] as String,
-      name: organisation['name'] as String,
-      role: row['role'] as String,
-    );
+  Future<List<OrganisationSummary>> listOrganisations() async {
+    final rows = await _client.rpc<List<dynamic>>('list_my_organisations');
+    return rows
+        .cast<Map<String, dynamic>>()
+        .map(
+          (row) => OrganisationSummary(
+            id: row['id'] as String,
+            name: row['name'] as String,
+            role: row['role'] as String,
+            isActive: row['is_active'] as bool? ?? false,
+          ),
+        )
+        .toList();
   }
+
+  Future<void> setActiveOrganisation(String organisationId) =>
+      _client.rpc<void>(
+        'set_active_organisation',
+        params: {'target_organisation_id': organisationId},
+      );
 
   Future<OrganisationSummary> createOrganisation(String name) async {
     final slug =

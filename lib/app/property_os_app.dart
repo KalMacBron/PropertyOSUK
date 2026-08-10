@@ -7,6 +7,7 @@ import 'package:property_os/features/auth/presentation/password_recovery_screen.
 import 'package:property_os/features/auth/presentation/sign_in_screen.dart';
 import 'package:property_os/features/portfolio/application/portfolio_providers.dart';
 import 'package:property_os/features/portfolio/presentation/workspace_setup_screen.dart';
+import 'package:property_os/features/portfolio/presentation/workspace_selection_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class PropertyOsApp extends StatelessWidget {
@@ -25,6 +26,11 @@ class _AuthenticatedApp extends ConsumerWidget {
     ref.listen(authStateProvider, (_, next) {
       if (next.value?.event == AuthChangeEvent.passwordRecovery) {
         ref.read(passwordRecoveryProvider.notifier).state = true;
+      }
+      if (next.value?.event == AuthChangeEvent.signedIn ||
+          next.value?.event == AuthChangeEvent.signedOut) {
+        ref.invalidate(activeOrganisationIdProvider);
+        ref.invalidate(organisationMembershipsProvider);
       }
     });
     final recoveringPassword = ref.watch(passwordRecoveryProvider);
@@ -46,8 +52,8 @@ class _AuthenticatedApp extends ConsumerWidget {
         home: const SignInScreen(),
       );
     }
-    final organisation = ref.watch(organisationProvider);
-    return organisation.when(
+    final memberships = ref.watch(organisationMembershipsProvider);
+    return memberships.when(
       loading: () => MaterialApp(
         theme: buildPropertyOsTheme(),
         home: const Scaffold(body: Center(child: CircularProgressIndicator())),
@@ -60,19 +66,48 @@ class _AuthenticatedApp extends ConsumerWidget {
           ),
         ),
       ),
-      data: (value) => value == null
-          ? MaterialApp(
-              title: 'PropertyOS',
-              debugShowCheckedModeBanner: false,
-              theme: buildPropertyOsTheme(),
-              home: const WorkspaceSetupScreen(),
-            )
-          : MaterialApp.router(
-              title: 'PropertyOS',
-              debugShowCheckedModeBanner: false,
-              theme: buildPropertyOsTheme(),
-              routerConfig: propertyOsRouter,
+      data: (organisations) {
+        if (organisations.isEmpty) {
+          return MaterialApp(
+            title: 'PropertyOS',
+            debugShowCheckedModeBanner: false,
+            theme: buildPropertyOsTheme(),
+            home: const WorkspaceSetupScreen(),
+          );
+        }
+        final organisation = ref.watch(organisationProvider);
+        return organisation.when(
+          loading: () => MaterialApp(
+            theme: buildPropertyOsTheme(),
+            home: const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
             ),
+          ),
+          error: (_, __) => MaterialApp(
+            theme: buildPropertyOsTheme(),
+            home: const Scaffold(
+              body: Center(
+                child: Text('PropertyOS could not select your workspace.'),
+              ),
+            ),
+          ),
+          data: (value) => value == null
+              ? MaterialApp(
+                  title: 'PropertyOS',
+                  debugShowCheckedModeBanner: false,
+                  theme: buildPropertyOsTheme(),
+                  home: WorkspaceSelectionScreen(
+                    organisations: organisations,
+                  ),
+                )
+              : MaterialApp.router(
+                  title: 'PropertyOS',
+                  debugShowCheckedModeBanner: false,
+                  theme: buildPropertyOsTheme(),
+                  routerConfig: propertyOsRouter,
+                ),
+        );
+      },
     );
   }
 }

@@ -6,9 +6,37 @@ final portfolioRepositoryProvider = Provider<PortfolioRepository>(
   (ref) => PortfolioRepository(ref.watch(supabaseProvider)),
 );
 
-final organisationProvider = FutureProvider<OrganisationSummary?>(
-  (ref) => ref.watch(portfolioRepositoryProvider).currentOrganisation(),
+final organisationMembershipsProvider =
+    FutureProvider<List<OrganisationSummary>>(
+  (ref) => ref.watch(portfolioRepositoryProvider).listOrganisations(),
 );
+
+final activeOrganisationIdProvider = StateProvider<String?>((ref) => null);
+
+final organisationProvider = FutureProvider<OrganisationSummary?>((ref) async {
+  final organisations = await ref.watch(organisationMembershipsProvider.future);
+  if (organisations.isEmpty) return null;
+
+  final selectedId = ref.watch(activeOrganisationIdProvider);
+  for (final organisation in organisations) {
+    if (organisation.id == selectedId) return organisation;
+  }
+  for (final organisation in organisations) {
+    if (organisation.isActive) return organisation;
+  }
+  return organisations.length == 1 ? organisations.single : null;
+});
+
+Future<void> selectOrganisation(
+  WidgetRef ref,
+  OrganisationSummary organisation,
+) async {
+  await ref
+      .read(portfolioRepositoryProvider)
+      .setActiveOrganisation(organisation.id);
+  ref.read(activeOrganisationIdProvider.notifier).state = organisation.id;
+  ref.invalidate(organisationMembershipsProvider);
+}
 
 final ownershipEntitiesProvider = FutureProvider<List<OwnershipEntity>>((
   ref,

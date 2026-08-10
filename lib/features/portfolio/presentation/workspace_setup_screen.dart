@@ -24,6 +24,7 @@ class _WorkspaceSetupScreenState extends ConsumerState<WorkspaceSetupScreen> {
       await ref
           .read(portfolioRepositoryProvider)
           .createOrganisation(_name.text);
+      ref.invalidate(organisationMembershipsProvider);
       ref.invalidate(organisationProvider);
     } catch (error) {
       setState(

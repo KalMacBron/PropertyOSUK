@@ -25,8 +25,10 @@ commit passed all six database suites (71 assertions).
 
 Subject to an approved implementation contract:
 
-- **In progress:** extend the TC-000 task-completion and property-timeline
-  foundation into a routed Tasks workspace with Today drill-downs.
+- ~~Extend the TC-000 task-completion and property-timeline foundation into a
+  routed Tasks workspace with Today drill-downs.~~ Completed and accepted.
+- **In progress:** SaaS Foundation 1: explicit authorised organisation context,
+  persisted workspace selection, safe switching and final-owner safeguards.
 - Add the routed tenancy and maintenance workflows already represented in the
   database foundation.
 - Complete organisation-scoped JSON/CSV export and authorised document export.
@@ -40,6 +42,9 @@ Subject to an approved implementation contract:
 - Further AI extraction improvements with transparent confirmation.
 - Native iOS and Android clients after web validation.
 - Optional integrations with independent KaelVaren products.
+- Complete User Management: invitations, member administration, account
+  lifecycle and multi-factor authentication (MFA), including recovery and
+  step-up authentication for sensitive actions.
 
 ## Deliberate boundaries
 
