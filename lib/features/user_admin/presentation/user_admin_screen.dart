@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:property_os/app/theme.dart';
@@ -5,10 +7,32 @@ import 'package:property_os/features/portfolio/application/portfolio_providers.d
 import 'package:property_os/features/user_admin/application/user_admin_providers.dart';
 import 'package:property_os/features/user_admin/data/user_admin_repository.dart';
 
-class UserAdminScreen extends ConsumerWidget {
+class UserAdminScreen extends ConsumerStatefulWidget {
   const UserAdminScreen({super.key});
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<UserAdminScreen> createState() => _UserAdminScreenState();
+}
+
+class _UserAdminScreenState extends ConsumerState<UserAdminScreen> {
+  Timer? _refreshTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _refreshTimer = Timer.periodic(const Duration(seconds: 15), (_) {
+      ref.invalidate(organisationUsersProvider);
+    });
+  }
+
+  @override
+  void dispose() {
+    _refreshTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final organisation = ref.watch(organisationProvider).valueOrNull;
     if (organisation == null ||
         !['owner', 'admin'].contains(organisation.role)) {
@@ -34,6 +58,11 @@ class UserAdminScreen extends ConsumerWidget {
                       'Manage who can access this organisation and what they can do.',
                       style: TextStyle(color: PropertyOsColours.muted))
                 ])),
+            IconButton(
+                tooltip: 'Refresh users',
+                onPressed: () => ref.invalidate(organisationUsersProvider),
+                icon: const Icon(Icons.refresh)),
+            const SizedBox(width: 8),
             FilledButton.icon(
                 onPressed: () =>
                     _invite(context, ref, organisation.id, organisation.role),

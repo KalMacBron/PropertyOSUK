@@ -13,3 +13,6 @@ final currentUserProvider = Provider<User?>((ref) {
 });
 
 final passwordRecoveryProvider = StateProvider<bool>((ref) => false);
+
+bool invitationOnboardingRequired(Map<String, dynamic>? metadata) =>
+    metadata?['propertyos_invitation_onboarding'] == true;

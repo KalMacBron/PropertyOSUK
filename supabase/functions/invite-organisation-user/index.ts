@@ -88,7 +88,10 @@ Deno.serve(async (request: Request) => {
   const redirectTo = `${origin ?? "https://alpha.propertyosuk.com"}/`;
   const { error: inviteError } = await admin.auth.admin.inviteUserByEmail(
     String(body.email).trim().toLowerCase(),
-    { redirectTo },
+    {
+      redirectTo,
+      data: { propertyos_invitation_onboarding: true },
+    },
   );
   if (inviteError) {
     const { error: existingUserEmailError } = await userClient.auth
