@@ -6,17 +6,17 @@
 
 | Item | Verified state |
 |---|---|
-| Repository `main` | `02f07ca737af5ca78d6b4dc287cd74e127cbf444` |
+| Repository `main` | `c41ae1add10c0a1dc56166c1ccf59b7fb569ac6f` |
 | `origin/main` at baseline | Same commit as local `main` |
 | Worktree at baseline review | Clean before documentation updates |
 | Alpha URL | `https://alpha.propertyosuk.com` |
-| Alpha `version.json` | Commit `02f07ca737af5ca78d6b4dc287cd74e127cbf444` |
-| Alpha deployment time | `2026-08-10T11:38:47Z` |
+| Alpha `version.json` | Commit `c41ae1add10c0a1dc56166c1ccf59b7fb569ac6f` |
+| Alpha deployment time | `2026-08-10T13:31:21Z` |
 | Deployment source | Push to `main` via `.github/workflows/deploy-alpha.yml` |
 | Production | Not evidenced as established or approved |
 
-The hosted Flutter Alpha metadata was verified on 10/08/2026 after PR #29 and
-matches `main` at `02f07ca`. TC-000 has been merged and deployed. Karl has also
+The hosted Flutter Alpha metadata was verified on 10/08/2026 after PR #30 and
+matches `main` at `c41ae1a`. TC-000 has been merged and deployed. Karl has also
 accepted the refreshed KaelVaren UI, sign-out/landing flow, Today compliance
 summary and filtered compliance drill-downs.
 
@@ -27,6 +27,9 @@ commit. GitHub Actions CI passed on `02f07ca`. Alpha deployment run
 The Tasks database migration was applied to the hosted project as
 `20260810120613_task_workflow_actions` after the web-only deployment exposed
 the missing RPC; Karl then confirmed task creation worked on Alpha.
+The task-edit migration was subsequently applied as
+`20260810133157_task_editing`; the authenticated invoker RPC was verified and
+Karl accepted the deployed create, reopen and edit workflow.
 
 ## Delivered implementation increments
 
@@ -45,7 +48,8 @@ the missing RPC; Karl then confirmed task creation worked on Alpha.
 | TC-000 durable Today completion and property timeline | Merged and deployed |
 | KaelVaren UI foundation, landing/sign-out flow and Today summary | Merged, deployed and accepted |
 | Compliance summary filtered drill-downs | Merged, deployed and accepted |
-| Portfolio Tasks workspace | Merged, deployed and accepted; edit follow-up in progress |
+| Portfolio Tasks workspace and edit workflow | Merged, deployed and accepted |
+| SaaS Foundation 1 | Approved and in progress on `codex/saas-foundation-1` |
 
 “Merged” does not mean the frozen Alpha acceptance criteria are complete. The
 repository milestone numbers describe implementation increments and do not map
@@ -93,7 +97,9 @@ TC-000.
 
 ## Immediate priority
 
-Complete the approved task-edit follow-up, verify it locally and in CI, then
-obtain separate readiness, merge and deployment approvals. Follow with
-Maintenance, Tenancies, Export and the remaining formal Alpha acceptance
-coverage. Do not infer overall Alpha readiness from merged increments alone.
+Complete SaaS Foundation 1: explicit authorised organisation selection,
+workspace switching, persisted profile preference, cache-safe data reload and
+final-owner safeguards. Follow with Tenancies, Maintenance, Export and the
+remaining formal Alpha acceptance coverage. Invitations, complete member
+management and MFA remain later User Management work. Do not infer overall
+Alpha readiness from merged increments alone.

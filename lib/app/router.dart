@@ -9,6 +9,8 @@ import 'package:property_os/features/compliance/presentation/compliance_record_s
 import 'package:property_os/features/compliance/presentation/compliance_register_screen.dart';
 import 'package:property_os/features/expenses/presentation/expenses_screen.dart';
 import 'package:property_os/features/ownership/presentation/ownership_entities_screen.dart';
+import 'package:property_os/features/portfolio/application/portfolio_providers.dart';
+import 'package:property_os/features/portfolio/data/portfolio_repository.dart';
 import 'package:property_os/features/properties/presentation/properties_screen.dart';
 import 'package:property_os/features/tasks/presentation/tasks_screen.dart';
 import 'package:property_os/features/today/presentation/today_screen.dart';
@@ -82,6 +84,9 @@ class _AppShell extends ConsumerWidget {
     final selected =
         _destinations.indexWhere((item) => path.startsWith(item.path));
     void navigate(int index) => context.go(_destinations[index].path);
+    final organisation = ref.watch(organisationProvider).valueOrNull;
+    final organisations =
+        ref.watch(organisationMembershipsProvider).valueOrNull ?? const [];
     return LayoutBuilder(builder: (context, constraints) {
       final desktop = constraints.maxWidth >= 900;
       final content = Column(children: [
@@ -108,7 +113,12 @@ class _AppShell extends ConsumerWidget {
       if (desktop) {
         return Scaffold(
             body: Row(children: [
-          _DesktopNavigation(selected: selected, onSelected: navigate),
+          _DesktopNavigation(
+            selected: selected,
+            onSelected: navigate,
+            organisation: organisation,
+            organisations: organisations,
+          ),
           Expanded(child: content)
         ]));
       }
@@ -122,6 +132,8 @@ class _AppShell extends ConsumerWidget {
               child: SafeArea(
                   child: _NavigationContent(
                       selected: selected,
+                      organisation: organisation,
+                      organisations: organisations,
                       onSelected: (index) {
                         Navigator.pop(context);
                         navigate(index);
@@ -145,9 +157,16 @@ const _destinations = [
 ];
 
 class _DesktopNavigation extends StatelessWidget {
-  const _DesktopNavigation({required this.selected, required this.onSelected});
+  const _DesktopNavigation({
+    required this.selected,
+    required this.onSelected,
+    required this.organisation,
+    required this.organisations,
+  });
   final int selected;
   final ValueChanged<int> onSelected;
+  final OrganisationSummary? organisation;
+  final List<OrganisationSummary> organisations;
   @override
   Widget build(BuildContext context) => SizedBox(
       width: 276,
@@ -155,13 +174,56 @@ class _DesktopNavigation extends StatelessWidget {
           color: PropertyOsColours.deepNavy,
           child: SafeArea(
               child: _NavigationContent(
-                  selected: selected, onSelected: onSelected))));
+            selected: selected,
+            onSelected: onSelected,
+            organisation: organisation,
+            organisations: organisations,
+          ))));
 }
 
-class _NavigationContent extends StatelessWidget {
-  const _NavigationContent({required this.selected, required this.onSelected});
+class _NavigationContent extends ConsumerStatefulWidget {
+  const _NavigationContent({
+    required this.selected,
+    required this.onSelected,
+    required this.organisation,
+    required this.organisations,
+  });
   final int selected;
   final ValueChanged<int> onSelected;
+  final OrganisationSummary? organisation;
+  final List<OrganisationSummary> organisations;
+
+  @override
+  ConsumerState<_NavigationContent> createState() => _NavigationContentState();
+}
+
+class _NavigationContentState extends ConsumerState<_NavigationContent> {
+  bool _switching = false;
+
+  Future<void> _switchWorkspace(String? organisationId) async {
+    if (organisationId == null || organisationId == widget.organisation?.id) {
+      return;
+    }
+    OrganisationSummary? selected;
+    for (final organisation in widget.organisations) {
+      if (organisation.id == organisationId) selected = organisation;
+    }
+    if (selected == null) return;
+    setState(() => _switching = true);
+    try {
+      await selectOrganisation(ref, selected);
+      if (mounted) context.go('/today');
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('The workspace could not be changed.')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _switching = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) => Padding(
       padding: const EdgeInsets.all(18),
@@ -173,23 +235,50 @@ class _NavigationContent extends StatelessWidget {
             margin: const EdgeInsets.symmetric(vertical: 16),
             padding: const EdgeInsets.all(14),
             color: const Color(0xFF102F40),
-            child: const Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('ORGANISATION',
-                      style: TextStyle(
-                          color: Color(0xFF7892A3),
-                          fontSize: 9,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 1.5)),
-                  SizedBox(height: 8),
-                  Text('PropertyOS Alpha',
-                      style: TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.w700)),
-                  SizedBox(height: 4),
-                  Text('Portfolio workspace',
-                      style: TextStyle(color: Color(0xFF8EA4B2), fontSize: 12))
-                ])),
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text('ORGANISATION',
+                  style: TextStyle(
+                      color: Color(0xFF7892A3),
+                      fontSize: 9,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 1.5)),
+              SizedBox(height: 8),
+              Text(widget.organisation?.name ?? 'PropertyOS',
+                  style: const TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.w700)),
+              const SizedBox(height: 4),
+              Text(
+                  widget.organisation == null
+                      ? 'Portfolio workspace'
+                      : '${widget.organisation!.role.toUpperCase()} · Portfolio workspace',
+                  style:
+                      const TextStyle(color: Color(0xFF8EA4B2), fontSize: 12))
+            ])),
+        if (widget.organisations.length > 1)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(4, 0, 4, 16),
+            child: DropdownButtonFormField<String>(
+              initialValue: widget.organisation?.id,
+              dropdownColor: PropertyOsColours.deepNavy,
+              style: const TextStyle(color: Colors.white, fontSize: 12),
+              decoration: InputDecoration(
+                labelText: _switching ? 'Switching…' : 'Workspace',
+                labelStyle: const TextStyle(color: Color(0xFFA9BCC8)),
+                enabledBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(color: Color(0xFF496575)),
+                ),
+              ),
+              items: [
+                for (final organisation in widget.organisations)
+                  DropdownMenuItem(
+                    value: organisation.id,
+                    child: Text(organisation.name),
+                  ),
+              ],
+              onChanged: _switching ? null : _switchWorkspace,
+            ),
+          ),
         const Padding(
             padding: EdgeInsets.fromLTRB(12, 4, 0, 8),
             child: Text('PORTFOLIO OPERATIONS',
@@ -202,16 +291,16 @@ class _NavigationContent extends StatelessWidget {
           Padding(
               padding: const EdgeInsets.only(bottom: 4),
               child: Material(
-                  color: i == selected
+                  color: i == widget.selected
                       ? PropertyOsColours.selectedNavy
                       : Colors.transparent,
                   child: InkWell(
-                      onTap: () => onSelected(i),
+                      onTap: () => widget.onSelected(i),
                       child: Container(
                           decoration: BoxDecoration(
                               border: Border(
                                   left: BorderSide(
-                                      color: i == selected
+                                      color: i == widget.selected
                                           ? PropertyOsColours.amber
                                           : Colors.transparent,
                                       width: 4))),
@@ -223,10 +312,10 @@ class _NavigationContent extends StatelessWidget {
                             const SizedBox(width: 16),
                             Text(_destinations[i].label,
                                 style: TextStyle(
-                                    color: i == selected
+                                    color: i == widget.selected
                                         ? Colors.white
                                         : const Color(0xFFB2C2CC),
-                                    fontWeight: i == selected
+                                    fontWeight: i == widget.selected
                                         ? FontWeight.w700
                                         : FontWeight.w400))
                           ]))))),
