@@ -18,5 +18,13 @@ class AuthRepository {
   Future<void> updatePassword(String password) =>
       _client.auth.updateUser(UserAttributes(password: password));
 
+  Future<void> completeInvitationOnboarding(String password) async {
+    await _client.auth.updateUser(UserAttributes(password: password));
+    await _client.rpc<int>('accept_my_organisation_invitations');
+    await _client.auth.updateUser(
+      UserAttributes(data: {'propertyos_invitation_onboarding': false}),
+    );
+  }
+
   Future<void> signOut() => _client.auth.signOut();
 }

@@ -4,6 +4,7 @@ import 'package:property_os/app/router.dart';
 import 'package:property_os/app/theme.dart';
 import 'package:property_os/features/auth/application/auth_state.dart';
 import 'package:property_os/features/auth/presentation/password_recovery_screen.dart';
+import 'package:property_os/features/auth/presentation/invitation_onboarding_screen.dart';
 import 'package:property_os/features/auth/presentation/sign_in_screen.dart';
 import 'package:property_os/features/portfolio/application/portfolio_providers.dart';
 import 'package:property_os/features/portfolio/presentation/workspace_setup_screen.dart';
@@ -51,6 +52,14 @@ class _AuthenticatedApp extends ConsumerWidget {
         debugShowCheckedModeBanner: false,
         theme: buildPropertyOsTheme(),
         home: const SignInScreen(),
+      );
+    }
+    if (invitationOnboardingRequired(user.userMetadata)) {
+      return MaterialApp(
+        title: 'PropertyOS',
+        debugShowCheckedModeBanner: false,
+        theme: buildPropertyOsTheme(),
+        home: const InvitationOnboardingScreen(),
       );
     }
     ref.watch(invitationAcceptanceProvider);

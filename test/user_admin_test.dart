@@ -1,7 +1,19 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:property_os/features/auth/application/auth_state.dart';
 import 'package:property_os/features/user_admin/data/user_admin_repository.dart';
 
 void main() {
+  test('requires onboarding only for tagged invitation sessions', () {
+    expect(
+      invitationOnboardingRequired(
+        {'propertyos_invitation_onboarding': true},
+      ),
+      isTrue,
+    );
+    expect(invitationOnboardingRequired({}), isFalse);
+    expect(invitationOnboardingRequired(null), isFalse);
+  });
+
   test('parses active organisation member', () {
     final user = OrganisationUser.fromJson({
       'record_type': 'member',

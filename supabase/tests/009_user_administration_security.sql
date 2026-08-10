@@ -1,5 +1,5 @@
 begin;
-select plan(18);
+select plan(19);
 
 insert into auth.users (instance_id,id,aud,role,email,encrypted_password,email_confirmed_at,raw_app_meta_data,raw_user_meta_data,created_at,updated_at) values
 ('00000000-0000-0000-0000-000000000000','91000000-0000-4000-8000-000000000001','authenticated','authenticated','owner@admin.test',crypt('test',gen_salt('bf')),now(),'{"provider":"email","providers":["email"]}','{}',now(),now()),
@@ -38,6 +38,7 @@ select is((select role::text from public.organisation_members where organisation
 select throws_ok($$select * from public.list_organisation_users('f1000000-0000-4000-8000-000000000001')$$,'42501','user_admin_forbidden','viewer cannot list user admin');
 
 select set_config('request.jwt.claim.sub','91000000-0000-4000-8000-000000000001',true);
+select is((select count(*) from public.list_organisation_users('f1000000-0000-4000-8000-000000000001') where record_type='invitation'),0::bigint,'accepted invitation is replaced by active member');
 select is((select count(*) from public.organisation_audit_events where event_type='member_joined'),1::bigint,'acceptance audited and visible to owner');
 select throws_ok($$select public.remove_organisation_member('f1000000-0000-4000-8000-000000000001','91000000-0000-4000-8000-000000000001')$$,'23514','organisation_requires_owner','final owner remains protected');
 select lives_ok($$select public.remove_organisation_member('f1000000-0000-4000-8000-000000000001','91000000-0000-4000-8000-000000000003')$$,'owner removes member');

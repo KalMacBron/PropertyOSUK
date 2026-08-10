@@ -17,7 +17,10 @@ function reply(origin: string | null, status: number, body: unknown) {
     headers["access-control-allow-methods"] = "POST, OPTIONS";
     headers.vary = "Origin";
   }
-  return new Response(JSON.stringify(body), { status, headers });
+  return new Response(status === 204 ? null : JSON.stringify(body), {
+    status,
+    headers,
+  });
 }
 
 function secretKey() {
@@ -85,7 +88,10 @@ Deno.serve(async (request: Request) => {
   const redirectTo = `${origin ?? "https://alpha.propertyosuk.com"}/`;
   const { error: inviteError } = await admin.auth.admin.inviteUserByEmail(
     String(body.email).trim().toLowerCase(),
-    { redirectTo },
+    {
+      redirectTo,
+      data: { propertyos_invitation_onboarding: true },
+    },
   );
   if (inviteError) {
     const { error: existingUserEmailError } = await userClient.auth
