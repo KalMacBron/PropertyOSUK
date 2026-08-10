@@ -35,6 +35,16 @@ class TenancyRepository {
         params: {...params, 'target_organisation_id': input.organisationId},
       );
     }
+    if (input.actualEndDate != null) {
+      return _client.rpc<String>(
+        'correct_historical_tenancy',
+        params: {
+          ...params,
+          'target_tenancy_id': input.tenancyId,
+          'tenancy_actual_end_date': _date(input.actualEndDate!),
+        },
+      );
+    }
     return _client.rpc<String>(
       'update_tenancy',
       params: {...params, 'target_tenancy_id': input.tenancyId},
@@ -48,6 +58,11 @@ class TenancyRepository {
           'target_tenancy_id': tenancyId,
           'tenancy_actual_end_date': _date(actualEndDate),
         },
+      );
+
+  Future<String> reopenTenancy(String tenancyId) => _client.rpc<String>(
+        'reopen_tenancy',
+        params: {'target_tenancy_id': tenancyId},
       );
 
   static String _date(DateTime value) =>

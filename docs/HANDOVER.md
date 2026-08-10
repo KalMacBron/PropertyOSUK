@@ -1,10 +1,11 @@
 # PropertyOS Codex Handover
 
-**Baseline reviewed:** 07/08/2026
+**Baseline reviewed:** 10/08/2026
 **Repository source of truth:** `KalMacBron/PropertyOSUK`
-**Baseline `main`:** `04430c5` — *Merge PR #28: filtered compliance drill-downs*
-**Active implementation:** `codex/milestone-10-tc000` — local acceptance passed,
-not merged or deployed
+**Baseline `main`:** `c120c09` — *Merge PR #36: Tenancies Alpha*
+**Active implementation:** `codex/tenancy-editing-follow-up` — historical
+correction and explicit reopening implemented and locally verified; awaiting
+review
 
 This is the entry point for a new PropertyOS engineering session. GitHub is the
 source of truth for code. The frozen Alpha boundary remains
@@ -35,15 +36,15 @@ milestone numbering and statements such as “no software has been built” are
 historical, not current-state evidence. TC-000 now records a local automated
 `Pass`; all other tracker rows retain their existing execution state.
 
-## TC-000 handoff
+## Current handoff
 
-The active branch adds the database-backed Today feed, evidence deep link,
-durable compliance-action completion, property timeline display, explicit
-RLS-backed portfolio API grants, 21 focused pgTAP assertions, and a real Flutter
-Web integration test using two disposable organisations. Local evidence is 92
-database assertions, 24 Flutter unit/widget tests, clean analysis, and the full
-Chrome journey passing. The hosted Alpha remains at `f65568f` and does not
-contain TC-000.
+TC-000, Tasks, SaaS Foundations 1 and 2, Viewer Read-Only Hardening and
+Tenancies Alpha are merged. The hosted Alpha is at `c120c09`; the Tenancies
+database migration is also applied and Karl has confirmed saving works. The
+active follow-up makes tenancy rows directly editable, permits audited
+historical corrections without silently reopening a tenancy, and provides a
+separate confirmed reopen action. Viewer remains read-only and inaccessible
+records remain hidden by RLS.
 
 ## First-session verification
 

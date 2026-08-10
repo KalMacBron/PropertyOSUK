@@ -21,6 +21,27 @@ final tenancy = PortfolioTenancy(
   status: 'active',
 );
 
+final historicalTenancy = PortfolioTenancy(
+  id: 'historical-tenancy',
+  organisationId: 'organisation',
+  propertyId: 'property',
+  propertyName: 'Oak House',
+  tenantDisplayName: 'B. Tenant',
+  startDate: DateTime(2025, 1, 1),
+  actualEndDate: DateTime(2025, 12, 31),
+  status: 'archived',
+);
+
+final upcomingTenancy = PortfolioTenancy(
+  id: 'upcoming-tenancy',
+  organisationId: 'organisation',
+  propertyId: 'property',
+  propertyName: 'Oak House',
+  tenantDisplayName: 'C. Tenant',
+  startDate: DateTime(2030, 1, 1),
+  status: 'active',
+);
+
 Widget appForRole(String role) => ProviderScope(
       overrides: [
         organisationProvider.overrideWith(
@@ -30,7 +51,19 @@ Widget appForRole(String role) => ProviderScope(
             role: role,
           ),
         ),
-        tenanciesProvider.overrideWith((_) async => [tenancy]),
+        tenanciesProvider.overrideWith(
+          (_) async => [tenancy, upcomingTenancy, historicalTenancy],
+        ),
+        propertiesProvider.overrideWith(
+          (_) async => [
+            {
+              'id': 'property',
+              'display_name': 'Oak House',
+              'address_line_1': '1 Test Street',
+              'postcode': 'SW1A 1AA',
+            },
+          ],
+        ),
       ],
       child: MaterialApp(
         theme: buildPropertyOsTheme(),
@@ -45,8 +78,23 @@ void main() {
 
     expect(find.text('A. Tenant'), findsOneWidget);
     expect(find.text('Add tenancy'), findsOneWidget);
-    expect(find.byTooltip('Edit tenancy'), findsOneWidget);
-    expect(find.byTooltip('End tenancy'), findsOneWidget);
+    expect(find.byTooltip('Edit tenancy'), findsNWidgets(3));
+    expect(find.byTooltip('End tenancy'), findsNWidgets(2));
+    expect(find.byTooltip('Reopen tenancy'), findsOneWidget);
+  });
+
+  testWidgets('historical tenancy row opens correction form', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(1200, 1200));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    await tester.pumpWidget(appForRole('member'));
+    await tester.pumpAndSettle();
+
+    await tester.ensureVisible(find.text('B. Tenant'));
+    await tester.tap(find.text('B. Tenant'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Edit tenancy'), findsOneWidget);
+    expect(find.text('Actual end date'), findsOneWidget);
   });
 
   testWidgets('viewer sees tenancy data without write controls',

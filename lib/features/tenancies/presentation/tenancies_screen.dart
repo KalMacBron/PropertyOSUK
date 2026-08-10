@@ -122,6 +122,50 @@ class TenanciesScreen extends ConsumerWidget {
     }
   }
 
+  Future<void> _reopen(
+    BuildContext context,
+    WidgetRef ref,
+    PortfolioTenancy tenancy,
+  ) async {
+    final organisation = await ref.read(organisationProvider.future);
+    if (!canWriteOrganisation(organisation) || !context.mounted) return;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Reopen tenancy?'),
+        content: Text(
+          'Move ${tenancy.tenantDisplayName} back to the current or upcoming register? The change will be recorded in the property timeline.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: const Text('Reopen tenancy'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+    try {
+      await ref.read(tenancyRepositoryProvider).reopenTenancy(tenancy.id);
+      _refresh(ref, tenancy.propertyId);
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Tenancy reopened.')),
+        );
+      }
+    } catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('The tenancy could not be reopened.')),
+        );
+      }
+    }
+  }
+
   void _refresh(WidgetRef ref, String propertyId) {
     ref.invalidate(tenanciesProvider);
     ref.invalidate(todayActionsProvider);
@@ -174,6 +218,7 @@ class TenanciesScreen extends ConsumerWidget {
                 canWrite: canWrite,
                 onEdit: (item) => _openForm(context, ref, tenancy: item),
                 onEnd: (item) => _end(context, ref, item),
+                onReopen: (_) {},
               ),
               const SizedBox(height: 18),
               _TenancySection(
@@ -183,15 +228,18 @@ class TenanciesScreen extends ConsumerWidget {
                 canWrite: canWrite,
                 onEdit: (item) => _openForm(context, ref, tenancy: item),
                 onEnd: (item) => _end(context, ref, item),
+                onReopen: (_) {},
               ),
               const SizedBox(height: 18),
               _TenancySection(
                 title: 'Historical',
                 items: historical,
                 initialTenancyId: initialTenancyId,
-                canWrite: false,
-                onEdit: (_) {},
+                canWrite: canWrite,
+                onEdit: (item) => _openForm(context, ref, tenancy: item),
                 onEnd: (_) {},
+                onReopen: (item) => _reopen(context, ref, item),
+                historical: true,
               ),
             ],
           );
@@ -209,6 +257,8 @@ class _TenancySection extends StatelessWidget {
     required this.canWrite,
     required this.onEdit,
     required this.onEnd,
+    required this.onReopen,
+    this.historical = false,
   });
 
   final String title;
@@ -217,6 +267,8 @@ class _TenancySection extends StatelessWidget {
   final bool canWrite;
   final ValueChanged<PortfolioTenancy> onEdit;
   final ValueChanged<PortfolioTenancy> onEnd;
+  final ValueChanged<PortfolioTenancy> onReopen;
+  final bool historical;
 
   @override
   Widget build(BuildContext context) => SectionPanel(
@@ -233,6 +285,8 @@ class _TenancySection extends StatelessWidget {
                       canWrite: canWrite,
                       onEdit: () => onEdit(items[index]),
                       onEnd: () => onEnd(items[index]),
+                      onReopen: () => onReopen(items[index]),
+                      historical: historical,
                     ),
                     if (index < items.length - 1) const Divider(height: 1),
                   ],
@@ -248,6 +302,8 @@ class _TenancyTile extends StatelessWidget {
     required this.canWrite,
     required this.onEdit,
     required this.onEnd,
+    required this.onReopen,
+    required this.historical,
   });
 
   final PortfolioTenancy tenancy;
@@ -255,6 +311,8 @@ class _TenancyTile extends StatelessWidget {
   final bool canWrite;
   final VoidCallback onEdit;
   final VoidCallback onEnd;
+  final VoidCallback onReopen;
+  final bool historical;
 
   @override
   Widget build(BuildContext context) {
@@ -268,11 +326,12 @@ class _TenancyTile extends StatelessWidget {
         '${NumberFormat.currency(locale: 'en_GB', symbol: '£').format(tenancy.monthlyRentPence! / 100)} monthly',
       if (tenancy.rentDueDay != null) 'Due day ${tenancy.rentDueDay}',
     ];
-    return ColoredBox(
+    return Material(
       color: selected
           ? PropertyOsColours.amber.withValues(alpha: 0.12)
           : Colors.transparent,
       child: ListTile(
+        onTap: canWrite ? onEdit : null,
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         leading: const CircleAvatar(child: Icon(Icons.key_outlined)),
@@ -288,11 +347,18 @@ class _TenancyTile extends StatelessWidget {
                     onPressed: onEdit,
                     icon: const Icon(Icons.edit_outlined),
                   ),
-                  IconButton(
-                    tooltip: 'End tenancy',
-                    onPressed: onEnd,
-                    icon: const Icon(Icons.event_busy_outlined),
-                  ),
+                  if (historical)
+                    IconButton(
+                      tooltip: 'Reopen tenancy',
+                      onPressed: onReopen,
+                      icon: const Icon(Icons.replay_outlined),
+                    )
+                  else
+                    IconButton(
+                      tooltip: 'End tenancy',
+                      onPressed: onEnd,
+                      icon: const Icon(Icons.event_busy_outlined),
+                    ),
                 ],
               )
             : null,
@@ -333,6 +399,7 @@ class _TenancyDialogState extends State<_TenancyDialog> {
   );
   late DateTime _startDate = widget.tenancy?.startDate ?? DateTime.now();
   late DateTime? _fixedEndDate = widget.tenancy?.fixedTermEndDate;
+  late DateTime? _actualEndDate = widget.tenancy?.actualEndDate;
 
   @override
   void dispose() {
@@ -362,6 +429,16 @@ class _TenancyDialogState extends State<_TenancyDialog> {
     if (picked != null) setState(() => _fixedEndDate = picked);
   }
 
+  Future<void> _pickActualEnd() async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _actualEndDate ?? _startDate,
+      firstDate: _startDate,
+      lastDate: DateTime(2100),
+    );
+    if (picked != null) setState(() => _actualEndDate = picked);
+  }
+
   void _save() {
     if (!_formKey.currentState!.validate()) return;
     final rent = _rent.text.trim().isEmpty ? null : double.parse(_rent.text);
@@ -374,6 +451,7 @@ class _TenancyDialogState extends State<_TenancyDialog> {
         tenantDisplayName: _tenant.text.trim(),
         startDate: _startDate,
         fixedTermEndDate: _fixedEndDate,
+        actualEndDate: _actualEndDate,
         monthlyRentPence: rent == null ? null : (rent * 100).round(),
         rentDueDay:
             _rentDay.text.trim().isEmpty ? null : int.parse(_rentDay.text),
@@ -421,6 +499,14 @@ class _TenancyDialogState extends State<_TenancyDialog> {
                     value: _startDate,
                     onPressed: _pickStart,
                   ),
+                  if (widget.tenancy?.isEnded == true) ...[
+                    const SizedBox(height: 14),
+                    _DateField(
+                      label: 'Actual end date',
+                      value: _actualEndDate,
+                      onPressed: _pickActualEnd,
+                    ),
+                  ],
                   const SizedBox(height: 14),
                   _DateField(
                     label: 'Fixed-term end date (optional)',

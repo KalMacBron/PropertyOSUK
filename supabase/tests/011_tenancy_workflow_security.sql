@@ -1,5 +1,5 @@
 begin;
-select plan(17);
+select plan(27);
 
 insert into auth.users (
   instance_id,id,aud,role,email,encrypted_password,email_confirmed_at,
@@ -83,6 +83,42 @@ select lives_ok(
 );
 select is((select count(*) from public.timeline_events where event_type='tenancy_ended'),1::bigint,'end timeline event is written');
 select is((select count(*) from public.today_actions where source_type='tenancy'),0::bigint,'ended tenancy leaves Today');
+
+select lives_ok(
+  $$select public.correct_historical_tenancy(
+    current_setting('test.tenancy_id')::uuid,
+    'b3000000-0000-4000-8000-000000000001',
+    'A. Tenant corrected', current_date - 31, current_date + 50,
+    135000, 8::smallint, current_date - 1
+  )$$,
+  'owner corrects historical tenancy atomically'
+);
+select is((select actual_end_date from public.tenancies limit 1),current_date - 1,'corrected actual end date is stored');
+select is((select count(*) from public.timeline_events where event_type='tenancy_corrected'),1::bigint,'historical correction timeline event is written');
+
+select set_config('request.jwt.claim.sub','b1000000-0000-4000-8000-000000000002',true);
+select throws_ok(
+  $$select public.correct_historical_tenancy(
+    current_setting('test.tenancy_id')::uuid,
+    'b3000000-0000-4000-8000-000000000001',
+    'Blocked', current_date - 31, null, null, null, current_date - 1
+  )$$,
+  'P0002','tenancy_missing','viewer cannot see or correct historical tenancy'
+);
+select throws_ok(
+  $$select public.reopen_tenancy(current_setting('test.tenancy_id')::uuid)$$,
+  'P0002','tenancy_missing','viewer cannot see or reopen tenancy'
+);
+
+select set_config('request.jwt.claim.sub','b1000000-0000-4000-8000-000000000001',true);
+select lives_ok(
+  $$select public.reopen_tenancy(current_setting('test.tenancy_id')::uuid)$$,
+  'owner reopens historical tenancy after confirmation'
+);
+select is((select actual_end_date from public.tenancies limit 1),null::date,'reopened tenancy clears actual end date');
+select is((select status::text from public.tenancies limit 1),'active','reopened tenancy returns to active status');
+select is((select count(*) from public.timeline_events where event_type='tenancy_reopened'),1::bigint,'reopen timeline event is written');
+select is((select count(*) from public.today_actions where source_type='tenancy'),1::bigint,'reopened ending tenancy returns to Today');
 
 select * from finish();
 rollback;
