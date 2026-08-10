@@ -1,6 +1,6 @@
 begin;
 
-select plan(13);
+select plan(20);
 
 insert into auth.users (
   instance_id, id, aud, role, email, encrypted_password, email_confirmed_at,
@@ -84,6 +84,42 @@ select is(
   1::bigint,
   'reopening writes a timeline event'
 );
+select lives_ok(
+  $$select public.update_task_details(
+    (select id from public.tasks where title = 'Arrange annual inspection'),
+    'ea100000-0000-4000-8000-000000000001',
+    'Arrange safety inspection', 'Confirm access with tenant', 'urgent', current_date + 3
+  )$$,
+  'owner can update task details'
+);
+select is(
+  (select title from public.tasks where title = 'Arrange safety inspection'),
+  'Arrange safety inspection',
+  'task title is updated'
+);
+select is(
+  (select priority::text from public.tasks where title = 'Arrange safety inspection'),
+  'urgent',
+  'task priority is updated'
+);
+select is(
+  (select count(*) from public.timeline_events where event_type = 'task_updated'),
+  1::bigint,
+  'task update writes one timeline event'
+);
+select lives_ok(
+  $$select public.update_task_details(
+    (select id from public.tasks where title = 'Arrange safety inspection'),
+    'ea100000-0000-4000-8000-000000000001',
+    'Arrange safety inspection', 'Confirm access with tenant', 'urgent', current_date + 3
+  )$$,
+  'saving unchanged task details is safe'
+);
+select is(
+  (select count(*) from public.timeline_events where event_type = 'task_updated'),
+  1::bigint,
+  'unchanged details do not duplicate the timeline event'
+);
 
 select set_config('request.jwt.claim.sub', '71000000-0000-4000-8000-000000000002', true);
 select throws_ok(
@@ -94,6 +130,15 @@ select throws_ok(
   )$$,
   '42501', 'task_create_forbidden',
   'viewer cannot create tasks'
+);
+select throws_ok(
+  $$select public.update_task_details(
+    (select id from public.tasks where title = 'Arrange safety inspection'),
+    'ea100000-0000-4000-8000-000000000001',
+    'Viewer edit'
+  )$$,
+  'P0002', 'task_missing',
+  'viewer cannot lock or update tasks'
 );
 
 select set_config('request.jwt.claim.sub', '72000000-0000-4000-8000-000000000001', true);

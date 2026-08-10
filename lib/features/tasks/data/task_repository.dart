@@ -60,6 +60,18 @@ class TaskRepository {
         params: {'target_task_id': taskId, 'target_state': state.value},
       );
 
+  Future<String> updateTask(UpdateTaskInput input) => _client.rpc<String>(
+        'update_task_details',
+        params: {
+          'target_task_id': input.taskId,
+          'target_property_id': input.propertyId,
+          'task_title': input.title,
+          'task_description': input.description,
+          'task_priority': input.priority.name,
+          'task_due_date': input.dueDate == null ? null : _date(input.dueDate!),
+        },
+      );
+
   static String _propertyName(Map<String, dynamic> property) {
     final address = property['address_line_1'] as String;
     final postcode = property['postcode'] as String?;

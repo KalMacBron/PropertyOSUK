@@ -6,24 +6,27 @@
 
 | Item | Verified state |
 |---|---|
-| Repository `main` | `04430c5cff52fab3462a88e77b44d31b5d2c2ee0` |
+| Repository `main` | `02f07ca737af5ca78d6b4dc287cd74e127cbf444` |
 | `origin/main` at baseline | Same commit as local `main` |
 | Worktree at baseline review | Clean before documentation updates |
 | Alpha URL | `https://alpha.propertyosuk.com` |
-| Alpha `version.json` | Commit `04430c5cff52fab3462a88e77b44d31b5d2c2ee0` |
-| Alpha deployment time | `2026-08-10T11:00:21Z` |
+| Alpha `version.json` | Commit `02f07ca737af5ca78d6b4dc287cd74e127cbf444` |
+| Alpha deployment time | `2026-08-10T11:38:47Z` |
 | Deployment source | Push to `main` via `.github/workflows/deploy-alpha.yml` |
 | Production | Not evidenced as established or approved |
 
-The hosted Flutter Alpha metadata was verified on 10/08/2026 after PR #28 and
-matches `main` at `04430c5`. TC-000 has been merged and deployed. Karl has also
+The hosted Flutter Alpha metadata was verified on 10/08/2026 after PR #29 and
+matches `main` at `02f07ca`. TC-000 has been merged and deployed. Karl has also
 accepted the refreshed KaelVaren UI, sign-out/landing flow, Today compliance
 summary and filtered compliance drill-downs.
 
 This proves the frontend bundle version only. It does not by itself prove that
 the linked Supabase project has every migration and Edge Function from the same
-commit. GitHub Actions CI passed on `04430c5`. Alpha deployment run
-`31381497335` completed successfully, including the Hostinger FTPS upload.
+commit. GitHub Actions CI passed on `02f07ca`. Alpha deployment run
+`31384326872` completed successfully, including the Hostinger FTPS upload.
+The Tasks database migration was applied to the hosted project as
+`20260810120613_task_workflow_actions` after the web-only deployment exposed
+the missing RPC; Karl then confirmed task creation worked on Alpha.
 
 ## Delivered implementation increments
 
@@ -42,7 +45,7 @@ commit. GitHub Actions CI passed on `04430c5`. Alpha deployment run
 | TC-000 durable Today completion and property timeline | Merged and deployed |
 | KaelVaren UI foundation, landing/sign-out flow and Today summary | Merged, deployed and accepted |
 | Compliance summary filtered drill-downs | Merged, deployed and accepted |
-| Portfolio Tasks workspace | In progress on `codex/tasks-workspace` |
+| Portfolio Tasks workspace | Merged, deployed and accepted; edit follow-up in progress |
 
 “Merged” does not mean the frozen Alpha acceptance criteria are complete. The
 repository milestone numbers describe implementation increments and do not map
@@ -82,15 +85,15 @@ TC-000.
 
 - Formal tracker cases other than TC-000 remain unexecuted.
 - Tenancy, maintenance, Settings and complete organisation export are not
-  exposed as routed application workflows. General Tasks is the current stage;
-  timeline events are currently surfaced within compliance records.
+  exposed as routed application workflows. Timeline events are currently
+  surfaced within compliance records.
 - Backup/restore, deletion, accessibility, responsive and full role/tenant
   separation evidence is not recorded.
 - Private validation with real portfolio data is not documented as complete.
 
 ## Immediate priority
 
-Complete the approved Tasks workspace contract, verify it locally and in CI,
-then obtain separate readiness, merge and deployment approvals. Follow with
+Complete the approved task-edit follow-up, verify it locally and in CI, then
+obtain separate readiness, merge and deployment approvals. Follow with
 Maintenance, Tenancies, Export and the remaining formal Alpha acceptance
 coverage. Do not infer overall Alpha readiness from merged increments alone.

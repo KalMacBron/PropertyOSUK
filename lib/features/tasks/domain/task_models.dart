@@ -140,3 +140,21 @@ class CreateTaskInput {
   final TaskPriority priority;
   final DateTime? dueDate;
 }
+
+class UpdateTaskInput {
+  const UpdateTaskInput({
+    required this.taskId,
+    required this.propertyId,
+    required this.title,
+    required this.priority,
+    this.description,
+    this.dueDate,
+  });
+
+  final String taskId;
+  final String propertyId;
+  final String title;
+  final String? description;
+  final TaskPriority priority;
+  final DateTime? dueDate;
+}
