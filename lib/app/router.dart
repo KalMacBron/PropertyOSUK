@@ -28,7 +28,9 @@ final propertyOsRouter = GoRouter(
         ),
         GoRoute(
           path: '/compliance',
-          builder: (_, __) => const ComplianceRegisterScreen(),
+          builder: (_, state) => ComplianceRegisterScreen(
+            initialStatus: state.uri.queryParameters['status'],
+          ),
         ),
         GoRoute(
           path: '/compliance-record/:propertyId/:requirementId',

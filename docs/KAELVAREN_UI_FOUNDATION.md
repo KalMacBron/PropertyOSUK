@@ -46,3 +46,8 @@ from confirmed organisation-scoped records and use the same status rules as
 their source register. Compliance totals link to the Compliance workspace;
 they are management prompts and never assertions that a property is legally
 compliant.
+
+Compliance summary links use URL status filters (`compliant`, `dueSoon`,
+`overdue`, or `notRecorded`). The selected status is visibly highlighted, the
+register shows only matching property requirements, and users can return to the
+full register without losing the underlying data context.
