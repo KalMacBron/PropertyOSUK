@@ -330,7 +330,8 @@ class _TodayActionCard extends StatelessWidget {
         action.requirementTypeId != null &&
         action.dueDate != null;
     final taskAction = action.sourceType == 'task';
-    final canOpen = complianceAction || taskAction;
+    final tenancyAction = action.sourceType == 'tenancy';
+    final canOpen = complianceAction || taskAction || tenancyAction;
     return Material(
       color: Colors.white,
       child: ListTile(
@@ -362,6 +363,10 @@ class _TodayActionCard extends StatelessWidget {
                         ? '/tasks?filter=overdue'
                         : '/tasks?filter=upcoming',
                   );
+                  return;
+                }
+                if (tenancyAction) {
+                  context.go('/tenancies?tenancyId=${action.sourceId}');
                   return;
                 }
                 final uri = Uri(

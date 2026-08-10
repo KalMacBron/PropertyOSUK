@@ -13,6 +13,7 @@ import 'package:property_os/features/portfolio/application/portfolio_providers.d
 import 'package:property_os/features/portfolio/data/portfolio_repository.dart';
 import 'package:property_os/features/properties/presentation/properties_screen.dart';
 import 'package:property_os/features/tasks/presentation/tasks_screen.dart';
+import 'package:property_os/features/tenancies/presentation/tenancies_screen.dart';
 import 'package:property_os/features/today/presentation/today_screen.dart';
 import 'package:property_os/features/user_admin/presentation/user_admin_screen.dart';
 
@@ -64,6 +65,12 @@ final propertyOsRouter = GoRouter(
           path: '/tasks',
           builder: (_, state) => TasksScreen(
             initialFilter: state.uri.queryParameters['filter'],
+          ),
+        ),
+        GoRoute(
+          path: '/tenancies',
+          builder: (_, state) => TenanciesScreen(
+            initialTenancyId: state.uri.queryParameters['tenancyId'],
           ),
         ),
         GoRoute(
@@ -157,6 +164,7 @@ const _destinations = [
   (label: 'Properties', path: '/properties', icon: Icons.home_work_outlined),
   (label: 'Compliance', path: '/compliance', icon: Icons.fact_check_outlined),
   (label: 'Tasks', path: '/tasks', icon: Icons.task_alt_outlined),
+  (label: 'Tenancies', path: '/tenancies', icon: Icons.key_outlined),
   (label: 'Expenses', path: '/expenses', icon: Icons.receipt_long_outlined),
   (
     label: 'Ownership',

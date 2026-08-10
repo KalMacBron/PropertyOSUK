@@ -32,10 +32,11 @@ Subject to an approved implementation contract:
   deployed and accepted.
 - ~~SaaS Foundation 2: invitations, member administration, role changes and
   organisation-scoped audit history.~~ Completed and deployed for Alpha UAT.
-- **In progress:** Viewer Read-Only Hardening: consistent capability-gated UI,
-  guarded write entry points and database regression evidence.
-- Add the routed tenancy and maintenance workflows already represented in the
-  database foundation.
+- ~~Viewer Read-Only Hardening: consistent capability-gated UI, guarded write
+  entry points and database regression evidence.~~ Deployed and accepted;
+  organisation-scoped expense CSV remains an intentional Viewer capability.
+- **In progress:** Tenancies Alpha is implemented and locally verified; review,
+  deployment and Alpha UAT remain. Follow with Maintenance.
 - Complete organisation-scoped JSON/CSV export and authorised document export.
 - Perform role, recovery, deletion, privacy, responsive and keyboard testing.
 - Validate daily use with Karl's portfolio before inviting additional testers.
@@ -50,6 +51,10 @@ Subject to an approved implementation contract:
 - Complete the remaining User Management lifecycle and multi-factor
   authentication (MFA), including recovery and step-up authentication for
   sensitive actions.
+- Customer Signup and Organisation Onboarding: public registration, verified
+  account bootstrap, terms acceptance and controlled creation of a first
+  organisation. Alpha remains invitation-only with separately provisioned new
+  landlord accounts using the existing single-workspace setup flow.
 
 ## Deliberate boundaries
 

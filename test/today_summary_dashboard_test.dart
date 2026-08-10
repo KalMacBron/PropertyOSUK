@@ -9,6 +9,7 @@ import 'package:property_os/features/tasks/application/task_providers.dart';
 import 'package:property_os/features/tasks/domain/task_models.dart';
 import 'package:property_os/features/today/application/today_providers.dart';
 import 'package:property_os/features/today/domain/portfolio_summary.dart';
+import 'package:property_os/features/today/domain/today_action.dart';
 import 'package:property_os/features/today/presentation/today_screen.dart';
 
 void main() {
@@ -169,6 +170,77 @@ void main() {
     expect(
       router.routeInformationProvider.value.uri.toString(),
       '/tasks?filter=overdue',
+    );
+  });
+
+  testWidgets('tenancy Today prompt opens the tenancy workspace',
+      (tester) async {
+    tester.view.physicalSize = const Size(1200, 1200);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final router = GoRouter(
+      initialLocation: '/today',
+      routes: [
+        GoRoute(path: '/today', builder: (_, __) => const TodayScreen()),
+        GoRoute(
+          path: '/tenancies',
+          builder: (_, __) => const Scaffold(body: Text('Tenancy target')),
+        ),
+      ],
+    );
+    addTearDown(router.dispose);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          portfolioSummaryProvider.overrideWith(
+            (_) async => const PortfolioSummary(
+              propertyCount: 1,
+              compliant: 0,
+              dueSoon: 0,
+              overdue: 0,
+              notRecorded: 0,
+            ),
+          ),
+          todayActionsProvider.overrideWith(
+            (_) async => [
+              TodayAction(
+                sourceType: 'tenancy',
+                sourceId: 'tenancy-1',
+                propertyId: 'property-1',
+                title: 'Review tenancy ending soon',
+                reason: 'fixed_term_ending',
+                priority: 'medium',
+                dueDate: DateTime(2026, 9, 30),
+              ),
+            ],
+          ),
+          propertiesProvider.overrideWith(
+            (_) async => [
+              {
+                'id': 'property-1',
+                'display_name': 'Oak House',
+                'address_line_1': '1 Oak Road',
+              },
+            ],
+          ),
+          tasksProvider.overrideWith((_) async => []),
+        ],
+        child: MaterialApp.router(
+          theme: buildPropertyOsTheme(),
+          routerConfig: router,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Review tenancy ending soon'));
+    await tester.pumpAndSettle();
+    expect(find.text('Tenancy target'), findsOneWidget);
+    expect(
+      router.routeInformationProvider.value.uri.toString(),
+      '/tenancies?tenancyId=tenancy-1',
     );
   });
 }
