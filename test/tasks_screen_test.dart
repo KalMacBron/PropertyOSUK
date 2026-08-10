@@ -112,4 +112,41 @@ void main() {
       '/tasks?filter=overdue',
     );
   });
+
+  testWidgets('property quick action preselects task property', (tester) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          organisationProvider.overrideWith(
+            (_) async => const OrganisationSummary(
+              id: 'org',
+              name: 'Test organisation',
+              role: 'member',
+            ),
+          ),
+          tasksProvider.overrideWith((_) async => []),
+          propertiesProvider.overrideWith(
+            (_) async => [
+              {'id': 'property', 'address_line_1': 'Oak House'},
+            ],
+          ),
+        ],
+        child: MaterialApp(
+          theme: buildPropertyOsTheme(),
+          home: const Scaffold(
+            body: TasksScreen(
+              initialPropertyId: 'property',
+              openCreate: true,
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final field = tester.widget<DropdownButtonFormField<String>>(
+      find.byType(DropdownButtonFormField<String>),
+    );
+    expect(field.initialValue, 'property');
+  });
 }

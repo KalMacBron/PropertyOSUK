@@ -121,7 +121,7 @@ class PortfolioRepository {
     return _client
         .from('properties')
         .select(
-          'id, display_name, address_line_1, town_or_city, postcode, property_ownerships(ownership_percentage, ownership_entities(legal_name))',
+          'id, display_name, address_line_1, town_or_city, postcode, property_type, bedrooms, status, property_ownerships(ownership_percentage, ownership_entities(legal_name))',
         )
         .eq('organisation_id', organisationId)
         .eq('status', 'active')

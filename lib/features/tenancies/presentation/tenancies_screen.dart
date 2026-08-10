@@ -11,14 +11,22 @@ import 'package:property_os/features/timeline/application/timeline_providers.dar
 import 'package:property_os/features/today/application/today_providers.dart';
 
 class TenanciesScreen extends ConsumerWidget {
-  const TenanciesScreen({this.initialTenancyId, super.key});
+  const TenanciesScreen({
+    this.initialTenancyId,
+    this.initialPropertyId,
+    this.openCreate = false,
+    super.key,
+  });
 
   final String? initialTenancyId;
+  final String? initialPropertyId;
+  final bool openCreate;
 
   Future<void> _openForm(
     BuildContext context,
     WidgetRef ref, {
     PortfolioTenancy? tenancy,
+    String? initialPropertyId,
   }) async {
     final organisation = await ref.read(organisationProvider.future);
     if (!canWriteOrganisation(organisation)) {
@@ -44,6 +52,7 @@ class TenanciesScreen extends ConsumerWidget {
         organisationId: organisation.id,
         properties: properties,
         tenancy: tenancy,
+        initialPropertyId: initialPropertyId,
       ),
     );
     if (input == null) return;
@@ -177,14 +186,18 @@ class TenanciesScreen extends ConsumerWidget {
     final organisation = ref.watch(organisationProvider);
     final canWrite = canWriteOrganisation(organisation.valueOrNull);
     final tenancies = ref.watch(tenanciesProvider);
-    return WorkspacePage(
+    final page = WorkspacePage(
       eyebrow: 'Occupancy register',
       title: 'Tenancies',
       subtitle:
           'Current and historical tenancy dates with privacy-minimised tenant details.',
       action: canWrite
           ? FilledButton.icon(
-              onPressed: () => _openForm(context, ref),
+              onPressed: () => _openForm(
+                context,
+                ref,
+                initialPropertyId: initialPropertyId,
+              ),
               icon: const Icon(Icons.add),
               label: const Text('Add tenancy'),
             )
@@ -204,10 +217,16 @@ class TenanciesScreen extends ConsumerWidget {
           }
           final now = DateTime.now();
           final today = DateTime(now.year, now.month, now.day);
-          final current = items.where((item) => item.isCurrent(today)).toList();
+          final scoped = initialPropertyId == null
+              ? items
+              : items
+                  .where((item) => item.propertyId == initialPropertyId)
+                  .toList();
+          final current =
+              scoped.where((item) => item.isCurrent(today)).toList();
           final upcoming =
-              items.where((item) => item.isUpcoming(today)).toList();
-          final historical = items.where((item) => item.isEnded).toList();
+              scoped.where((item) => item.isUpcoming(today)).toList();
+          final historical = scoped.where((item) => item.isEnded).toList();
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -245,6 +264,15 @@ class TenanciesScreen extends ConsumerWidget {
           );
         },
       ),
+    );
+    if (!openCreate) return page;
+    return _OpenTenancyOnLoad(
+      onOpen: () => _openForm(
+        context,
+        ref,
+        initialPropertyId: initialPropertyId,
+      ),
+      child: page,
     );
   }
 }
@@ -293,6 +321,27 @@ class _TenancySection extends StatelessWidget {
                 ],
               ),
       );
+}
+
+class _OpenTenancyOnLoad extends StatefulWidget {
+  const _OpenTenancyOnLoad({required this.onOpen, required this.child});
+
+  final VoidCallback onOpen;
+  final Widget child;
+
+  @override
+  State<_OpenTenancyOnLoad> createState() => _OpenTenancyOnLoadState();
+}
+
+class _OpenTenancyOnLoadState extends State<_OpenTenancyOnLoad> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => widget.onOpen());
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
 }
 
 class _TenancyTile extends StatelessWidget {
@@ -372,11 +421,13 @@ class _TenancyDialog extends StatefulWidget {
     required this.organisationId,
     required this.properties,
     this.tenancy,
+    this.initialPropertyId,
   });
 
   final String organisationId;
   final List<Map<String, dynamic>> properties;
   final PortfolioTenancy? tenancy;
+  final String? initialPropertyId;
 
   @override
   State<_TenancyDialog> createState() => _TenancyDialogState();
@@ -384,8 +435,9 @@ class _TenancyDialog extends StatefulWidget {
 
 class _TenancyDialogState extends State<_TenancyDialog> {
   final _formKey = GlobalKey<FormState>();
-  late String _propertyId =
-      widget.tenancy?.propertyId ?? widget.properties.first['id'] as String;
+  late String _propertyId = widget.tenancy?.propertyId ??
+      widget.initialPropertyId ??
+      widget.properties.first['id'] as String;
   late final _tenant = TextEditingController(
     text: widget.tenancy?.tenantDisplayName,
   );

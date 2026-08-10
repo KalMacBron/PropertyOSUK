@@ -86,11 +86,12 @@ class PropertiesScreen extends ConsumerWidget {
                         .whereType<String>()
                         .join(', ');
                     final selected = item['id'] == initialPropertyId;
-                    return Container(
+                    return Material(
                       color: selected
                           ? PropertyOsColours.amber.withValues(alpha: 0.12)
                           : null,
                       child: ListTile(
+                        onTap: () => context.go('/properties/${item['id']}'),
                         contentPadding: const EdgeInsets.symmetric(
                             horizontal: 22, vertical: 10),
                         leading: Container(
@@ -108,13 +109,7 @@ class PropertiesScreen extends ConsumerWidget {
                           '${item['address_line_1']}, ${item['town_or_city']}, ${item['postcode']}\nOwner: $ownerNames',
                         ),
                         isThreeLine: true,
-                        trailing: IconButton(
-                          tooltip: 'View property expenses',
-                          icon: const Icon(Icons.receipt_long_outlined),
-                          onPressed: () => context.go(
-                            '/expenses?propertyId=${item['id']}',
-                          ),
-                        ),
+                        trailing: const Icon(Icons.chevron_right),
                       ),
                     );
                   }).toList(),

@@ -10,9 +10,16 @@ import 'package:property_os/features/timeline/application/timeline_providers.dar
 import 'package:property_os/features/today/application/today_providers.dart';
 
 class TasksScreen extends ConsumerStatefulWidget {
-  const TasksScreen({this.initialFilter, super.key});
+  const TasksScreen({
+    this.initialFilter,
+    this.initialPropertyId,
+    this.openCreate = false,
+    super.key,
+  });
 
   final String? initialFilter;
+  final String? initialPropertyId;
+  final bool openCreate;
 
   @override
   ConsumerState<TasksScreen> createState() => _TasksScreenState();
@@ -22,6 +29,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
   late TaskFilter _filter;
   TaskPriority? _priority;
   String? _busyTaskId;
+  bool _openedInitialDialog = false;
 
   @override
   void initState() {
@@ -37,6 +45,10 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
     final tasks = ref.watch(tasksProvider);
     final organisation = ref.watch(organisationProvider);
     final canWrite = canWriteOrganisation(organisation.valueOrNull);
+    if (widget.openCreate && !_openedInitialDialog) {
+      _openedInitialDialog = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) => _showCreateTask());
+    }
     return ColoredBox(
       color: PropertyOsColours.workspace,
       child: RefreshIndicator(
@@ -64,11 +76,16 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
   }
 
   Widget _buildContent(List<PortfolioTask> tasks, bool canWrite) {
+    final scopedTasks = widget.initialPropertyId == null
+        ? tasks
+        : tasks
+            .where((task) => task.propertyId == widget.initialPropertyId)
+            .toList();
     final counts = {
       for (final filter in TaskFilter.values)
-        filter: _applyFilter(tasks, filter, null).length,
+        filter: _applyFilter(scopedTasks, filter, null).length,
     };
-    final visible = _applyFilter(tasks, _filter, _priority);
+    final visible = _applyFilter(scopedTasks, _filter, _priority);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -152,9 +169,12 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
 
   void _selectFilter(TaskFilter filter) {
     setState(() => _filter = filter);
-    final uri =
-        filter == TaskFilter.all ? '/tasks' : '/tasks?filter=${filter.name}';
-    context.go(uri);
+    final parameters = <String, String>{
+      if (filter != TaskFilter.all) 'filter': filter.name,
+      if (widget.initialPropertyId != null)
+        'propertyId': widget.initialPropertyId!,
+    };
+    context.go(Uri(path: '/tasks', queryParameters: parameters).toString());
   }
 
   Future<void> _transition(PortfolioTask task, TaskState state) async {
@@ -203,7 +223,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
         '/compliance-record/${task.propertyId}/${task.requirementTypeId}',
       );
     } else {
-      context.go('/properties?propertyId=${task.propertyId ?? ''}');
+      context.go('/properties/${task.propertyId ?? ''}');
     }
   }
 
@@ -222,7 +242,10 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
     if (!mounted) return;
     final saved = await showDialog<bool>(
       context: context,
-      builder: (_) => _TaskDialog(task: task),
+      builder: (_) => _TaskDialog(
+        task: task,
+        initialPropertyId: task == null ? widget.initialPropertyId : null,
+      ),
     );
     if (saved == true) {
       ref.invalidate(tasksProvider);
@@ -406,9 +429,10 @@ class _Badge extends StatelessWidget {
 }
 
 class _TaskDialog extends ConsumerStatefulWidget {
-  const _TaskDialog({this.task});
+  const _TaskDialog({this.task, this.initialPropertyId});
 
   final PortfolioTask? task;
+  final String? initialPropertyId;
 
   @override
   ConsumerState<_TaskDialog> createState() => _TaskDialogState();
@@ -429,7 +453,7 @@ class _TaskDialogState extends ConsumerState<_TaskDialog> {
     final task = widget.task;
     _title = TextEditingController(text: task?.title);
     _description = TextEditingController(text: task?.description);
-    _propertyId = task?.propertyId;
+    _propertyId = task?.propertyId ?? widget.initialPropertyId;
     _priority = task?.priority ?? TaskPriority.medium;
     _dueDate = task?.dueDate;
   }

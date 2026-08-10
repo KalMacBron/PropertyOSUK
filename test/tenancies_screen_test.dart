@@ -42,7 +42,12 @@ final upcomingTenancy = PortfolioTenancy(
   status: 'active',
 );
 
-Widget appForRole(String role) => ProviderScope(
+Widget appForRole(
+  String role, {
+  bool openCreate = false,
+  String? initialPropertyId,
+}) =>
+    ProviderScope(
       overrides: [
         organisationProvider.overrideWith(
           (_) async => OrganisationSummary(
@@ -67,7 +72,12 @@ Widget appForRole(String role) => ProviderScope(
       ],
       child: MaterialApp(
         theme: buildPropertyOsTheme(),
-        home: const Scaffold(body: TenanciesScreen()),
+        home: Scaffold(
+          body: TenanciesScreen(
+            openCreate: openCreate,
+            initialPropertyId: initialPropertyId,
+          ),
+        ),
       ),
     );
 
@@ -106,5 +116,22 @@ void main() {
     expect(find.text('Add tenancy'), findsNothing);
     expect(find.byTooltip('Edit tenancy'), findsNothing);
     expect(find.byTooltip('End tenancy'), findsNothing);
+  });
+
+  testWidgets('property quick action preselects tenancy property',
+      (tester) async {
+    await tester.pumpWidget(
+      appForRole(
+        'member',
+        openCreate: true,
+        initialPropertyId: 'property',
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final field = tester.widget<DropdownButtonFormField<String>>(
+      find.byType(DropdownButtonFormField<String>),
+    );
+    expect(field.initialValue, 'property');
   });
 }

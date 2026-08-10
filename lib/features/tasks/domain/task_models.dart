@@ -71,6 +71,7 @@ class PortfolioTask {
     this.requirementTypeId,
     this.description,
     this.dueDate,
+    this.completedAt,
   });
 
   factory PortfolioTask.fromJson(
@@ -97,6 +98,9 @@ class PortfolioTask {
             : DateTime.parse(json['due_date'] as String),
         sourceType: json['source_type'] as String,
         createdAt: DateTime.parse(json['created_at'] as String),
+        completedAt: json['completed_at'] == null
+            ? null
+            : DateTime.parse(json['completed_at'] as String),
       );
 
   final String id;
@@ -112,6 +116,7 @@ class PortfolioTask {
   final DateTime? dueDate;
   final String sourceType;
   final DateTime createdAt;
+  final DateTime? completedAt;
 
   bool get isOpen => state == TaskState.open || state == TaskState.inProgress;
   bool get isOverdue {
