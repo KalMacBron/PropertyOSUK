@@ -1,30 +1,29 @@
 # PropertyOS Current State
 
-**Baseline recorded:** 07/08/2026
+**Baseline recorded:** 10/08/2026
 
 ## Source and deployment facts
 
 | Item | Verified state |
 |---|---|
-| Repository `main` | `f65568f8b7832144bf3be65d8cdea21c0d4c12b9` |
+| Repository `main` | `04430c5cff52fab3462a88e77b44d31b5d2c2ee0` |
 | `origin/main` at baseline | Same commit as local `main` |
 | Worktree at baseline review | Clean before documentation updates |
 | Alpha URL | `https://alpha.propertyosuk.com` |
-| Alpha `version.json` | Commit `f65568f8b7832144bf3be65d8cdea21c0d4c12b9` |
-| Alpha deployment time | `2026-08-07T11:15:04Z` |
+| Alpha `version.json` | Commit `04430c5cff52fab3462a88e77b44d31b5d2c2ee0` |
+| Alpha deployment time | `2026-08-10T11:00:21Z` |
 | Deployment source | Push to `main` via `.github/workflows/deploy-alpha.yml` |
 | Production | Not evidenced as established or approved |
 
-The hosted Flutter Alpha metadata was verified on 07/08/2026 after PR #21 and
-matches `main` at `f65568f`. TC-000 is implemented only on
-`codex/milestone-10-tc000` and is not yet deployed.
+The hosted Flutter Alpha metadata was verified on 10/08/2026 after PR #28 and
+matches `main` at `04430c5`. TC-000 has been merged and deployed. Karl has also
+accepted the refreshed KaelVaren UI, sign-out/landing flow, Today compliance
+summary and filtered compliance drill-downs.
 
 This proves the frontend bundle version only. It does not by itself prove that
 the linked Supabase project has every migration and Edge Function from the same
-commit. GitHub Actions run `31023681109` passed on the merge commit: Flutter
-format, analysis and tests; Edge Function format and type-check; clean database
-rebuild; and all six pgTAP suites (71 assertions). The Alpha deployment run
-`31023680833` also passed.
+commit. GitHub Actions CI passed on `04430c5`. Alpha deployment run
+`31381497335` completed successfully, including the Hostinger FTPS upload.
 
 ## Delivered implementation increments
 
@@ -40,6 +39,10 @@ rebuild; and all six pgTAP suites (71 assertions). The Alpha deployment run
 | Alpha landing page and deployment-from-main repair | Merged |
 | Expense action/delete Hotfixes 9.1–9.3 | Merged, frontend deployed and accepted by Karl |
 | Milestone 10 database CI baseline | Merged and passing locally and in CI |
+| TC-000 durable Today completion and property timeline | Merged and deployed |
+| KaelVaren UI foundation, landing/sign-out flow and Today summary | Merged, deployed and accepted |
+| Compliance summary filtered drill-downs | Merged, deployed and accepted |
+| Portfolio Tasks workspace | In progress on `codex/tasks-workspace` |
 
 “Merged” does not mean the frozen Alpha acceptance criteria are complete. The
 repository milestone numbers describe implementation increments and do not map
@@ -54,7 +57,7 @@ Alpha on 05/08/2026 and confirmed that expense deletion worked. Formal
 owner/member/viewer API evidence remains part of the wider role-separation
 acceptance gap below; the reported UI defect itself is closed.
 
-## TC-000 local acceptance result
+## TC-000 acceptance result
 
 TC-000 passes against a reset, disposable local Supabase stack in headless
 Chrome. The executable test creates two fictional users and organisations and
@@ -71,22 +74,23 @@ Evidence recorded on 07/08/2026:
 - the TC-000 Flutter Web integration journey passing in Chrome;
 - TC-000 marked `Pass` in the authoritative test tracker.
 
-This is local acceptance evidence, not Alpha deployment or UAT evidence.
+The implementation and migration subsequently passed CI and were deployed to
+Alpha. The formal tracker still needs broader Alpha acceptance cases beyond
+TC-000.
 
 ## Remaining material acceptance gaps
 
-- TC-000 has not yet passed CI, been deployed with its database migration, or
-  been retested by Karl on the hosted Alpha.
 - Formal tracker cases other than TC-000 remain unexecuted.
-- Tenancy, maintenance, general Tasks, property Timeline, Settings and complete
-  organisation export are not exposed as routed application workflows.
+- Tenancy, maintenance, Settings and complete organisation export are not
+  exposed as routed application workflows. General Tasks is the current stage;
+  timeline events are currently surfaced within compliance records.
 - Backup/restore, deletion, accessibility, responsive and full role/tenant
   separation evidence is not recorded.
 - Private validation with real portfolio data is not documented as complete.
 
 ## Immediate priority
 
-Review the TC-000 branch, run CI, and open a draft PR. After separate readiness,
-merge and deployment approvals, apply the migration and frontend together to
-Alpha and execute TC-000 UAT there. Do not infer overall Alpha readiness from
-the local TC-000 pass or the number of merged implementation milestones.
+Complete the approved Tasks workspace contract, verify it locally and in CI,
+then obtain separate readiness, merge and deployment approvals. Follow with
+Maintenance, Tenancies, Export and the remaining formal Alpha acceptance
+coverage. Do not infer overall Alpha readiness from merged increments alone.

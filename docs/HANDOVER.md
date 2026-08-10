@@ -2,7 +2,7 @@
 
 **Baseline reviewed:** 07/08/2026
 **Repository source of truth:** `KalMacBron/PropertyOSUK`
-**Baseline `main`:** `f65568f` — *Merge PR #21: Milestone 10 toolchain baseline*
+**Baseline `main`:** `04430c5` — *Merge PR #28: filtered compliance drill-downs*
 **Active implementation:** `codex/milestone-10-tc000` — local acceptance passed,
 not merged or deployed
 

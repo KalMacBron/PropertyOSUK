@@ -5,6 +5,8 @@ import 'package:intl/intl.dart';
 import 'package:property_os/app/suite_ui.dart';
 import 'package:property_os/app/theme.dart';
 import 'package:property_os/features/portfolio/application/portfolio_providers.dart';
+import 'package:property_os/features/tasks/application/task_providers.dart';
+import 'package:property_os/features/tasks/domain/task_models.dart';
 import 'package:property_os/features/today/application/today_providers.dart';
 import 'package:property_os/features/today/domain/portfolio_summary.dart';
 import 'package:property_os/features/today/domain/today_action.dart';
@@ -17,6 +19,7 @@ class TodayScreen extends ConsumerWidget {
     final actions = ref.watch(todayActionsProvider);
     final properties = ref.watch(propertiesProvider);
     final summary = ref.watch(portfolioSummaryProvider);
+    final tasks = ref.watch(tasksProvider);
     return ListView(padding: const EdgeInsets.all(32), children: [
       Center(
           child: ConstrainedBox(
@@ -39,6 +42,12 @@ class TodayScreen extends ConsumerWidget {
                         retry: () => ref.invalidate(portfolioSummaryProvider),
                       ),
                       data: (value) => _SummaryDashboard(summary: value),
+                    ),
+                    const SizedBox(height: 12),
+                    tasks.when(
+                      loading: () => const SizedBox.shrink(),
+                      error: (_, __) => const SizedBox.shrink(),
+                      data: (items) => _TaskSummary(tasks: items),
                     ),
                     const SizedBox(height: 28),
                     actions.when(
@@ -105,6 +114,48 @@ class TodayScreen extends ConsumerWidget {
                             color: PropertyOsColours.muted, fontSize: 12)),
                   ])))
     ]);
+  }
+}
+
+class _TaskSummary extends StatelessWidget {
+  const _TaskSummary({required this.tasks});
+
+  final List<PortfolioTask> tasks;
+
+  @override
+  Widget build(BuildContext context) {
+    final overdue = tasks.where((task) => task.isOverdue).length;
+    final upcoming =
+        tasks.where((task) => task.isOpen && !task.isOverdue).length;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final width = constraints.maxWidth >= 720
+            ? (constraints.maxWidth - 12) / 2
+            : constraints.maxWidth;
+        return Wrap(
+          spacing: 12,
+          runSpacing: 12,
+          children: [
+            _DashboardTile(
+              width: width,
+              label: 'Overdue tasks',
+              value: '$overdue',
+              detail: 'Past their due date',
+              colour: PropertyOsColours.critical,
+              onTap: () => context.go('/tasks?filter=overdue'),
+            ),
+            _DashboardTile(
+              width: width,
+              label: 'Upcoming tasks',
+              value: '$upcoming',
+              detail: 'Open actions to plan',
+              colour: PropertyOsColours.amberText,
+              onTap: () => context.go('/tasks?filter=upcoming'),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
 
@@ -274,10 +325,12 @@ class _TodayActionCard extends StatelessWidget {
       _reasonLabel(action.reason),
       if (action.evidenceDocumentId != null) 'Evidence attached',
     ];
-    final canOpen = action.sourceType == 'compliance' &&
+    final complianceAction = action.sourceType == 'compliance' &&
         action.propertyId != null &&
         action.requirementTypeId != null &&
         action.dueDate != null;
+    final taskAction = action.sourceType == 'task';
+    final canOpen = complianceAction || taskAction;
     return Material(
       color: Colors.white,
       child: ListTile(
@@ -303,6 +356,14 @@ class _TodayActionCard extends StatelessWidget {
         onTap: !canOpen
             ? null
             : () {
+                if (taskAction) {
+                  context.go(
+                    action.reason == 'overdue'
+                        ? '/tasks?filter=overdue'
+                        : '/tasks?filter=upcoming',
+                  );
+                  return;
+                }
                 final uri = Uri(
                   path:
                       '/compliance-record/${action.propertyId}/${action.requirementTypeId}',

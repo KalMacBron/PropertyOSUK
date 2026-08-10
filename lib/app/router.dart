@@ -10,6 +10,7 @@ import 'package:property_os/features/compliance/presentation/compliance_register
 import 'package:property_os/features/expenses/presentation/expenses_screen.dart';
 import 'package:property_os/features/ownership/presentation/ownership_entities_screen.dart';
 import 'package:property_os/features/properties/presentation/properties_screen.dart';
+import 'package:property_os/features/tasks/presentation/tasks_screen.dart';
 import 'package:property_os/features/today/presentation/today_screen.dart';
 
 final propertyOsRouter = GoRouter(
@@ -24,7 +25,9 @@ final propertyOsRouter = GoRouter(
         ),
         GoRoute(
           path: '/properties',
-          builder: (_, __) => const PropertiesScreen(),
+          builder: (_, state) => PropertiesScreen(
+            initialPropertyId: state.uri.queryParameters['propertyId'],
+          ),
         ),
         GoRoute(
           path: '/compliance',
@@ -52,6 +55,12 @@ final propertyOsRouter = GoRouter(
             initialComplianceRecordId:
                 state.uri.queryParameters['complianceRecordId'],
             openCreate: state.uri.queryParameters['create'] == 'true',
+          ),
+        ),
+        GoRoute(
+          path: '/tasks',
+          builder: (_, state) => TasksScreen(
+            initialFilter: state.uri.queryParameters['filter'],
           ),
         ),
         GoRoute(
@@ -126,6 +135,7 @@ const _destinations = [
   (label: 'Today', path: '/today', icon: Icons.schedule_outlined),
   (label: 'Properties', path: '/properties', icon: Icons.home_work_outlined),
   (label: 'Compliance', path: '/compliance', icon: Icons.fact_check_outlined),
+  (label: 'Tasks', path: '/tasks', icon: Icons.task_alt_outlined),
   (label: 'Expenses', path: '/expenses', icon: Icons.receipt_long_outlined),
   (
     label: 'Ownership',
