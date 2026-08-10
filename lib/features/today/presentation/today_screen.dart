@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:property_os/app/suite_ui.dart';
+import 'package:property_os/app/theme.dart';
 import 'package:property_os/features/portfolio/application/portfolio_providers.dart';
 import 'package:property_os/features/today/application/today_providers.dart';
 import 'package:property_os/features/today/domain/today_action.dart';
@@ -13,68 +15,86 @@ class TodayScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final actions = ref.watch(todayActionsProvider);
     final properties = ref.watch(propertiesProvider);
-    return ListView(
-      padding: const EdgeInsets.all(24),
-      children: [
-        const Text(
-          'Today',
-          style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600),
-        ),
-        const SizedBox(height: 4),
-        const Text(
-          'Prioritised management prompts from confirmed portfolio records. '
-          'PropertyOS does not certify compliance or provide legal advice.',
-        ),
-        const SizedBox(height: 24),
-        actions.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (_, __) => _ErrorCard(
-            retry: () => ref.invalidate(todayActionsProvider),
-          ),
-          data: (items) => properties.when(
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (_, __) => _ErrorCard(
-              retry: () => ref.invalidate(propertiesProvider),
-            ),
-            data: (propertyRows) {
-              final names = <String, String>{
-                for (final row in propertyRows)
-                  row['id'] as String:
-                      ((row['display_name'] as String?)?.trim().isNotEmpty ??
-                              false)
-                          ? row['display_name'] as String
-                          : row['address_line_1'] as String,
-              };
-              if (items.isEmpty) {
-                return const Card(
-                  child: Padding(
-                    padding: EdgeInsets.all(28),
-                    child: Text(
-                      'Nothing needs your attention in the current Today window.',
+    return ListView(padding: const EdgeInsets.all(32), children: [
+      Center(
+          child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 1480),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    PageHeading(
+                      eyebrow:
+                          '${DateFormat('EEEE, dd MMMM yyyy').format(DateTime.now())} · Portfolio briefing',
+                      title:
+                          'Good ${DateTime.now().hour < 12 ? 'morning' : DateTime.now().hour < 18 ? 'afternoon' : 'evening'}',
+                      subtitle:
+                          'Prioritised management prompts from confirmed portfolio records.',
                     ),
-                  ),
-                );
-              }
-              return Column(
-                children: items
-                    .map(
-                      (action) => Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: _TodayActionCard(
-                          action: action,
-                          propertyName: action.propertyId == null
-                              ? null
-                              : names[action.propertyId],
-                        ),
+                    const SizedBox(height: 28),
+                    actions.when(
+                      loading: () =>
+                          const Center(child: CircularProgressIndicator()),
+                      error: (_, __) => _ErrorCard(
+                        retry: () => ref.invalidate(todayActionsProvider),
                       ),
-                    )
-                    .toList(),
-              );
-            },
-          ),
-        ),
-      ],
-    );
+                      data: (items) => properties.when(
+                        loading: () =>
+                            const Center(child: CircularProgressIndicator()),
+                        error: (_, __) => _ErrorCard(
+                          retry: () => ref.invalidate(propertiesProvider),
+                        ),
+                        data: (propertyRows) {
+                          final names = <String, String>{
+                            for (final row in propertyRows)
+                              row['id'] as String:
+                                  ((row['display_name'] as String?)
+                                              ?.trim()
+                                              .isNotEmpty ??
+                                          false)
+                                      ? row['display_name'] as String
+                                      : row['address_line_1'] as String,
+                          };
+                          if (items.isEmpty) {
+                            return const Card(
+                              child: Padding(
+                                padding: EdgeInsets.all(28),
+                                child: Text(
+                                  'Nothing needs your attention in the current Today window.',
+                                ),
+                              ),
+                            );
+                          }
+                          return SectionPanel(
+                              title: 'Management attention',
+                              subtitle: 'Highest operational impact first',
+                              child: Column(
+                                children: items
+                                    .asMap()
+                                    .entries
+                                    .map((entry) => Column(children: [
+                                          _TodayActionCard(
+                                            action: entry.value,
+                                            propertyName: entry
+                                                        .value.propertyId ==
+                                                    null
+                                                ? null
+                                                : names[entry.value.propertyId],
+                                          ),
+                                          if (entry.key < items.length - 1)
+                                            const Divider(height: 1),
+                                        ]))
+                                    .toList(),
+                              ));
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    const Text(
+                        'PropertyOS recommendations support portfolio management. They do not certify compliance or provide legal advice.',
+                        style: TextStyle(
+                            color: PropertyOsColours.muted, fontSize: 12)),
+                  ])))
+    ]);
   }
 }
 
@@ -97,8 +117,11 @@ class _TodayActionCard extends StatelessWidget {
         action.propertyId != null &&
         action.requirementTypeId != null &&
         action.dueDate != null;
-    return Card(
+    return Material(
+      color: Colors.white,
       child: ListTile(
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         leading: CircleAvatar(
           backgroundColor: _priorityColour(action.priority).withValues(
             alpha: 0.14,
@@ -113,7 +136,9 @@ class _TodayActionCard extends StatelessWidget {
           style: const TextStyle(fontWeight: FontWeight.w600),
         ),
         subtitle: Text(details.join(' · ')),
-        trailing: canOpen ? const Icon(Icons.chevron_right) : null,
+        trailing: canOpen
+            ? const Icon(Icons.chevron_right, color: PropertyOsColours.ink)
+            : null,
         onTap: !canOpen
             ? null
             : () {

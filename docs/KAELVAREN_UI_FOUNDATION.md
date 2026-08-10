@@ -1,0 +1,33 @@
+# KaelVaren UI foundation
+
+Status: approved for PropertyOS Alpha on 9 August 2026.
+
+PropertyOS uses the KaelVaren suite visual language: deep navy operational
+navigation, warm amber accents, cool-grey workspaces, white bordered surfaces,
+editorial serif headings and neutral sans-serif interface copy.
+
+## Core tokens
+
+- Deep navy: `#071F2F`; primary navy: `#0B2A3C`; selected navy: `#194A64`
+- Amber: `#F2B426`; amber text: `#A76A08`
+- Workspace: `#F3F6F7`; border: `#D7E0E5`
+- Ink: `#102B3D`; muted text: `#718697`
+- Success: `#238A68`; warning: `#D99A16`; critical: `#D65353`
+
+Status meaning must never rely on colour alone. Use a label or icon as well.
+
+## Layout and components
+
+- Desktop uses a persistent suite sidebar and slim contextual top bar.
+- Narrow layouts retain the same hierarchy in a drawer.
+- Page headings use an uppercase operational eyebrow, serif title and concise
+  supporting copy.
+- Panels, tables and forms use square edges, fine borders and minimal shadow.
+- Feature screens consume shared theme tokens and suite components rather than
+  defining local colours.
+
+## Product boundary
+
+Visual changes must not invent metrics, change business rules or weaken the
+Alpha's compliance disclaimers. PropertyOS wording and landlord workflows stay
+distinct from other KaelVaren suite products.

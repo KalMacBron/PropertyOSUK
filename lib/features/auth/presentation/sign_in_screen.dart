@@ -1,5 +1,9 @@
+// ignore_for_file: unused_element, unused_field, unused_element_parameter
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:property_os/app/suite_ui.dart';
+import 'package:property_os/app/theme.dart';
 import 'package:property_os/core/database/supabase_provider.dart';
 import 'package:property_os/features/auth/data/auth_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -99,42 +103,128 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        backgroundColor: const Color(0xFFF6F8FB),
-        body: SelectionArea(
-          child: SingleChildScrollView(
-            controller: _scrollController,
-            child: Column(
-              children: [
-                _HeroSection(
-                  signInKey: _signInSectionKey,
-                  form: _SignInCard(
-                    key: _signInSectionKey,
-                    formKey: _formKey,
-                    email: _email,
-                    password: _password,
-                    obscure: _obscure,
-                    submitting: _submitting,
-                    error: _error,
-                    notice: _notice,
-                    onTogglePassword: () =>
-                        setState(() => _obscure = !_obscure),
-                    onSignIn: _signIn,
-                    onResetPassword: _requestPasswordReset,
-                  ),
-                  onEnterAlpha: () => _scrollTo(_signInSectionKey),
-                  onViewBriefing: () => _scrollTo(_briefingSectionKey),
-                ),
-                const _ProblemSection(),
-                const _DifferenceSection(),
-                const _CapabilitiesSection(),
-                _DailyBriefingShowcase(key: _briefingSectionKey),
-                const _AudienceSection(),
-                const _DisclaimerSection(),
-                _FinalCta(onEnterAlpha: () => _scrollTo(_signInSectionKey)),
-              ],
-            ),
-          ),
-        ),
+        backgroundColor: Colors.white,
+        body: LayoutBuilder(builder: (context, constraints) {
+          final narrow = constraints.maxWidth < 900;
+          final form = _SignInCard(
+            key: _signInSectionKey,
+            formKey: _formKey,
+            email: _email,
+            password: _password,
+            obscure: _obscure,
+            submitting: _submitting,
+            error: _error,
+            notice: _notice,
+            onTogglePassword: () => setState(() => _obscure = !_obscure),
+            onSignIn: _signIn,
+            onResetPassword: _requestPasswordReset,
+          );
+          return SingleChildScrollView(
+              controller: _scrollController,
+              child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  child: Flex(
+                      direction: narrow ? Axis.vertical : Axis.horizontal,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Expanded(
+                            flex: narrow ? 0 : 3,
+                            child: Container(
+                                constraints: BoxConstraints(
+                                    minHeight:
+                                        narrow ? 460 : constraints.maxHeight),
+                                padding: EdgeInsets.all(narrow ? 32 : 64),
+                                decoration: const BoxDecoration(
+                                    gradient: LinearGradient(
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                        colors: [
+                                      PropertyOsColours.deepNavy,
+                                      PropertyOsColours.navy,
+                                      Color(0xFF123E56)
+                                    ])),
+                                child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const SuiteBrand(),
+                                      const Spacer(),
+                                      Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 14, vertical: 8),
+                                          decoration: BoxDecoration(
+                                              color: const Color(0xFFFFF4D8),
+                                              borderRadius:
+                                                  BorderRadius.circular(30)),
+                                          child: const Text(
+                                              'PRIVATE ALPHA · PROPERTY OPERATIONS',
+                                              style: TextStyle(
+                                                  color: PropertyOsColours
+                                                      .amberText,
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.w800,
+                                                  letterSpacing: 1.1))),
+                                      const SizedBox(height: 28),
+                                      const Text(
+                                          'Every property.\nEvery obligation.\nOne clear view.',
+                                          style: TextStyle(
+                                              fontFamily: 'Georgia',
+                                              color: Colors.white,
+                                              fontSize: 52,
+                                              height: 1.08)),
+                                      const SizedBox(height: 24),
+                                      const Text(
+                                          'Coordinate compliance, costs, ownership and daily actions across your portfolio.',
+                                          style: TextStyle(
+                                              color: Color(0xFFB7C8D2),
+                                              fontSize: 18,
+                                              height: 1.6)),
+                                      const Spacer(),
+                                      Container(
+                                          padding: const EdgeInsets.all(20),
+                                          decoration: const BoxDecoration(
+                                              color: Color(0xFF173D52),
+                                              border: Border(
+                                                  left: BorderSide(
+                                                      color: PropertyOsColours
+                                                          .amber,
+                                                      width: 4))),
+                                          child: const Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text('TODAY',
+                                                    style: TextStyle(
+                                                        color: PropertyOsColours
+                                                            .amber,
+                                                        fontWeight:
+                                                            FontWeight.w800,
+                                                        fontSize: 10,
+                                                        letterSpacing: 1.5)),
+                                                SizedBox(height: 8),
+                                                Text(
+                                                    'Your operational priorities, traced to confirmed portfolio records.',
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontFamily: 'Georgia',
+                                                        fontSize: 20))
+                                              ])),
+                                    ]))),
+                        Expanded(
+                            flex: narrow ? 0 : 2,
+                            child: Container(
+                                constraints: BoxConstraints(
+                                    minHeight:
+                                        narrow ? 560 : constraints.maxHeight),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: narrow ? 28 : 70, vertical: 60),
+                                alignment: Alignment.center,
+                                child: ConstrainedBox(
+                                    constraints:
+                                        const BoxConstraints(maxWidth: 560),
+                                    child: form))),
+                      ])));
+        }),
       );
 }
 
@@ -459,88 +549,84 @@ class _SignInCard extends StatelessWidget {
   final VoidCallback onResetPassword;
 
   @override
-  Widget build(BuildContext context) => Card(
-        elevation: 0,
-        color: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        child: Padding(
-          padding: const EdgeInsets.all(26),
-          child: Form(
-            key: formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const Text(
-                  'Private Alpha sign-in',
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: -0.7,
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.all(26),
+        child: Form(
+          key: formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Text(
+                'Welcome back',
+                style: TextStyle(
+                  fontFamily: 'Georgia',
+                  fontSize: 42,
+                  color: PropertyOsColours.ink,
+                ),
+              ),
+              const SizedBox(height: 6),
+              const Text(
+                'Sign in to continue to your PropertyOS workspace.',
+                style: TextStyle(color: Color(0xFF667085)),
+              ),
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: email,
+                keyboardType: TextInputType.emailAddress,
+                autofillHints: const [AutofillHints.email],
+                decoration: const InputDecoration(labelText: 'Email address'),
+                validator: (value) => value == null || !value.contains('@')
+                    ? 'Enter a valid email address'
+                    : null,
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: password,
+                obscureText: obscure,
+                autofillHints: const [AutofillHints.password],
+                decoration: InputDecoration(
+                  labelText: 'Password',
+                  suffixIcon: IconButton(
+                    onPressed: onTogglePassword,
+                    icon:
+                        Icon(obscure ? Icons.visibility : Icons.visibility_off),
                   ),
                 ),
-                const SizedBox(height: 6),
-                const Text(
-                  'Access is invitation-only while we validate the first landlord workflows.',
-                  style: TextStyle(color: Color(0xFF667085)),
-                ),
-                const SizedBox(height: 20),
-                TextFormField(
-                  controller: email,
-                  keyboardType: TextInputType.emailAddress,
-                  autofillHints: const [AutofillHints.email],
-                  decoration: const InputDecoration(labelText: 'Email address'),
-                  validator: (value) => value == null || !value.contains('@')
-                      ? 'Enter a valid email address'
-                      : null,
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: password,
-                  obscureText: obscure,
-                  autofillHints: const [AutofillHints.password],
-                  decoration: InputDecoration(
-                    labelText: 'Password',
-                    suffixIcon: IconButton(
-                      onPressed: onTogglePassword,
-                      icon: Icon(
-                          obscure ? Icons.visibility : Icons.visibility_off),
-                    ),
+                onFieldSubmitted: (_) => onSignIn(),
+                validator: (value) => value == null || value.isEmpty
+                    ? 'Enter your password'
+                    : null,
+              ),
+              if (error != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 12),
+                  child: Text(
+                    error!,
+                    style:
+                        TextStyle(color: Theme.of(context).colorScheme.error),
                   ),
-                  onFieldSubmitted: (_) => onSignIn(),
-                  validator: (value) => value == null || value.isEmpty
-                      ? 'Enter your password'
-                      : null,
                 ),
-                if (error != null)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 12),
-                    child: Text(
-                      error!,
-                      style:
-                          TextStyle(color: Theme.of(context).colorScheme.error),
-                    ),
+              if (notice != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 12),
+                  child: Text(
+                    notice!,
+                    textAlign: TextAlign.center,
+                    style:
+                        TextStyle(color: Theme.of(context).colorScheme.primary),
                   ),
-                if (notice != null)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 12),
-                    child: Text(
-                      notice!,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary),
-                    ),
-                  ),
-                const SizedBox(height: 22),
-                FilledButton(
-                  onPressed: submitting ? null : onSignIn,
-                  child: Text(submitting ? 'Please wait…' : 'Sign in'),
                 ),
-                TextButton(
-                  onPressed: submitting ? null : onResetPassword,
-                  child: const Text('Forgot password?'),
-                ),
-              ],
-            ),
+              const SizedBox(height: 22),
+              FilledButton(
+                onPressed: submitting ? null : onSignIn,
+                child: Text(
+                    submitting ? 'Please wait…' : 'Open property workspace  →'),
+              ),
+              TextButton(
+                onPressed: submitting ? null : onResetPassword,
+                child: const Text('Forgot password?'),
+              ),
+            ],
           ),
         ),
       );
