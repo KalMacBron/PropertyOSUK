@@ -37,9 +37,12 @@ Subject to an approved implementation contract:
   organisation-scoped expense CSV remains an intentional Viewer capability.
 - ~~Tenancies Alpha: current, upcoming and historical tenancy register with
   deterministic Today links.~~ Merged, deployed and accepted.
-- **In progress:** Tenancy Editing follow-up adds row-level edit access,
-  audit-safe historical corrections and explicit reopening. Follow with
-  Maintenance after review, deployment and Alpha UAT.
+- ~~Tenancy Editing follow-up: row-level edit access, audit-safe historical
+  corrections and explicit reopening.~~ Merged, deployed and accepted.
+- **Awaiting review:** Property Dashboard connects property identity,
+  compliance, tenancy, tasks, expenses and timeline with property-scoped
+  drill-downs and writer quick actions. Local checks pass. Follow with
+  Maintenance after review and Alpha UAT.
 - Complete organisation-scoped JSON/CSV export and authorised document export.
 - Perform role, recovery, deletion, privacy, responsive and keyboard testing.
 - Validate daily use with Karl's portfolio before inviting additional testers.

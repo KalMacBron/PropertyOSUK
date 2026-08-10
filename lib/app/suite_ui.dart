@@ -84,10 +84,11 @@ class SectionPanel extends StatelessWidget {
   final String? subtitle;
   final Widget child;
   @override
-  Widget build(BuildContext context) => DecoratedBox(
-        decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(color: PropertyOsColours.border)),
+  Widget build(BuildContext context) => Material(
+        color: Colors.white,
+        shape: const RoundedRectangleBorder(
+          side: BorderSide(color: PropertyOsColours.border),
+        ),
         child:
             Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           Padding(

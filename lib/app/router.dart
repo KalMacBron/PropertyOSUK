@@ -12,6 +12,7 @@ import 'package:property_os/features/ownership/presentation/ownership_entities_s
 import 'package:property_os/features/portfolio/application/portfolio_providers.dart';
 import 'package:property_os/features/portfolio/data/portfolio_repository.dart';
 import 'package:property_os/features/properties/presentation/properties_screen.dart';
+import 'package:property_os/features/property_dashboard/presentation/property_dashboard_screen.dart';
 import 'package:property_os/features/tasks/presentation/tasks_screen.dart';
 import 'package:property_os/features/tenancies/presentation/tenancies_screen.dart';
 import 'package:property_os/features/today/presentation/today_screen.dart';
@@ -34,9 +35,16 @@ final propertyOsRouter = GoRouter(
           ),
         ),
         GoRoute(
+          path: '/properties/:propertyId',
+          builder: (_, state) => PropertyDashboardScreen(
+            propertyId: state.pathParameters['propertyId']!,
+          ),
+        ),
+        GoRoute(
           path: '/compliance',
           builder: (_, state) => ComplianceRegisterScreen(
             initialStatus: state.uri.queryParameters['status'],
+            initialPropertyId: state.uri.queryParameters['propertyId'],
           ),
         ),
         GoRoute(
@@ -65,12 +73,16 @@ final propertyOsRouter = GoRouter(
           path: '/tasks',
           builder: (_, state) => TasksScreen(
             initialFilter: state.uri.queryParameters['filter'],
+            initialPropertyId: state.uri.queryParameters['propertyId'],
+            openCreate: state.uri.queryParameters['create'] == 'true',
           ),
         ),
         GoRoute(
           path: '/tenancies',
           builder: (_, state) => TenanciesScreen(
             initialTenancyId: state.uri.queryParameters['tenancyId'],
+            initialPropertyId: state.uri.queryParameters['propertyId'],
+            openCreate: state.uri.queryParameters['create'] == 'true',
           ),
         ),
         GoRoute(

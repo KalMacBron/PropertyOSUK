@@ -2,10 +2,9 @@
 
 **Baseline reviewed:** 10/08/2026
 **Repository source of truth:** `KalMacBron/PropertyOSUK`
-**Baseline `main`:** `c120c09` — *Merge PR #36: Tenancies Alpha*
-**Active implementation:** `codex/tenancy-editing-follow-up` — historical
-correction and explicit reopening implemented and locally verified; awaiting
-review
+**Baseline `main`:** `077bed6` — *Merge PR #37: audited historical tenancy editing*
+**Active implementation:** `codex/property-dashboard` — Property Dashboard
+implemented and locally verified; awaiting review
 
 This is the entry point for a new PropertyOS engineering session. GitHub is the
 source of truth for code. The frozen Alpha boundary remains
@@ -39,12 +38,12 @@ historical, not current-state evidence. TC-000 now records a local automated
 ## Current handoff
 
 TC-000, Tasks, SaaS Foundations 1 and 2, Viewer Read-Only Hardening and
-Tenancies Alpha are merged. The hosted Alpha is at `c120c09`; the Tenancies
-database migration is also applied and Karl has confirmed saving works. The
-active follow-up makes tenancy rows directly editable, permits audited
-historical corrections without silently reopening a tenancy, and provides a
-separate confirmed reopen action. Viewer remains read-only and inaccessible
-records remain hidden by RLS.
+Tenancies Alpha and its editing follow-up are merged. The hosted Alpha is at
+`077bed6`; both Tenancies migrations are applied and Karl has accepted creation,
+editing, historical correction and reopening. The active Property Dashboard
+branch aggregates existing RLS-protected property, compliance, tenancy, task,
+expense and timeline data. The full local Flutter and database quality gate
+passes; it is not yet committed, reviewed or deployed.
 
 ## First-session verification
 

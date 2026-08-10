@@ -11,9 +11,14 @@ import 'package:property_os/features/portfolio/data/portfolio_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ComplianceRegisterScreen extends ConsumerWidget {
-  const ComplianceRegisterScreen({super.key, this.initialStatus});
+  const ComplianceRegisterScreen({
+    super.key,
+    this.initialStatus,
+    this.initialPropertyId,
+  });
 
   final String? initialStatus;
+  final String? initialPropertyId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -41,6 +46,7 @@ class ComplianceRegisterScreen extends ConsumerWidget {
             requirements: types,
             properties: properties,
             statusFilter: statusFilter,
+            propertyId: initialPropertyId,
           ),
         ),
       ),
@@ -53,17 +59,22 @@ class _RegisterContent extends ConsumerWidget {
     required this.requirements,
     required this.properties,
     required this.statusFilter,
+    required this.propertyId,
   });
 
   final List<ComplianceRequirement> requirements;
   final List<PropertyCompliance> properties;
   final ComplianceStatus? statusFilter;
+  final String? propertyId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final today = DateTime.now();
+    final scopedProperties = propertyId == null
+        ? properties
+        : properties.where((property) => property.id == propertyId).toList();
     final counts = {for (final status in ComplianceStatus.values) status: 0};
-    for (final property in properties) {
+    for (final property in scopedProperties) {
       for (final requirement in requirements) {
         final status = property.recordFor(requirement.id)?.statusOn(
                   today,
@@ -74,7 +85,7 @@ class _RegisterContent extends ConsumerWidget {
       }
     }
 
-    final visibleProperties = properties
+    final visibleProperties = scopedProperties
         .map(
           (property) => (
             property: property,
@@ -118,7 +129,11 @@ class _RegisterContent extends ConsumerWidget {
                     ),
                   ),
                   TextButton(
-                    onPressed: () => context.go('/compliance'),
+                    onPressed: () => context.go(
+                      propertyId == null
+                          ? '/compliance'
+                          : '/compliance?propertyId=$propertyId',
+                    ),
                     child: const Text('Show full register'),
                   ),
                 ],
@@ -136,6 +151,7 @@ class _RegisterContent extends ConsumerWidget {
                   status: status,
                   count: counts[status]!,
                   selected: status == statusFilter,
+                  propertyId: propertyId,
                 ),
               )
               .toList(),
@@ -556,11 +572,16 @@ class _DateField extends StatelessWidget {
 }
 
 class _SummaryCard extends StatelessWidget {
-  const _SummaryCard(
-      {required this.status, required this.count, required this.selected});
+  const _SummaryCard({
+    required this.status,
+    required this.count,
+    required this.selected,
+    required this.propertyId,
+  });
   final ComplianceStatus status;
   final int count;
   final bool selected;
+  final String? propertyId;
 
   @override
   Widget build(BuildContext context) => SizedBox(
@@ -568,9 +589,16 @@ class _SummaryCard extends StatelessWidget {
         child: Card(
           color: selected ? const Color(0xFFFFF4D8) : Colors.white,
           child: InkWell(
-            onTap: () => context.go(
-              selected ? '/compliance' : '/compliance?status=${status.name}',
-            ),
+            onTap: () {
+              final parameters = <String, String>{
+                if (!selected) 'status': status.name,
+                if (propertyId != null) 'propertyId': propertyId!,
+              };
+              context.go(
+                Uri(path: '/compliance', queryParameters: parameters)
+                    .toString(),
+              );
+            },
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Row(
