@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:property_os/app/theme.dart';
 import 'package:property_os/features/portfolio/application/portfolio_providers.dart';
+import 'package:property_os/features/portfolio/data/portfolio_repository.dart';
 import 'package:property_os/features/tasks/application/task_providers.dart';
 import 'package:property_os/features/tasks/domain/task_models.dart';
 import 'package:property_os/features/timeline/application/timeline_providers.dart';
@@ -34,6 +35,8 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
   @override
   Widget build(BuildContext context) {
     final tasks = ref.watch(tasksProvider);
+    final organisation = ref.watch(organisationProvider);
+    final canWrite = canWriteOrganisation(organisation.valueOrNull);
     return ColoredBox(
       color: PropertyOsColours.workspace,
       child: RefreshIndicator(
@@ -41,10 +44,10 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
         child: ListView(
           padding: const EdgeInsets.all(32),
           children: [
-            _Header(onCreate: _showCreateTask),
+            _Header(onCreate: canWrite ? _showCreateTask : null),
             const SizedBox(height: 24),
             tasks.when(
-              data: (items) => _buildContent(items),
+              data: (items) => _buildContent(items, canWrite),
               loading: () => const Padding(
                 padding: EdgeInsets.all(48),
                 child: Center(child: CircularProgressIndicator()),
@@ -60,7 +63,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
     );
   }
 
-  Widget _buildContent(List<PortfolioTask> tasks) {
+  Widget _buildContent(List<PortfolioTask> tasks, bool canWrite) {
     final counts = {
       for (final filter in TaskFilter.values)
         filter: _applyFilter(tasks, filter, null).length,
@@ -112,15 +115,16 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
               child: _TaskCard(
                 task: task,
                 busy: _busyTaskId == task.id,
-                onEdit: () => _showTaskDialog(task),
-                onComplete: task.isOpen
+                onEdit: canWrite ? () => _showTaskDialog(task) : null,
+                onComplete: canWrite && task.isOpen
                     ? () => _transition(task, TaskState.completed)
                     : null,
-                onCancel: task.isOpen
+                onCancel: canWrite && task.isOpen
                     ? () => _transition(task, TaskState.cancelled)
                     : null,
-                onReopen: task.state == TaskState.completed ||
-                        task.state == TaskState.cancelled
+                onReopen: canWrite &&
+                        (task.state == TaskState.completed ||
+                            task.state == TaskState.cancelled)
                     ? () => _transition(task, TaskState.open)
                     : null,
                 onOpenSource: () => _openSource(task),
@@ -154,6 +158,15 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
   }
 
   Future<void> _transition(PortfolioTask task, TaskState state) async {
+    final organisation = await ref.read(organisationProvider.future);
+    if (!canWriteOrganisation(organisation)) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('This workspace is view only.')),
+        );
+      }
+      return;
+    }
     setState(() => _busyTaskId = task.id);
     try {
       await ref.read(taskRepositoryProvider).transitionTask(task.id, state);
@@ -197,6 +210,16 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
   Future<void> _showCreateTask() => _showTaskDialog(null);
 
   Future<void> _showTaskDialog(PortfolioTask? task) async {
+    final organisation = await ref.read(organisationProvider.future);
+    if (!canWriteOrganisation(organisation)) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('This workspace is view only.')),
+        );
+      }
+      return;
+    }
+    if (!mounted) return;
     final saved = await showDialog<bool>(
       context: context,
       builder: (_) => _TaskDialog(task: task),
@@ -213,7 +236,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
 
 class _Header extends StatelessWidget {
   const _Header({required this.onCreate});
-  final VoidCallback onCreate;
+  final VoidCallback? onCreate;
 
   @override
   Widget build(BuildContext context) => Wrap(
@@ -229,11 +252,12 @@ class _Header extends StatelessWidget {
               const Text('Plan and track actions across every property.'),
             ],
           ),
-          FilledButton.icon(
-            onPressed: onCreate,
-            icon: const Icon(Icons.add),
-            label: const Text('New task'),
-          ),
+          if (onCreate != null)
+            FilledButton.icon(
+              onPressed: onCreate,
+              icon: const Icon(Icons.add),
+              label: const Text('New task'),
+            ),
         ],
       );
 }
@@ -290,7 +314,7 @@ class _TaskCard extends StatelessWidget {
   });
   final PortfolioTask task;
   final bool busy;
-  final VoidCallback onEdit;
+  final VoidCallback? onEdit;
   final VoidCallback? onComplete;
   final VoidCallback? onCancel;
   final VoidCallback? onReopen;
@@ -342,11 +366,12 @@ class _TaskCard extends StatelessWidget {
                     : 'Due ${_formatDate(task.dueDate!)}'),
                 TextButton(
                     onPressed: onOpenSource, child: const Text('Open source')),
-                OutlinedButton.icon(
-                  onPressed: busy ? null : onEdit,
-                  icon: const Icon(Icons.edit_outlined, size: 18),
-                  label: const Text('Edit'),
-                ),
+                if (onEdit != null)
+                  OutlinedButton.icon(
+                    onPressed: busy ? null : onEdit,
+                    icon: const Icon(Icons.edit_outlined, size: 18),
+                    label: const Text('Edit'),
+                  ),
                 if (busy)
                   const SizedBox.square(
                       dimension: 22,

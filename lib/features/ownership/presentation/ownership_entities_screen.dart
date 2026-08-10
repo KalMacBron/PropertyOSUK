@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:property_os/app/suite_ui.dart';
 import 'package:property_os/app/theme.dart';
 import 'package:property_os/features/portfolio/application/portfolio_providers.dart';
+import 'package:property_os/features/portfolio/data/portfolio_repository.dart';
 
 const ownershipTypeLabels = {
   'individual': 'Individual',
@@ -17,6 +18,16 @@ class OwnershipEntitiesScreen extends ConsumerWidget {
   const OwnershipEntitiesScreen({super.key});
 
   Future<void> _add(BuildContext context, WidgetRef ref) async {
+    final organisation = await ref.read(organisationProvider.future);
+    if (!canWriteOrganisation(organisation)) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('This workspace is view only.')),
+        );
+      }
+      return;
+    }
+    if (!context.mounted) return;
     final formKey = GlobalKey<FormState>();
     final name = TextEditingController();
     final companyNumber = TextEditingController();
@@ -104,7 +115,6 @@ class OwnershipEntitiesScreen extends ConsumerWidget {
       ),
     );
     if (saved != true) return;
-    final organisation = await ref.read(organisationProvider.future);
     if (organisation == null) return;
     await ref.read(portfolioRepositoryProvider).createOwnershipEntity(
           organisationId: organisation.id,
@@ -118,16 +128,20 @@ class OwnershipEntitiesScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final entities = ref.watch(ownershipEntitiesProvider);
+    final organisation = ref.watch(organisationProvider);
+    final canWrite = canWriteOrganisation(organisation.valueOrNull);
     return WorkspacePage(
       eyebrow: 'Portfolio structure',
       title: 'Ownership entities',
       subtitle:
           'Individuals, joint owners, companies, trusts and partnerships.',
-      action: FilledButton.icon(
-        onPressed: () => _add(context, ref),
-        icon: const Icon(Icons.add),
-        label: const Text('Add owner'),
-      ),
+      action: canWrite
+          ? FilledButton.icon(
+              onPressed: () => _add(context, ref),
+              icon: const Icon(Icons.add),
+              label: const Text('Add owner'),
+            )
+          : null,
       child: entities.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (_, __) => const Text('Ownership entities could not be loaded.'),

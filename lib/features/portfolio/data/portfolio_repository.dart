@@ -13,11 +13,20 @@ class OrganisationSummary {
   final String role;
   final bool isActive;
 
-  bool get canUploadEvidence =>
+  bool get isViewer => role == 'viewer';
+
+  bool get canWriteOperations =>
       role == 'owner' || role == 'admin' || role == 'member';
 
-  bool get canDeleteEvidence => role == 'owner' || role == 'admin';
+  bool get canManageUsers => role == 'owner' || role == 'admin';
+
+  bool get canUploadEvidence => canWriteOperations;
+
+  bool get canDeleteEvidence => canManageUsers;
 }
+
+bool canWriteOrganisation(OrganisationSummary? organisation) =>
+    organisation?.canWriteOperations ?? false;
 
 class OwnershipEntity {
   const OwnershipEntity({

@@ -30,8 +30,10 @@ Subject to an approved implementation contract:
 - ~~SaaS Foundation 1: explicit authorised organisation context, persisted
   workspace selection, safe switching and final-owner safeguards.~~ Completed,
   deployed and accepted.
-- **In progress:** SaaS Foundation 2: invitations, member administration, role
-  changes and organisation-scoped audit history.
+- ~~SaaS Foundation 2: invitations, member administration, role changes and
+  organisation-scoped audit history.~~ Completed and deployed for Alpha UAT.
+- **In progress:** Viewer Read-Only Hardening: consistent capability-gated UI,
+  guarded write entry points and database regression evidence.
 - Add the routed tenancy and maintenance workflows already represented in the
   database foundation.
 - Complete organisation-scoped JSON/CSV export and authorised document export.
