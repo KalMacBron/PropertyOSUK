@@ -17,7 +17,10 @@ function reply(origin: string | null, status: number, body: unknown) {
     headers["access-control-allow-methods"] = "POST, OPTIONS";
     headers.vary = "Origin";
   }
-  return new Response(JSON.stringify(body), { status, headers });
+  return new Response(status === 204 ? null : JSON.stringify(body), {
+    status,
+    headers,
+  });
 }
 
 function secretKey() {
