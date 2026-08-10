@@ -77,6 +77,7 @@ class TenancyInput {
     required this.startDate,
     this.tenancyId,
     this.fixedTermEndDate,
+    this.actualEndDate,
     this.monthlyRentPence,
     this.rentDueDay,
   });
@@ -87,6 +88,7 @@ class TenancyInput {
   final DateTime startDate;
   final String? tenancyId;
   final DateTime? fixedTermEndDate;
+  final DateTime? actualEndDate;
   final int? monthlyRentPence;
   final int? rentDueDay;
 }

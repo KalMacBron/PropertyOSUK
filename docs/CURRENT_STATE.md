@@ -6,17 +6,17 @@
 
 | Item | Verified state |
 |---|---|
-| Repository `main` | `99cede5374963da81c11e7fc485de905e5ebc58c` |
+| Repository `main` | `c120c0999bea1e7bce3d2730f24e6671759d7b18` |
 | `origin/main` at baseline | Same commit as local `main` |
 | Worktree at baseline review | Clean before documentation updates |
 | Alpha URL | `https://alpha.propertyosuk.com` |
-| Alpha `version.json` | Commit `99cede5374963da81c11e7fc485de905e5ebc58c` |
-| Alpha deployment time | `2026-08-10T14:32:33Z` |
+| Alpha `version.json` | Commit `c120c0999bea1e7bce3d2730f24e6671759d7b18` |
+| Alpha deployment time | `2026-08-10T21:16:17Z` |
 | Deployment source | Push to `main` via `.github/workflows/deploy-alpha.yml` |
 | Production | Not evidenced as established or approved |
 
-The hosted Flutter Alpha metadata was verified on 10/08/2026 after PR #31 and
-matches `main` at `99cede5`. TC-000 has been merged and deployed. Karl has also
+The hosted Flutter Alpha metadata was verified on 10/08/2026 after PR #36 and
+matches `main` at `c120c09`. TC-000 has been merged and deployed. Karl has also
 accepted the refreshed KaelVaren UI, sign-out/landing flow, Today compliance
 summary and filtered compliance drill-downs.
 
@@ -30,6 +30,10 @@ the missing RPC; Karl then confirmed task creation worked on Alpha.
 The task-edit migration was subsequently applied as
 `20260810133157_task_editing`; the authenticated invoker RPC was verified and
 Karl accepted the deployed create, reopen and edit workflow.
+The Tenancies web deployment initially preceded its database migration. The
+approved `tenancy_workflow` migration was then applied to Alpha as
+`20260810213057`; its three invoker RPCs were verified and Karl confirmed
+create/save worked.
 
 ## Delivered implementation increments
 
@@ -52,7 +56,7 @@ Karl accepted the deployed create, reopen and edit workflow.
 | SaaS Foundation 1 | Merged, deployed and accepted |
 | SaaS Foundation 2: User Administration | Merged and deployed for Alpha UAT |
 | Viewer Read-Only Hardening | Merged, deployed and accepted; expense CSV export intentionally remains available to Viewer |
-| Tenancies Alpha | Implementation and local verification complete; awaiting review and Alpha UAT |
+| Tenancies Alpha | Merged, deployed and accepted; historical-editing follow-up in progress |
 
 “Merged” does not mean the frozen Alpha acceptance criteria are complete. The
 repository milestone numbers describe implementation increments and do not map
@@ -91,16 +95,17 @@ TC-000.
 ## Remaining material acceptance gaps
 
 - Formal tracker cases other than TC-000 remain unexecuted.
-- Tenancy, maintenance, Settings and complete organisation export are not
-  exposed as routed application workflows. Timeline events are currently
-  surfaced within compliance records.
+- Maintenance, Settings and complete organisation export are not exposed as
+  routed application workflows. Tenancy history correction and reopening are
+  implemented on a follow-up branch but are not yet deployed.
 - Backup/restore, deletion, accessibility, responsive and full role/tenant
   separation evidence is not recorded.
 - Private validation with real portfolio data is not documented as complete.
 
 ## Immediate priority
 
-Review, deploy and UAT Tenancies, then follow with Maintenance, Export and the
+Review, deploy and UAT the tenancy-editing follow-up, then proceed with
+Maintenance, Export and the
 remaining formal Alpha acceptance coverage. MFA and Customer Signup and
 Organisation Onboarding remain later SaaS/User Management work; Alpha account
 bootstrap remains controlled and invitation-only. Do not infer overall Alpha

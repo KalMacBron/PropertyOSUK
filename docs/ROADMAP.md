@@ -35,8 +35,11 @@ Subject to an approved implementation contract:
 - ~~Viewer Read-Only Hardening: consistent capability-gated UI, guarded write
   entry points and database regression evidence.~~ Deployed and accepted;
   organisation-scoped expense CSV remains an intentional Viewer capability.
-- **In progress:** Tenancies Alpha is implemented and locally verified; review,
-  deployment and Alpha UAT remain. Follow with Maintenance.
+- ~~Tenancies Alpha: current, upcoming and historical tenancy register with
+  deterministic Today links.~~ Merged, deployed and accepted.
+- **In progress:** Tenancy Editing follow-up adds row-level edit access,
+  audit-safe historical corrections and explicit reopening. Follow with
+  Maintenance after review, deployment and Alpha UAT.
 - Complete organisation-scoped JSON/CSV export and authorised document export.
 - Perform role, recovery, deletion, privacy, responsive and keyboard testing.
 - Validate daily use with Karl's portfolio before inviting additional testers.

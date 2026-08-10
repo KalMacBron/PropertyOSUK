@@ -1,7 +1,7 @@
 # Tenancies Alpha milestone
 
 **Contract approved:** 10/08/2026  
-**Status:** Implementation and local verification complete; awaiting review and Alpha UAT
+**Status:** Merged, deployed and accepted in Alpha; editing follow-up in progress
 
 ## Outcome
 
@@ -17,6 +17,8 @@ deterministic Today prompts and now drill into the tenancy workspace.
 - Create, edit and end workflows for owner, admin and member roles.
 - Read-only access for Viewer.
 - Actual end date and preserved historical record; no hard deletion.
+- Audit-safe correction of historical records and an explicit, confirmed reopen
+  action; both remain subject to the approved follow-up release.
 - Atomic database operations and property timeline events.
 - Organisation isolation, role and cross-property reference tests.
 
@@ -33,6 +35,8 @@ later without changing the organisation boundary.
 - A writer can create, edit and end a tenancy without partial records.
 - An ending fixed term appears on Today and opens its tenancy.
 - Ended tenancies remain visible as history and leave the active Today window.
+- Historical corrections preserve archived status and write changed fields to
+  the property timeline; reopening is a separate confirmed action.
 - Viewer can read but cannot reach or bypass write operations.
 - A different organisation cannot read or mutate the tenancy, tenant link or
   associated timeline events.
