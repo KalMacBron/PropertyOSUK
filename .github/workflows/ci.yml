@@ -66,4 +66,4 @@ jobs:
             git diff
             exit 1
           }
-      - run: deno check supabase/functions/certificate-processing/index.ts
+      - run: deno check supabase/functions/*/index.ts

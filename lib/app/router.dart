@@ -14,6 +14,7 @@ import 'package:property_os/features/portfolio/data/portfolio_repository.dart';
 import 'package:property_os/features/properties/presentation/properties_screen.dart';
 import 'package:property_os/features/tasks/presentation/tasks_screen.dart';
 import 'package:property_os/features/today/presentation/today_screen.dart';
+import 'package:property_os/features/user_admin/presentation/user_admin_screen.dart';
 
 final propertyOsRouter = GoRouter(
   initialLocation: '/today',
@@ -69,6 +70,10 @@ final propertyOsRouter = GoRouter(
           path: '/ownership',
           builder: (_, __) => const OwnershipEntitiesScreen(),
         ),
+        GoRoute(
+          path: '/settings/users',
+          builder: (_, __) => const UserAdminScreen(),
+        ),
       ],
     ),
   ],
@@ -101,6 +106,10 @@ class _AppShell extends ConsumerWidget {
               Text(
                   'PropertyOS  /  ${selected < 0 ? 'Workspace' : _destinations[selected].label}',
                   style: const TextStyle(color: PropertyOsColours.muted)),
+              if (organisation?.role == 'viewer') ...[
+                const SizedBox(width: 16),
+                const Chip(label: Text('VIEW ONLY')),
+              ],
               const Spacer(),
               IconButton(
                   tooltip: 'Sign out',
@@ -153,6 +162,11 @@ const _destinations = [
     label: 'Ownership',
     path: '/ownership',
     icon: Icons.account_balance_outlined
+  ),
+  (
+    label: 'Users',
+    path: '/settings/users',
+    icon: Icons.manage_accounts_outlined
   ),
 ];
 

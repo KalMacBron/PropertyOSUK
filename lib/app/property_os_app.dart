@@ -8,6 +8,7 @@ import 'package:property_os/features/auth/presentation/sign_in_screen.dart';
 import 'package:property_os/features/portfolio/application/portfolio_providers.dart';
 import 'package:property_os/features/portfolio/presentation/workspace_setup_screen.dart';
 import 'package:property_os/features/portfolio/presentation/workspace_selection_screen.dart';
+import 'package:property_os/features/user_admin/application/user_admin_providers.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class PropertyOsApp extends StatelessWidget {
@@ -52,6 +53,7 @@ class _AuthenticatedApp extends ConsumerWidget {
         home: const SignInScreen(),
       );
     }
+    ref.watch(invitationAcceptanceProvider);
     final memberships = ref.watch(organisationMembershipsProvider);
     return memberships.when(
       loading: () => MaterialApp(
