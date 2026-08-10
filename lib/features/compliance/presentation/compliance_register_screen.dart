@@ -10,12 +10,15 @@ import 'package:property_os/features/portfolio/application/portfolio_providers.d
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ComplianceRegisterScreen extends ConsumerWidget {
-  const ComplianceRegisterScreen({super.key});
+  const ComplianceRegisterScreen({super.key, this.initialStatus});
+
+  final String? initialStatus;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final requirements = ref.watch(complianceRequirementsProvider);
     final portfolio = ref.watch(compliancePortfolioProvider);
+    final statusFilter = _statusFromName(initialStatus);
     return WorkspacePage(
       eyebrow: 'Risk and evidence',
       title: 'Compliance register',
@@ -33,8 +36,11 @@ class ComplianceRegisterScreen extends ConsumerWidget {
             message: 'Your compliance register could not be loaded.',
             retry: () => ref.invalidate(compliancePortfolioProvider),
           ),
-          data: (properties) =>
-              _RegisterContent(requirements: types, properties: properties),
+          data: (properties) => _RegisterContent(
+            requirements: types,
+            properties: properties,
+            statusFilter: statusFilter,
+          ),
         ),
       ),
     );
@@ -45,10 +51,12 @@ class _RegisterContent extends ConsumerWidget {
   const _RegisterContent({
     required this.requirements,
     required this.properties,
+    required this.statusFilter,
   });
 
   final List<ComplianceRequirement> requirements;
   final List<PropertyCompliance> properties;
+  final ComplianceStatus? statusFilter;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -56,11 +64,32 @@ class _RegisterContent extends ConsumerWidget {
     final counts = {for (final status in ComplianceStatus.values) status: 0};
     for (final property in properties) {
       for (final requirement in requirements) {
-        final status = property.recordFor(requirement.id)?.statusOn(today) ??
+        final status = property.recordFor(requirement.id)?.statusOn(
+                  today,
+                  warningDays: requirement.defaultWarningDays,
+                ) ??
             ComplianceStatus.notRecorded;
         counts[status] = counts[status]! + 1;
       }
     }
+
+    final visibleProperties = properties
+        .map(
+          (property) => (
+            property: property,
+            requirements: requirements.where((requirement) {
+              if (statusFilter == null) return true;
+              final status = property.recordFor(requirement.id)?.statusOn(
+                        today,
+                        warningDays: requirement.defaultWarningDays,
+                      ) ??
+                  ComplianceStatus.notRecorded;
+              return status == statusFilter;
+            }).toList(),
+          ),
+        )
+        .where((entry) => entry.requirements.isNotEmpty)
+        .toList();
 
     if (properties.isEmpty) {
       return const Card(
@@ -74,36 +103,70 @@ class _RegisterContent extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        if (statusFilter != null) ...[
+          Material(
+            color: const Color(0xFFFFF4D8),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Filtered to ${_statusLabel(statusFilter!).toLowerCase()} items',
+                      style: const TextStyle(fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () => context.go('/compliance'),
+                    child: const Text('Show full register'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+        ],
         Wrap(
           spacing: 12,
           runSpacing: 12,
           children: ComplianceStatus.values
               .map(
-                (status) =>
-                    _SummaryCard(status: status, count: counts[status]!),
+                (status) => _SummaryCard(
+                  status: status,
+                  count: counts[status]!,
+                  selected: status == statusFilter,
+                ),
               )
               .toList(),
         ),
         const SizedBox(height: 24),
-        ...properties.map(
-          (property) => Padding(
+        if (visibleProperties.isEmpty)
+          const SuiteEmptyState(
+            icon: Icons.fact_check_outlined,
+            title: 'No matching compliance items',
+            message: 'Choose another status or return to the full register.',
+          ),
+        ...visibleProperties.map(
+          (entry) => Padding(
             padding: const EdgeInsets.only(bottom: 16),
             child: Card(
               clipBehavior: Clip.antiAlias,
               child: ExpansionTile(
-                initiallyExpanded: properties.length == 1,
+                initiallyExpanded:
+                    statusFilter != null || visibleProperties.length == 1,
                 leading: const CircleAvatar(
                   child: Icon(Icons.home_work_outlined),
                 ),
                 title: Text(
-                  property.name,
+                  entry.property.name,
                   style: const TextStyle(fontWeight: FontWeight.w600),
                 ),
-                subtitle: Text('${property.address}, ${property.postcode}'),
-                children: requirements
+                subtitle: Text(
+                    '${entry.property.address}, ${entry.property.postcode}'),
+                children: entry.requirements
                     .map(
                       (requirement) => _RequirementRow(
-                        property: property,
+                        property: entry.property,
                         requirement: requirement,
                       ),
                     )
@@ -470,34 +533,44 @@ class _DateField extends StatelessWidget {
 }
 
 class _SummaryCard extends StatelessWidget {
-  const _SummaryCard({required this.status, required this.count});
+  const _SummaryCard(
+      {required this.status, required this.count, required this.selected});
   final ComplianceStatus status;
   final int count;
+  final bool selected;
 
   @override
   Widget build(BuildContext context) => SizedBox(
         width: 180,
         child: Card(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                _StatusDot(status: status),
-                const SizedBox(width: 12),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '$count',
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w700,
-                      ),
+          color: selected ? const Color(0xFFFFF4D8) : Colors.white,
+          child: InkWell(
+            onTap: () => context.go(
+              selected ? '/compliance' : '/compliance?status=${status.name}',
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  _StatusDot(status: status),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '$count',
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        Text(_statusLabel(status)),
+                      ],
                     ),
-                    Text(_statusLabel(status)),
-                  ],
-                ),
-              ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -539,6 +612,13 @@ String _statusLabel(ComplianceStatus status) => switch (status) {
       ComplianceStatus.overdue => 'Overdue',
       ComplianceStatus.notRecorded => 'Not recorded',
     };
+
+ComplianceStatus? _statusFromName(String? value) {
+  for (final status in ComplianceStatus.values) {
+    if (status.name == value) return status;
+  }
+  return null;
+}
 
 class _ErrorCard extends StatelessWidget {
   const _ErrorCard({required this.message, required this.retry});

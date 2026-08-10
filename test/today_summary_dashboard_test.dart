@@ -101,5 +101,9 @@ void main() {
     await tester.tap(find.text('NOT RECORDED'));
     await tester.pumpAndSettle();
     expect(find.text('Compliance target'), findsOneWidget);
+    expect(
+      router.routeInformationProvider.value.uri.toString(),
+      '/compliance?status=notRecorded',
+    );
   });
 }

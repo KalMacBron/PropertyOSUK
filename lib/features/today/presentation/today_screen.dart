@@ -140,7 +140,7 @@ class _SummaryDashboard extends StatelessWidget {
                 value: '${summary.notRecorded}',
                 detail: 'Compliance records missing',
                 colour: PropertyOsColours.warning,
-                onTap: () => context.go('/compliance'),
+                onTap: () => context.go('/compliance?status=notRecorded'),
               ),
               _DashboardTile(
                 width: width,
@@ -148,7 +148,7 @@ class _SummaryDashboard extends StatelessWidget {
                 value: '${summary.overdue}',
                 detail: 'Require immediate review',
                 colour: PropertyOsColours.critical,
-                onTap: () => context.go('/compliance'),
+                onTap: () => context.go('/compliance?status=overdue'),
               ),
               _DashboardTile(
                 width: width,
@@ -156,7 +156,7 @@ class _SummaryDashboard extends StatelessWidget {
                 value: '${summary.dueSoon}',
                 detail: 'Inside warning window',
                 colour: PropertyOsColours.amberText,
-                onTap: () => context.go('/compliance'),
+                onTap: () => context.go('/compliance?status=dueSoon'),
               ),
               _DashboardTile(
                 width: width,
@@ -164,7 +164,7 @@ class _SummaryDashboard extends StatelessWidget {
                 value: '${summary.compliant}',
                 detail: '${summary.complianceChecks} tracked checks',
                 colour: PropertyOsColours.success,
-                onTap: () => context.go('/compliance'),
+                onTap: () => context.go('/compliance?status=compliant'),
               ),
             ],
           );
