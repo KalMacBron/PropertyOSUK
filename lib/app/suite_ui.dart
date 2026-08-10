@@ -112,3 +112,100 @@ class SectionPanel extends StatelessWidget {
         ]),
       );
 }
+
+class WorkspacePage extends StatelessWidget {
+  const WorkspacePage({
+    super.key,
+    required this.eyebrow,
+    required this.title,
+    required this.subtitle,
+    required this.child,
+    this.action,
+  });
+
+  final String eyebrow;
+  final String title;
+  final String subtitle;
+  final Widget child;
+  final Widget? action;
+
+  @override
+  Widget build(BuildContext context) => ListView(
+        padding: const EdgeInsets.all(32),
+        children: [
+          Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 1480),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Wrap(
+                    alignment: WrapAlignment.spaceBetween,
+                    crossAxisAlignment: WrapCrossAlignment.end,
+                    spacing: 24,
+                    runSpacing: 18,
+                    children: [
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 820),
+                        child: PageHeading(
+                          eyebrow: eyebrow,
+                          title: title,
+                          subtitle: subtitle,
+                        ),
+                      ),
+                      if (action != null) action!,
+                    ],
+                  ),
+                  const SizedBox(height: 28),
+                  child,
+                ],
+              ),
+            ),
+          ),
+        ],
+      );
+}
+
+class SuiteEmptyState extends StatelessWidget {
+  const SuiteEmptyState({
+    super.key,
+    required this.icon,
+    required this.title,
+    required this.message,
+  });
+  final IconData icon;
+  final String title;
+  final String message;
+
+  @override
+  Widget build(BuildContext context) => Container(
+        padding: const EdgeInsets.all(32),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(color: PropertyOsColours.border),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 52,
+              height: 52,
+              color: const Color(0xFFFFF4D8),
+              child: Icon(icon, color: PropertyOsColours.amberText),
+            ),
+            const SizedBox(width: 18),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title,
+                      style: const TextStyle(fontWeight: FontWeight.w700)),
+                  const SizedBox(height: 4),
+                  Text(message,
+                      style: const TextStyle(color: PropertyOsColours.muted)),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+}

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:property_os/app/suite_ui.dart';
+import 'package:property_os/app/theme.dart';
 import 'package:property_os/features/portfolio/application/portfolio_providers.dart';
 import 'package:property_os/features/portfolio/data/portfolio_repository.dart';
 
@@ -39,80 +41,66 @@ class PropertiesScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final properties = ref.watch(propertiesProvider);
-    return ListView(
-      padding: const EdgeInsets.all(24),
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Properties',
-                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600),
+    return WorkspacePage(
+      eyebrow: 'Portfolio register',
+      title: 'Properties',
+      subtitle: 'Your active residential property portfolio.',
+      action: FilledButton.icon(
+        onPressed: () => _addProperty(context, ref),
+        icon: const Icon(Icons.add),
+        label: const Text('Add property'),
+      ),
+      child: properties.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (_, __) => const Text('Properties could not be loaded.'),
+        data: (items) => items.isEmpty
+            ? const SuiteEmptyState(
+                icon: Icons.home_work_outlined,
+                title: 'No properties yet',
+                message: 'Add an owner, then onboard your first property.',
+              )
+            : Card(
+                child: Column(
+                  children: items.map((item) {
+                    final owners =
+                        item['property_ownerships'] as List<dynamic>? ?? [];
+                    final ownerNames = owners
+                        .map(
+                          (row) => (row['ownership_entities']
+                              as Map<String, dynamic>?)?['legal_name'],
+                        )
+                        .whereType<String>()
+                        .join(', ');
+                    return ListTile(
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 22, vertical: 10),
+                      leading: Container(
+                          width: 44,
+                          height: 44,
+                          color: const Color(0xFFF0F4F6),
+                          child: const Icon(Icons.home_outlined,
+                              color: PropertyOsColours.navy)),
+                      title: Text(
+                        (item['display_name'] as String?)?.isNotEmpty == true
+                            ? item['display_name'] as String
+                            : item['address_line_1'] as String,
+                      ),
+                      subtitle: Text(
+                        '${item['address_line_1']}, ${item['town_or_city']}, ${item['postcode']}\nOwner: $ownerNames',
+                      ),
+                      isThreeLine: true,
+                      trailing: IconButton(
+                        tooltip: 'View property expenses',
+                        icon: const Icon(Icons.receipt_long_outlined),
+                        onPressed: () => context.go(
+                          '/expenses?propertyId=${item['id']}',
+                        ),
+                      ),
+                    );
+                  }).toList(),
                 ),
-                Text('Your active property portfolio.'),
-              ],
-            ),
-            FilledButton.icon(
-              onPressed: () => _addProperty(context, ref),
-              icon: const Icon(Icons.add),
-              label: const Text('Add property'),
-            ),
-          ],
-        ),
-        const SizedBox(height: 24),
-        properties.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (_, __) => const Text('Properties could not be loaded.'),
-          data: (items) => items.isEmpty
-              ? const Card(
-                  child: Padding(
-                    padding: EdgeInsets.all(32),
-                    child: Text(
-                      'No properties yet. Add an owner, then onboard your first property.',
-                    ),
-                  ),
-                )
-              : Card(
-                  child: Column(
-                    children: items.map((item) {
-                      final owners =
-                          item['property_ownerships'] as List<dynamic>? ?? [];
-                      final ownerNames = owners
-                          .map(
-                            (row) => (row['ownership_entities']
-                                as Map<String, dynamic>?)?['legal_name'],
-                          )
-                          .whereType<String>()
-                          .join(', ');
-                      return ListTile(
-                        leading: const CircleAvatar(
-                          child: Icon(Icons.home_outlined),
-                        ),
-                        title: Text(
-                          (item['display_name'] as String?)?.isNotEmpty == true
-                              ? item['display_name'] as String
-                              : item['address_line_1'] as String,
-                        ),
-                        subtitle: Text(
-                          '${item['address_line_1']}, ${item['town_or_city']}, ${item['postcode']}\nOwner: $ownerNames',
-                        ),
-                        isThreeLine: true,
-                        trailing: IconButton(
-                          tooltip: 'View property expenses',
-                          icon: const Icon(Icons.receipt_long_outlined),
-                          onPressed: () => context.go(
-                            '/expenses?propertyId=${item['id']}',
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ),
-        ),
-      ],
+              ),
+      ),
     );
   }
 }

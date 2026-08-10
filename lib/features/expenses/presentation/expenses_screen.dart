@@ -4,6 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:property_os/app/suite_ui.dart';
 import 'package:property_os/features/documents/domain/compliance_evidence.dart';
 import 'package:property_os/features/expenses/application/expense_providers.dart';
 import 'package:property_os/features/expenses/data/expense_repository.dart';
@@ -192,33 +193,18 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
           ));
     }
 
-    return ListView(
-      padding: const EdgeInsets.all(24),
-      children: [
-        Wrap(
-          alignment: WrapAlignment.spaceBetween,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          spacing: 16,
-          runSpacing: 12,
-          children: [
-            const Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Property expenses',
-                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600),
-                ),
-                Text('Track what each property costs to operate. GBP only.'),
-              ],
-            ),
-            if (canWrite)
-              FilledButton.icon(
-                onPressed: () => _openForm(propertyId: _propertyId),
-                icon: const Icon(Icons.add),
-                label: const Text('Record expense'),
-              ),
-          ],
-        ),
+    return WorkspacePage(
+      eyebrow: 'Portfolio costs',
+      title: 'Property expenses',
+      subtitle: 'Track what each property costs to operate. GBP only.',
+      action: canWrite
+          ? FilledButton.icon(
+              onPressed: () => _openForm(propertyId: _propertyId),
+              icon: const Icon(Icons.add),
+              label: const Text('Record expense'),
+            )
+          : null,
+      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         if (_deleting) ...[
           const SizedBox(height: 16),
           const LinearProgressIndicator(),
@@ -310,7 +296,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
             },
           ),
         ),
-      ],
+      ]),
     );
   }
 }

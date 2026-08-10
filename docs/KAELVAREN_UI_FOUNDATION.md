@@ -31,3 +31,12 @@ Status meaning must never rely on colour alone. Use a label or icon as well.
 Visual changes must not invent metrics, change business rules or weaken the
 Alpha's compliance disclaimers. PropertyOS wording and landlord workflows stay
 distinct from other KaelVaren suite products.
+
+## Alpha rollout
+
+The shared `WorkspacePage` pattern is the standard feature-screen frame for
+Today, Properties, Compliance, Expenses and Ownership. It constrains wide
+desktop content, wraps page actions on narrow screens and keeps headings and
+operational context consistent. `SuiteEmptyState` is used when a register has
+no records; it must explain the next valid action without implying missing
+data is compliant or complete.
