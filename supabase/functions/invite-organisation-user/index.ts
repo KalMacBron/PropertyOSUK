@@ -94,6 +94,17 @@ Deno.serve(async (request: Request) => {
     },
   );
   if (inviteError) {
+    if (
+      inviteError.status === 429 ||
+      inviteError.code === "over_email_send_rate_limit"
+    ) {
+      await admin.from("organisation_invitations").update({ state: "failed" })
+        .eq("id", invitationId);
+      return reply(origin, 429, {
+        error: "email_rate_limit_reached",
+        invitationId,
+      });
+    }
     const { error: existingUserEmailError } = await userClient.auth
       .signInWithOtp({
         email: String(body.email).trim().toLowerCase(),
