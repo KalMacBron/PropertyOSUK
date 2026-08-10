@@ -40,3 +40,9 @@ desktop content, wraps page actions on narrow screens and keeps headings and
 operational context consistent. `SuiteEmptyState` is used when a register has
 no records; it must explain the next valid action without implying missing
 data is compliant or complete.
+
+Today is the portfolio summary dashboard. Its headline tiles must be derived
+from confirmed organisation-scoped records and use the same status rules as
+their source register. Compliance totals link to the Compliance workspace;
+they are management prompts and never assertions that a property is legally
+compliant.
