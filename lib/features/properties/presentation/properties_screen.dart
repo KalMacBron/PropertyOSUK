@@ -13,6 +13,14 @@ class PropertiesScreen extends ConsumerWidget {
 
   Future<void> _addProperty(BuildContext context, WidgetRef ref) async {
     final organisation = await ref.read(organisationProvider.future);
+    if (!canWriteOrganisation(organisation)) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('This workspace is view only.')),
+        );
+      }
+      return;
+    }
     final owners = await ref.read(ownershipEntitiesProvider.future);
     if (!context.mounted || organisation == null) return;
     if (owners.isEmpty) {
@@ -43,15 +51,19 @@ class PropertiesScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final properties = ref.watch(propertiesProvider);
+    final organisation = ref.watch(organisationProvider);
+    final canWrite = canWriteOrganisation(organisation.valueOrNull);
     return WorkspacePage(
       eyebrow: 'Portfolio register',
       title: 'Properties',
       subtitle: 'Your active residential property portfolio.',
-      action: FilledButton.icon(
-        onPressed: () => _addProperty(context, ref),
-        icon: const Icon(Icons.add),
-        label: const Text('Add property'),
-      ),
+      action: canWrite
+          ? FilledButton.icon(
+              onPressed: () => _addProperty(context, ref),
+              icon: const Icon(Icons.add),
+              label: const Text('Add property'),
+            )
+          : null,
       child: properties.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (_, __) => const Text('Properties could not be loaded.'),

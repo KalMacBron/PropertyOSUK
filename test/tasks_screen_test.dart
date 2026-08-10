@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:property_os/app/theme.dart';
 import 'package:property_os/features/portfolio/application/portfolio_providers.dart';
+import 'package:property_os/features/portfolio/data/portfolio_repository.dart';
 import 'package:property_os/features/tasks/application/task_providers.dart';
 import 'package:property_os/features/tasks/domain/task_models.dart';
 import 'package:property_os/features/tasks/presentation/tasks_screen.dart';
@@ -59,6 +60,13 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
+          organisationProvider.overrideWith(
+            (_) async => const OrganisationSummary(
+              id: 'org',
+              name: 'Test organisation',
+              role: 'member',
+            ),
+          ),
           tasksProvider.overrideWith((_) async => tasks),
           propertiesProvider.overrideWith(
             (_) async => [

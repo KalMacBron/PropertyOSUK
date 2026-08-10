@@ -7,6 +7,7 @@ import 'package:property_os/features/compliance/application/compliance_providers
 import 'package:property_os/features/compliance/domain/compliance_models.dart';
 import 'package:property_os/features/documents/presentation/compliance_evidence_section.dart';
 import 'package:property_os/features/portfolio/application/portfolio_providers.dart';
+import 'package:property_os/features/portfolio/data/portfolio_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ComplianceRegisterScreen extends ConsumerWidget {
@@ -188,7 +189,15 @@ class _RequirementRow extends ConsumerWidget {
 
   Future<void> _edit(BuildContext context, WidgetRef ref) async {
     final organisation = await ref.read(organisationProvider.future);
-    if (!context.mounted || organisation == null) return;
+    if (!canWriteOrganisation(organisation)) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('This workspace is view only.')),
+        );
+      }
+      return;
+    }
+    if (!context.mounted) return;
     final record = property.recordFor(requirement.id);
     final draft = await showDialog<_ComplianceDraft>(
       context: context,
@@ -198,7 +207,7 @@ class _RequirementRow extends ConsumerWidget {
     if (draft == null) return;
     try {
       await ref.read(complianceRepositoryProvider).saveRecord(
-            organisationId: organisation.id,
+            organisationId: organisation!.id,
             propertyId: property.id,
             requirementTypeId: requirement.id,
             issueDate: draft.issueDate,
@@ -225,6 +234,16 @@ class _RequirementRow extends ConsumerWidget {
   }
 
   Future<void> _delete(BuildContext context, WidgetRef ref) async {
+    final organisation = await ref.read(organisationProvider.future);
+    if (!canWriteOrganisation(organisation)) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('This workspace is view only.')),
+        );
+      }
+      return;
+    }
+    if (!context.mounted) return;
     final record = property.recordFor(requirement.id);
     if (record == null) return;
     final confirmed = await showDialog<bool>(
@@ -291,6 +310,8 @@ class _RequirementRow extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final organisation = ref.watch(organisationProvider);
+    final canWrite = canWriteOrganisation(organisation.valueOrNull);
     final record = property.recordFor(requirement.id);
     final status = record?.statusOn(
           DateTime.now(),
@@ -321,26 +342,28 @@ class _RequirementRow extends ConsumerWidget {
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               _StatusChip(status: status),
-              TextButton.icon(
-                onPressed: () => _recordExpense(context),
-                icon: const Icon(Icons.receipt_long_outlined),
-                label: const Text('Record expense'),
-              ),
-              IconButton(
-                tooltip: record == null ? 'Add record' : 'Edit record',
-                onPressed: () => _edit(context, ref),
-                icon: Icon(
-                  record == null
-                      ? Icons.add_circle_outline
-                      : Icons.edit_outlined,
+              if (canWrite) ...[
+                TextButton.icon(
+                  onPressed: () => _recordExpense(context),
+                  icon: const Icon(Icons.receipt_long_outlined),
+                  label: const Text('Record expense'),
                 ),
-              ),
-              if (record != null)
                 IconButton(
-                  tooltip: 'Remove record',
-                  onPressed: () => _delete(context, ref),
-                  icon: const Icon(Icons.delete_outline),
+                  tooltip: record == null ? 'Add record' : 'Edit record',
+                  onPressed: () => _edit(context, ref),
+                  icon: Icon(
+                    record == null
+                        ? Icons.add_circle_outline
+                        : Icons.edit_outlined,
+                  ),
                 ),
+                if (record != null)
+                  IconButton(
+                    tooltip: 'Remove record',
+                    onPressed: () => _delete(context, ref),
+                    icon: const Icon(Icons.delete_outline),
+                  ),
+              ],
             ],
           ),
         ),

@@ -71,7 +71,7 @@ class ComplianceRecordScreen extends ConsumerWidget {
                 warningDays: requirement.defaultWarningDays,
               ).single;
               final canRecordExpense =
-                  organisation.valueOrNull?.role != 'viewer';
+                  organisation.valueOrNull?.canWriteOperations ?? false;
               final expenseRoute = record == null
                   ? '/expenses?propertyId=${property.id}&create=true'
                   : '/expenses?propertyId=${property.id}'

@@ -10,6 +10,7 @@ import 'package:property_os/features/expenses/application/expense_providers.dart
 import 'package:property_os/features/expenses/data/expense_repository.dart';
 import 'package:property_os/features/expenses/domain/expense_models.dart';
 import 'package:property_os/features/portfolio/application/portfolio_providers.dart';
+import 'package:property_os/features/portfolio/data/portfolio_repository.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 Future<bool> showExpenseDeleteConfirmation(
@@ -68,6 +69,14 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
     String? complianceRecordId,
   }) async {
     final organisation = await ref.read(organisationProvider.future);
+    if (!canWriteOrganisation(organisation)) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('This workspace is view only.')),
+        );
+      }
+      return;
+    }
     final properties = await ref.read(expensePropertiesProvider.future);
     if (!mounted || organisation == null || properties.isEmpty) return;
 
@@ -181,7 +190,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
     final organisation = ref.watch(organisationProvider);
     final properties = ref.watch(expensePropertiesProvider);
     final expenses = ref.watch(expensesProvider);
-    final canWrite = organisation.valueOrNull?.role != 'viewer';
+    final canWrite = canWriteOrganisation(organisation.valueOrNull);
     final canDelete =
         const ['owner', 'admin'].contains(organisation.valueOrNull?.role);
 

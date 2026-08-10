@@ -50,7 +50,8 @@ Karl accepted the deployed create, reopen and edit workflow.
 | Compliance summary filtered drill-downs | Merged, deployed and accepted |
 | Portfolio Tasks workspace and edit workflow | Merged, deployed and accepted |
 | SaaS Foundation 1 | Merged, deployed and accepted |
-| SaaS Foundation 2: User Administration | Approved and in progress |
+| SaaS Foundation 2: User Administration | Merged and deployed for Alpha UAT |
+| Viewer Read-Only Hardening | Implementation and local verification complete; awaiting review and deployment |
 
 “Merged” does not mean the frozen Alpha acceptance criteria are complete. The
 repository milestone numbers describe implementation increments and do not map
@@ -98,8 +99,7 @@ TC-000.
 
 ## Immediate priority
 
-Complete SaaS Foundation 2: invitation delivery and acceptance, owner/admin
-member administration, role boundaries, final-owner safeguards and an
-organisation audit log. Follow with Tenancies, Maintenance, Export and the
-remaining formal Alpha acceptance coverage. MFA remains later User Management
-work. Do not infer overall Alpha readiness from merged increments alone.
+Review, deploy and UAT Viewer Read-Only Hardening, then follow with Tenancies,
+Maintenance, Export and the remaining formal Alpha acceptance coverage. MFA
+remains later User Management work. Do not infer overall Alpha readiness from
+merged increments alone.
