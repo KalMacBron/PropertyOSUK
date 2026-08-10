@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:property_os/app/suite_ui.dart';
+import 'package:property_os/app/theme.dart';
 import 'package:property_os/features/portfolio/application/portfolio_providers.dart';
 
 const ownershipTypeLabels = {
@@ -116,66 +118,53 @@ class OwnershipEntitiesScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final entities = ref.watch(ownershipEntitiesProvider);
-    return ListView(
-      padding: const EdgeInsets.all(24),
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Ownership entities',
-                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600),
-                ),
-                Text(
-                  'Individuals, joint owners, companies, trusts and partnerships.',
-                ),
-              ],
-            ),
-            FilledButton.icon(
-              onPressed: () => _add(context, ref),
-              icon: const Icon(Icons.add),
-              label: const Text('Add owner'),
-            ),
-          ],
-        ),
-        const SizedBox(height: 24),
-        entities.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (_, __) =>
-              const Text('Ownership entities could not be loaded.'),
-          data: (items) => items.isEmpty
-              ? const Card(
-                  child: Padding(
-                    padding: EdgeInsets.all(32),
-                    child: Text(
-                      'Add the legal owner before onboarding your first property.',
-                    ),
-                  ),
-                )
-              : Card(
-                  child: Column(
-                    children: items
-                        .map(
-                          (item) => ListTile(
-                            leading: const Icon(Icons.account_balance_outlined),
-                            title: Text(item.legalName),
-                            subtitle: Text(
-                              ownershipTypeLabels[item.entityType] ??
-                                  item.entityType,
-                            ),
-                            trailing: item.companyNumber == null
-                                ? null
-                                : Text(item.companyNumber!),
+    return WorkspacePage(
+      eyebrow: 'Portfolio structure',
+      title: 'Ownership entities',
+      subtitle:
+          'Individuals, joint owners, companies, trusts and partnerships.',
+      action: FilledButton.icon(
+        onPressed: () => _add(context, ref),
+        icon: const Icon(Icons.add),
+        label: const Text('Add owner'),
+      ),
+      child: entities.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (_, __) => const Text('Ownership entities could not be loaded.'),
+        data: (items) => items.isEmpty
+            ? const SuiteEmptyState(
+                icon: Icons.account_balance_outlined,
+                title: 'No ownership entities yet',
+                message:
+                    'Add the legal owner before onboarding your first property.',
+              )
+            : Card(
+                child: Column(
+                  children: items
+                      .map(
+                        (item) => ListTile(
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 22, vertical: 10),
+                          leading: Container(
+                              width: 44,
+                              height: 44,
+                              color: const Color(0xFFF0F4F6),
+                              child: const Icon(Icons.account_balance_outlined,
+                                  color: PropertyOsColours.navy)),
+                          title: Text(item.legalName),
+                          subtitle: Text(
+                            ownershipTypeLabels[item.entityType] ??
+                                item.entityType,
                           ),
-                        )
-                        .toList(),
-                  ),
+                          trailing: item.companyNumber == null
+                              ? null
+                              : Text(item.companyNumber!),
+                        ),
+                      )
+                      .toList(),
                 ),
-        ),
-      ],
+              ),
+      ),
     );
   }
 }

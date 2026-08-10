@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:property_os/app/suite_ui.dart';
 import 'package:property_os/features/compliance/application/compliance_providers.dart';
 import 'package:property_os/features/compliance/domain/compliance_models.dart';
 import 'package:property_os/features/documents/presentation/compliance_evidence_section.dart';
@@ -15,36 +16,27 @@ class ComplianceRegisterScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final requirements = ref.watch(complianceRequirementsProvider);
     final portfolio = ref.watch(compliancePortfolioProvider);
-    return ListView(
-      padding: const EdgeInsets.all(24),
-      children: [
-        const Text(
-          'Property compliance register',
-          style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600),
+    return WorkspacePage(
+      eyebrow: 'Risk and evidence',
+      title: 'Compliance register',
+      subtitle:
+          'Track key records and renewal dates. Statuses are management prompts, not legal certification.',
+      child: requirements.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, _) => _ErrorCard(
+          message: 'Compliance categories could not be loaded.',
+          retry: () => ref.invalidate(complianceRequirementsProvider),
         ),
-        const SizedBox(height: 4),
-        const Text(
-          'Track key records and renewal dates across your portfolio. '
-          'Statuses are management prompts, not legal certification.',
-        ),
-        const SizedBox(height: 24),
-        requirements.when(
+        data: (types) => portfolio.when(
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (error, _) => _ErrorCard(
-            message: 'Compliance categories could not be loaded.',
-            retry: () => ref.invalidate(complianceRequirementsProvider),
+            message: 'Your compliance register could not be loaded.',
+            retry: () => ref.invalidate(compliancePortfolioProvider),
           ),
-          data: (types) => portfolio.when(
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (error, _) => _ErrorCard(
-              message: 'Your compliance register could not be loaded.',
-              retry: () => ref.invalidate(compliancePortfolioProvider),
-            ),
-            data: (properties) =>
-                _RegisterContent(requirements: types, properties: properties),
-          ),
+          data: (properties) =>
+              _RegisterContent(requirements: types, properties: properties),
         ),
-      ],
+      ),
     );
   }
 }
