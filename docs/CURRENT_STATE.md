@@ -6,17 +6,17 @@
 
 | Item | Verified state |
 |---|---|
-| Repository `main` | `c41ae1add10c0a1dc56166c1ccf59b7fb569ac6f` |
+| Repository `main` | `99cede5374963da81c11e7fc485de905e5ebc58c` |
 | `origin/main` at baseline | Same commit as local `main` |
 | Worktree at baseline review | Clean before documentation updates |
 | Alpha URL | `https://alpha.propertyosuk.com` |
-| Alpha `version.json` | Commit `c41ae1add10c0a1dc56166c1ccf59b7fb569ac6f` |
-| Alpha deployment time | `2026-08-10T13:31:21Z` |
+| Alpha `version.json` | Commit `99cede5374963da81c11e7fc485de905e5ebc58c` |
+| Alpha deployment time | `2026-08-10T14:32:33Z` |
 | Deployment source | Push to `main` via `.github/workflows/deploy-alpha.yml` |
 | Production | Not evidenced as established or approved |
 
-The hosted Flutter Alpha metadata was verified on 10/08/2026 after PR #30 and
-matches `main` at `c41ae1a`. TC-000 has been merged and deployed. Karl has also
+The hosted Flutter Alpha metadata was verified on 10/08/2026 after PR #31 and
+matches `main` at `99cede5`. TC-000 has been merged and deployed. Karl has also
 accepted the refreshed KaelVaren UI, sign-out/landing flow, Today compliance
 summary and filtered compliance drill-downs.
 
@@ -49,7 +49,8 @@ Karl accepted the deployed create, reopen and edit workflow.
 | KaelVaren UI foundation, landing/sign-out flow and Today summary | Merged, deployed and accepted |
 | Compliance summary filtered drill-downs | Merged, deployed and accepted |
 | Portfolio Tasks workspace and edit workflow | Merged, deployed and accepted |
-| SaaS Foundation 1 | Approved and in progress on `codex/saas-foundation-1` |
+| SaaS Foundation 1 | Merged, deployed and accepted |
+| SaaS Foundation 2: User Administration | Approved and in progress |
 
 “Merged” does not mean the frozen Alpha acceptance criteria are complete. The
 repository milestone numbers describe implementation increments and do not map
@@ -97,9 +98,8 @@ TC-000.
 
 ## Immediate priority
 
-Complete SaaS Foundation 1: explicit authorised organisation selection,
-workspace switching, persisted profile preference, cache-safe data reload and
-final-owner safeguards. Follow with Tenancies, Maintenance, Export and the
-remaining formal Alpha acceptance coverage. Invitations, complete member
-management and MFA remain later User Management work. Do not infer overall
-Alpha readiness from merged increments alone.
+Complete SaaS Foundation 2: invitation delivery and acceptance, owner/admin
+member administration, role boundaries, final-owner safeguards and an
+organisation audit log. Follow with Tenancies, Maintenance, Export and the
+remaining formal Alpha acceptance coverage. MFA remains later User Management
+work. Do not infer overall Alpha readiness from merged increments alone.
