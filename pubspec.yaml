@@ -7,6 +7,8 @@ environment:
   sdk: ">=3.5.0 <4.0.0"
 
 dependencies:
+  archive: 3.6.1
+  excel: 4.0.6
   file_picker: 11.0.2
   flutter:
     sdk: flutter
@@ -25,4 +27,3 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-
