@@ -13,12 +13,14 @@ class TasksScreen extends ConsumerStatefulWidget {
   const TasksScreen({
     this.initialFilter,
     this.initialPropertyId,
+    this.initialMaintenanceIssueId,
     this.openCreate = false,
     super.key,
   });
 
   final String? initialFilter;
   final String? initialPropertyId;
+  final String? initialMaintenanceIssueId;
   final bool openCreate;
 
   @override
@@ -216,7 +218,9 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
   }
 
   void _openSource(PortfolioTask task) {
-    if (task.complianceRecordId != null &&
+    if (task.maintenanceIssueId != null) {
+      context.go('/maintenance/${task.maintenanceIssueId}');
+    } else if (task.complianceRecordId != null &&
         task.propertyId != null &&
         task.requirementTypeId != null) {
       context.go(
@@ -245,6 +249,8 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
       builder: (_) => _TaskDialog(
         task: task,
         initialPropertyId: task == null ? widget.initialPropertyId : null,
+        initialMaintenanceIssueId:
+            task == null ? widget.initialMaintenanceIssueId : null,
       ),
     );
     if (saved == true) {
@@ -429,10 +435,15 @@ class _Badge extends StatelessWidget {
 }
 
 class _TaskDialog extends ConsumerStatefulWidget {
-  const _TaskDialog({this.task, this.initialPropertyId});
+  const _TaskDialog({
+    this.task,
+    this.initialPropertyId,
+    this.initialMaintenanceIssueId,
+  });
 
   final PortfolioTask? task;
   final String? initialPropertyId;
+  final String? initialMaintenanceIssueId;
 
   @override
   ConsumerState<_TaskDialog> createState() => _TaskDialogState();
@@ -496,7 +507,9 @@ class _TaskDialogState extends ConsumerState<_TaskDialog> {
                         child: Text(item['address_line_1'] as String),
                       ),
                   ],
-                  onChanged: (value) => setState(() => _propertyId = value),
+                  onChanged: widget.initialMaintenanceIssueId == null
+                      ? (value) => setState(() => _propertyId = value)
+                      : null,
                   validator: (value) =>
                       value == null ? 'Choose a property' : null,
                 ),
@@ -582,6 +595,7 @@ class _TaskDialogState extends ConsumerState<_TaskDialog> {
             description: _description.text.trim(),
             priority: _priority,
             dueDate: _dueDate,
+            maintenanceIssueId: widget.initialMaintenanceIssueId,
           ),
         );
       } else {

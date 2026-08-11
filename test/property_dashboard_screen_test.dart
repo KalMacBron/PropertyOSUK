@@ -6,6 +6,7 @@ import 'package:property_os/app/theme.dart';
 import 'package:property_os/features/compliance/application/compliance_providers.dart';
 import 'package:property_os/features/compliance/domain/compliance_models.dart';
 import 'package:property_os/features/expenses/application/expense_providers.dart';
+import 'package:property_os/features/maintenance/application/maintenance_providers.dart';
 import 'package:property_os/features/portfolio/application/portfolio_providers.dart';
 import 'package:property_os/features/portfolio/data/portfolio_repository.dart';
 import 'package:property_os/features/properties/presentation/properties_screen.dart';
@@ -126,6 +127,7 @@ void main() {
           ),
           tasksProvider.overrideWith((_) async => []),
           expensesProvider.overrideWith((_) async => []),
+          maintenanceIssuesProvider.overrideWith((_) async => []),
           tenanciesProvider.overrideWith((_) async => []),
           propertyTimelineProvider('property').overrideWith((_) async => []),
         ],
@@ -143,6 +145,7 @@ void main() {
     expect(find.text('Add expense'), findsNothing);
     expect(find.text('Create task'), findsNothing);
     expect(find.text('Add tenancy'), findsNothing);
+    expect(find.text('Report maintenance'), findsNothing);
   });
 
   testWidgets('unknown property is safely unavailable', (tester) async {

@@ -39,12 +39,19 @@ Subject to an approved implementation contract:
   deterministic Today links.~~ Merged, deployed and accepted.
 - ~~Tenancy Editing follow-up: row-level edit access, audit-safe historical
   corrections and explicit reopening.~~ Merged, deployed and accepted.
-- **Awaiting review:** Property Dashboard connects property identity,
-  compliance, tenancy, tasks, expenses and timeline with property-scoped
-  drill-downs and writer quick actions. Local checks pass. Follow with
-  Maintenance after review and Alpha UAT.
-- Complete organisation-scoped JSON/CSV export and authorised document export.
-- Perform role, recovery, deletion, privacy, responsive and keyboard testing.
+- ~~Property Dashboard: property identity, compliance, tenancy, tasks, expenses
+  and timeline with property-scoped drill-downs and writer quick actions.~~
+  Merged, deployed and accepted.
+- **Awaiting review under an approved contract:** Maintenance Alpha issue
+  recording, progression, Today surfacing and Property Dashboard integration.
+  Local Flutter and database gates pass; Alpha browser acceptance follows
+  deployment.
+- Then complete organisation-scoped JSON/CSV export and authorised document
+  export.
+- Then Customer Signup and Organisation Onboarding.
+- Then MFA and further user-management hardening.
+- Then perform formal Alpha acceptance, role and tenant-isolation, recovery,
+  deletion, privacy, responsive, accessibility and keyboard testing.
 - Validate daily use with Karl's portfolio before inviting additional testers.
 
 ## Later candidates — not approved implementation scope
@@ -54,13 +61,6 @@ Subject to an approved implementation contract:
 - Further AI extraction improvements with transparent confirmation.
 - Native iOS and Android clients after web validation.
 - Optional integrations with independent KaelVaren products.
-- Complete the remaining User Management lifecycle and multi-factor
-  authentication (MFA), including recovery and step-up authentication for
-  sensitive actions.
-- Customer Signup and Organisation Onboarding: public registration, verified
-  account bootstrap, terms acceptance and controlled creation of a first
-  organisation. Alpha remains invitation-only with separately provisioned new
-  landlord accounts using the existing single-workspace setup flow.
 
 ## Deliberate boundaries
 

@@ -7,6 +7,8 @@ import 'package:property_os/app/theme.dart';
 import 'package:property_os/features/compliance/application/compliance_providers.dart';
 import 'package:property_os/features/compliance/domain/compliance_models.dart';
 import 'package:property_os/features/expenses/application/expense_providers.dart';
+import 'package:property_os/features/maintenance/application/maintenance_providers.dart';
+import 'package:property_os/features/maintenance/domain/maintenance_models.dart';
 import 'package:property_os/features/portfolio/application/portfolio_providers.dart';
 import 'package:property_os/features/portfolio/data/portfolio_repository.dart';
 import 'package:property_os/features/property_dashboard/application/property_dashboard_summary.dart';
@@ -100,6 +102,10 @@ class _Dashboard extends ConsumerWidget {
                       width: width,
                       child: _ExpensesPanel(propertyId: propertyId),
                     ),
+                    SizedBox(
+                      width: width,
+                      child: _MaintenancePanel(propertyId: propertyId),
+                    ),
                   ],
                 );
               },
@@ -167,6 +173,12 @@ class _QuickActions extends StatelessWidget {
                 context.go('/expenses?propertyId=$propertyId&create=true'),
             icon: const Icon(Icons.receipt_long_outlined),
             label: const Text('Add expense'),
+          ),
+          OutlinedButton.icon(
+            onPressed: () =>
+                context.go('/maintenance?propertyId=$propertyId&create=true'),
+            icon: const Icon(Icons.home_repair_service_outlined),
+            label: const Text('Report maintenance'),
           ),
           OutlinedButton.icon(
             onPressed: () =>
@@ -367,6 +379,75 @@ class _ExpensesPanel extends ConsumerWidget {
                           context.go('/expenses?propertyId=$propertyId'),
                     ),
                   ],
+                ),
+              );
+            },
+          );
+}
+
+class _MaintenancePanel extends ConsumerWidget {
+  const _MaintenancePanel({required this.propertyId});
+  final String propertyId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) =>
+      ref.watch(maintenanceIssuesProvider).when(
+            loading: () => const _LoadingPanel(title: 'Maintenance'),
+            error: (_, __) => _ErrorPanel(
+              title: 'Maintenance',
+              onRetry: () => ref.invalidate(maintenanceIssuesProvider),
+            ),
+            data: (items) {
+              final summary = propertyMaintenanceSummary(
+                items,
+                propertyId,
+                DateTime.now(),
+              );
+              return SectionPanel(
+                title: 'Maintenance',
+                subtitle: 'Operational tracking, not safety certification',
+                child: Padding(
+                  padding: const EdgeInsets.all(18),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Wrap(
+                        spacing: 10,
+                        runSpacing: 10,
+                        children: [
+                          _MetricButton(
+                            label: 'Open',
+                            value: summary.open,
+                            onTap: () => context.go(
+                              '/maintenance?propertyId=$propertyId',
+                            ),
+                          ),
+                          _MetricButton(
+                            label: 'High / urgent',
+                            value: summary.highUrgent,
+                            onTap: () => context.go(
+                              '/maintenance?propertyId=$propertyId',
+                            ),
+                          ),
+                          _MetricButton(
+                            label: 'Overdue',
+                            value: summary.overdue,
+                            onTap: () => context.go(
+                              '/maintenance?propertyId=$propertyId',
+                            ),
+                          ),
+                        ],
+                      ),
+                      for (final issue in summary.recentResolved)
+                        ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          title: Text(issue.title),
+                          subtitle: Text('Resolved ${_date(issue.updatedAt)}'),
+                          trailing: const Icon(Icons.chevron_right),
+                          onTap: () => context.go('/maintenance/${issue.id}'),
+                        ),
+                    ],
+                  ),
                 ),
               );
             },

@@ -1,7 +1,8 @@
 # Property Dashboard milestone
 
 **Contract approved:** 10/08/2026
-**Status:** Implementation and local verification complete; awaiting review
+**Deployed:** 10/08/2026 at commit `7a694511a3d807d87c8872283d01a4cbdbc17cec`
+**Status:** Deployed to Alpha and accepted by Karl on 11/08/2026
 
 ## Outcome
 
@@ -39,3 +40,13 @@ personal information remain outside this milestone.
 - Viewer sees no create actions.
 - An unavailable property identifier does not disclose another organisation's
   data.
+
+## Acceptance evidence
+
+- PR #38 passed Flutter, database and Edge Function CI before merge.
+- Post-merge CI passed on `main`.
+- The Hostinger Alpha deployment completed successfully.
+- Alpha `version.json` reported commit `7a69451` and deployment time
+  `2026-08-10T22:40:36Z`.
+- Karl exercised the deployed dashboard and confirmed that it was working on
+  11/08/2026.

@@ -76,12 +76,14 @@ class ExpenseRepository {
     int? vatAmountPence,
     String? notes,
     String? complianceRecordId,
+    String? maintenanceIssueId,
   }) async {
     final values = {
       'organisation_id': organisationId,
       'property_id': propertyId,
       'ownership_entity_id': ownershipEntityId,
       'compliance_record_id': complianceRecordId,
+      'maintenance_issue_id': maintenanceIssueId,
       'expense_date': _date(expenseDate),
       'supplier': _optional(supplier),
       'description': description.trim(),

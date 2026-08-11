@@ -1,10 +1,11 @@
 # PropertyOS Codex Handover
 
-**Baseline reviewed:** 10/08/2026
+**Baseline reviewed:** 11/08/2026
 **Repository source of truth:** `KalMacBron/PropertyOSUK`
-**Baseline `main`:** `077bed6` — *Merge PR #37: audited historical tenancy editing*
-**Active implementation:** `codex/property-dashboard` — Property Dashboard
-implemented and locally verified; awaiting review
+**Baseline `main`:** `7a69451` — *Merge PR #38: Property Dashboard*
+**Active implementation:** `codex/maintenance-alpha-contract` — Maintenance
+Alpha contract approved; implementation and local verification complete,
+awaiting review
 
 This is the entry point for a new PropertyOS engineering session. GitHub is the
 source of truth for code. The frozen Alpha boundary remains
@@ -39,11 +40,14 @@ historical, not current-state evidence. TC-000 now records a local automated
 
 TC-000, Tasks, SaaS Foundations 1 and 2, Viewer Read-Only Hardening and
 Tenancies Alpha and its editing follow-up are merged. The hosted Alpha is at
-`077bed6`; both Tenancies migrations are applied and Karl has accepted creation,
-editing, historical correction and reopening. The active Property Dashboard
-branch aggregates existing RLS-protected property, compliance, tenancy, task,
-expense and timeline data. The full local Flutter and database quality gate
-passes; it is not yet committed, reviewed or deployed.
+`7a69451`; both Tenancies migrations are applied and Karl has accepted creation,
+editing, historical correction and reopening. Property Dashboard PR #38 passed
+pre-merge and post-merge CI, deployed successfully, and was accepted by Karl on
+11/08/2026. The bounded Maintenance Alpha contract is approved and active. It
+adds the routed register, secure workflow RPCs, private evidence, Today and
+Property Dashboard integration, and linked task/expense context. The full local
+quality gate passes; authenticated Alpha browser acceptance remains pending
+deployment.
 
 ## First-session verification
 

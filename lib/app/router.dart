@@ -8,6 +8,7 @@ import 'package:property_os/features/auth/data/auth_repository.dart';
 import 'package:property_os/features/compliance/presentation/compliance_record_screen.dart';
 import 'package:property_os/features/compliance/presentation/compliance_register_screen.dart';
 import 'package:property_os/features/expenses/presentation/expenses_screen.dart';
+import 'package:property_os/features/maintenance/presentation/maintenance_screen.dart';
 import 'package:property_os/features/ownership/presentation/ownership_entities_screen.dart';
 import 'package:property_os/features/portfolio/application/portfolio_providers.dart';
 import 'package:property_os/features/portfolio/data/portfolio_repository.dart';
@@ -66,6 +67,8 @@ final propertyOsRouter = GoRouter(
             initialPropertyId: state.uri.queryParameters['propertyId'],
             initialComplianceRecordId:
                 state.uri.queryParameters['complianceRecordId'],
+            initialMaintenanceIssueId:
+                state.uri.queryParameters['maintenanceIssueId'],
             openCreate: state.uri.queryParameters['create'] == 'true',
           ),
         ),
@@ -74,7 +77,22 @@ final propertyOsRouter = GoRouter(
           builder: (_, state) => TasksScreen(
             initialFilter: state.uri.queryParameters['filter'],
             initialPropertyId: state.uri.queryParameters['propertyId'],
+            initialMaintenanceIssueId:
+                state.uri.queryParameters['maintenanceIssueId'],
             openCreate: state.uri.queryParameters['create'] == 'true',
+          ),
+        ),
+        GoRoute(
+          path: '/maintenance',
+          builder: (_, state) => MaintenanceScreen(
+            initialPropertyId: state.uri.queryParameters['propertyId'],
+            openCreate: state.uri.queryParameters['create'] == 'true',
+          ),
+        ),
+        GoRoute(
+          path: '/maintenance/:issueId',
+          builder: (_, state) => MaintenanceScreen(
+            initialIssueId: state.pathParameters['issueId'],
           ),
         ),
         GoRoute(
@@ -176,6 +194,11 @@ const _destinations = [
   (label: 'Properties', path: '/properties', icon: Icons.home_work_outlined),
   (label: 'Compliance', path: '/compliance', icon: Icons.fact_check_outlined),
   (label: 'Tasks', path: '/tasks', icon: Icons.task_alt_outlined),
+  (
+    label: 'Maintenance',
+    path: '/maintenance',
+    icon: Icons.home_repair_service_outlined
+  ),
   (label: 'Tenancies', path: '/tenancies', icon: Icons.key_outlined),
   (label: 'Expenses', path: '/expenses', icon: Icons.receipt_long_outlined),
   (

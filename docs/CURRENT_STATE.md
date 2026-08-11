@@ -1,29 +1,30 @@
 # PropertyOS Current State
 
-**Baseline recorded:** 10/08/2026
+**Baseline recorded:** 11/08/2026
 
 ## Source and deployment facts
 
 | Item | Verified state |
 |---|---|
-| Repository `main` | `077bed6a50f952d6d2be9846406af2a557b43283` |
+| Repository `main` | `7a694511a3d807d87c8872283d01a4cbdbc17cec` |
 | `origin/main` at baseline | Same commit as local `main` |
 | Worktree at baseline review | Clean before documentation updates |
 | Alpha URL | `https://alpha.propertyosuk.com` |
-| Alpha `version.json` | Commit `077bed6a50f952d6d2be9846406af2a557b43283` |
-| Alpha deployment time | `2026-08-10T22:01:41Z` |
+| Alpha `version.json` | Commit `7a694511a3d807d87c8872283d01a4cbdbc17cec` |
+| Alpha deployment time | `2026-08-10T22:40:36Z` |
 | Deployment source | Push to `main` via `.github/workflows/deploy-alpha.yml` |
 | Production | Not evidenced as established or approved |
 
-The hosted Flutter Alpha metadata was verified on 10/08/2026 after PR #37 and
-matches `main` at `077bed6`. TC-000 has been merged and deployed. Karl has also
+The hosted Flutter Alpha metadata was verified after PR #38 and matches `main`
+at `7a69451`. TC-000 has been merged and deployed. Karl has also
 accepted the refreshed KaelVaren UI, sign-out/landing flow, Today compliance
-summary and filtered compliance drill-downs.
+summary, filtered compliance drill-downs and Property Dashboard.
 
 This proves the frontend bundle version only. It does not by itself prove that
 the linked Supabase project has every migration and Edge Function from the same
-commit. GitHub Actions CI passed on `02f07ca`. Alpha deployment run
-`31384326872` completed successfully, including the Hostinger FTPS upload.
+commit. Post-merge GitHub Actions CI run `31439201377` passed on `7a69451`.
+Alpha deployment run `31439201378` completed successfully, including the
+Hostinger FTPS upload.
 The Tasks database migration was applied to the hosted project as
 `20260810120613_task_workflow_actions` after the web-only deployment exposed
 the missing RPC; Karl then confirmed task creation worked on Alpha.
@@ -60,7 +61,8 @@ Karl accepted historical correction and reopening in Alpha.
 | SaaS Foundation 2: User Administration | Merged and deployed for Alpha UAT |
 | Viewer Read-Only Hardening | Merged, deployed and accepted; expense CSV export intentionally remains available to Viewer |
 | Tenancies Alpha and historical-editing follow-up | Merged, deployed and accepted |
-| Property Dashboard | Implemented and locally verified on `codex/property-dashboard`; awaiting review |
+| Property Dashboard | Merged in PR #38, deployed and accepted |
+| Maintenance Alpha | Contract approved; implementation and local verification complete on `codex/maintenance-alpha-contract`, awaiting review |
 
 “Merged” does not mean the frozen Alpha acceptance criteria are complete. The
 repository milestone numbers describe implementation increments and do not map
@@ -100,17 +102,17 @@ TC-000.
 
 - Formal tracker cases other than TC-000 remain unexecuted.
 - Maintenance, Settings and complete organisation export are not exposed as
-  routed application workflows. The Property Dashboard is locally verified
-  but is not yet reviewed, committed or deployed.
+  routed application workflows.
 - Backup/restore, deletion, accessibility, responsive and full role/tenant
   separation evidence is not recorded.
 - Private validation with real portfolio data is not documented as complete.
 
 ## Immediate priority
 
-Review, deploy and UAT the Property Dashboard, then proceed with Maintenance,
-Export and the
-remaining formal Alpha acceptance coverage. MFA and Customer Signup and
-Organisation Onboarding remain later SaaS/User Management work; Alpha account
-bootstrap remains controlled and invitation-only. Do not infer overall Alpha
-readiness from merged increments alone.
+Complete, review, deploy and UAT the approved Maintenance Alpha contract, then complete
+organisation export and authorised document export. Customer Signup and
+Organisation Onboarding follows, then MFA and further user-management
+hardening, followed by formal Alpha acceptance, responsive, accessibility and
+tenant-isolation testing. Alpha account bootstrap remains controlled and
+invitation-only. Do not infer overall Alpha readiness from merged increments
+alone.

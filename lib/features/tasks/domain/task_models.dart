@@ -68,6 +68,7 @@ class PortfolioTask {
     this.propertyId,
     this.propertyName,
     this.complianceRecordId,
+    this.maintenanceIssueId,
     this.requirementTypeId,
     this.description,
     this.dueDate,
@@ -85,6 +86,7 @@ class PortfolioTask {
         propertyId: json['property_id'] as String?,
         propertyName: propertyName,
         complianceRecordId: json['compliance_record_id'] as String?,
+        maintenanceIssueId: json['maintenance_issue_id'] as String?,
         requirementTypeId: requirementTypeId,
         title: json['title'] as String,
         description: json['description'] as String?,
@@ -108,6 +110,7 @@ class PortfolioTask {
   final String? propertyId;
   final String? propertyName;
   final String? complianceRecordId;
+  final String? maintenanceIssueId;
   final String? requirementTypeId;
   final String title;
   final String? description;
@@ -136,6 +139,7 @@ class CreateTaskInput {
     required this.priority,
     this.description,
     this.dueDate,
+    this.maintenanceIssueId,
   });
 
   final String organisationId;
@@ -144,6 +148,7 @@ class CreateTaskInput {
   final String? description;
   final TaskPriority priority;
   final DateTime? dueDate;
+  final String? maintenanceIssueId;
 }
 
 class UpdateTaskInput {
