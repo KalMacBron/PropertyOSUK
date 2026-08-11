@@ -331,7 +331,9 @@ class _TodayActionCard extends StatelessWidget {
         action.dueDate != null;
     final taskAction = action.sourceType == 'task';
     final tenancyAction = action.sourceType == 'tenancy';
-    final canOpen = complianceAction || taskAction || tenancyAction;
+    final maintenanceAction = action.sourceType == 'maintenance';
+    final canOpen =
+        complianceAction || taskAction || tenancyAction || maintenanceAction;
     return Material(
       color: Colors.white,
       child: ListTile(
@@ -367,6 +369,10 @@ class _TodayActionCard extends StatelessWidget {
                 }
                 if (tenancyAction) {
                   context.go('/tenancies?tenancyId=${action.sourceId}');
+                  return;
+                }
+                if (maintenanceAction) {
+                  context.go('/maintenance/${action.sourceId}');
                   return;
                 }
                 final uri = Uri(

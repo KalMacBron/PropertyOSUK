@@ -87,6 +87,7 @@ class PropertyExpense {
     this.vatAmountPence,
     this.notes,
     this.complianceRecordId,
+    this.maintenanceIssueId,
     this.complianceRequirement,
     this.certificateReference,
     this.evidence,
@@ -119,6 +120,7 @@ class PropertyExpense {
       paymentStatus: json['payment_status'] as String,
       notes: json['notes'] as String?,
       complianceRecordId: json['compliance_record_id'] as String?,
+      maintenanceIssueId: json['maintenance_issue_id'] as String?,
       complianceRequirement: compliance == null
           ? null
           : (compliance['compliance_requirement_types']
@@ -147,6 +149,7 @@ class PropertyExpense {
   final String paymentStatus;
   final String? notes;
   final String? complianceRecordId;
+  final String? maintenanceIssueId;
   final String? complianceRequirement;
   final String? certificateReference;
   final DateTime createdAt;

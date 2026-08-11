@@ -43,10 +43,15 @@ class TaskRepository {
   }
 
   Future<String> createTask(CreateTaskInput input) => _client.rpc<String>(
-        'create_manual_task',
+        input.maintenanceIssueId == null
+            ? 'create_manual_task'
+            : 'create_maintenance_task',
         params: {
-          'target_organisation_id': input.organisationId,
-          'target_property_id': input.propertyId,
+          if (input.maintenanceIssueId == null) ...{
+            'target_organisation_id': input.organisationId,
+            'target_property_id': input.propertyId,
+          } else
+            'target_maintenance_issue_id': input.maintenanceIssueId,
           'task_title': input.title,
           'task_description': input.description,
           'task_priority': input.priority.name,

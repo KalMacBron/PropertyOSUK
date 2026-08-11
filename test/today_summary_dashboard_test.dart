@@ -243,4 +243,68 @@ void main() {
       '/tenancies?tenancyId=tenancy-1',
     );
   });
+
+  testWidgets('maintenance Today prompt opens the issue detail',
+      (tester) async {
+    tester.view.physicalSize = const Size(1200, 1200);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final router = GoRouter(
+      initialLocation: '/today',
+      routes: [
+        GoRoute(path: '/today', builder: (_, __) => const TodayScreen()),
+        GoRoute(
+          path: '/maintenance/:issueId',
+          builder: (_, state) => Scaffold(
+            body: Text('Maintenance ${state.pathParameters['issueId']}'),
+          ),
+        ),
+      ],
+    );
+    addTearDown(router.dispose);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          portfolioSummaryProvider.overrideWith(
+            (_) async => const PortfolioSummary(
+              propertyCount: 1,
+              compliant: 0,
+              dueSoon: 0,
+              overdue: 0,
+              notRecorded: 0,
+            ),
+          ),
+          todayActionsProvider.overrideWith(
+            (_) async => const [
+              TodayAction(
+                sourceType: 'maintenance',
+                sourceId: 'issue-1',
+                propertyId: 'property-1',
+                title: 'Urgent boiler repair',
+                reason: 'open_reported',
+                priority: 'urgent',
+              ),
+            ],
+          ),
+          propertiesProvider.overrideWith((_) async => const []),
+          tasksProvider.overrideWith((_) async => const []),
+        ],
+        child: MaterialApp.router(
+          theme: buildPropertyOsTheme(),
+          routerConfig: router,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Urgent boiler repair'));
+    await tester.pumpAndSettle();
+    expect(find.text('Maintenance issue-1'), findsOneWidget);
+    expect(
+      router.routeInformationProvider.value.uri.toString(),
+      '/maintenance/issue-1',
+    );
+  });
 }

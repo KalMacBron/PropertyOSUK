@@ -46,12 +46,14 @@ class ExpensesScreen extends ConsumerStatefulWidget {
   const ExpensesScreen({
     this.initialPropertyId,
     this.initialComplianceRecordId,
+    this.initialMaintenanceIssueId,
     this.openCreate = false,
     super.key,
   });
 
   final String? initialPropertyId;
   final String? initialComplianceRecordId;
+  final String? initialMaintenanceIssueId;
   final bool openCreate;
 
   @override
@@ -67,6 +69,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
     PropertyExpense? expense,
     String? propertyId,
     String? complianceRecordId,
+    String? maintenanceIssueId,
   }) async {
     final organisation = await ref.read(organisationProvider.future);
     if (!canWriteOrganisation(organisation)) {
@@ -89,6 +92,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
         expense: expense,
         initialPropertyId: propertyId,
         initialComplianceRecordId: complianceRecordId,
+        initialMaintenanceIssueId: maintenanceIssueId,
         repository: ref.read(expenseRepositoryProvider),
       ),
     );
@@ -199,6 +203,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
       WidgetsBinding.instance.addPostFrameCallback((_) => _openForm(
             propertyId: widget.initialPropertyId,
             complianceRecordId: widget.initialComplianceRecordId,
+            maintenanceIssueId: widget.initialMaintenanceIssueId,
           ));
     }
 
@@ -481,6 +486,7 @@ class _ExpenseDialog extends StatefulWidget {
     this.expense,
     this.initialPropertyId,
     this.initialComplianceRecordId,
+    this.initialMaintenanceIssueId,
   });
 
   final String organisationId;
@@ -489,6 +495,7 @@ class _ExpenseDialog extends StatefulWidget {
   final PropertyExpense? expense;
   final String? initialPropertyId;
   final String? initialComplianceRecordId;
+  final String? initialMaintenanceIssueId;
 
   @override
   State<_ExpenseDialog> createState() => _ExpenseDialogState();
@@ -579,6 +586,8 @@ class _ExpenseDialogState extends State<_ExpenseDialog> {
         vatAmountPence: vat,
         paymentStatus: _paymentStatus,
         complianceRecordId: _complianceId,
+        maintenanceIssueId: widget.expense?.maintenanceIssueId ??
+            widget.initialMaintenanceIssueId,
         notes: _notes.text,
       );
       if (mounted) Navigator.pop(context, true);
@@ -624,16 +633,18 @@ class _ExpenseDialogState extends State<_ExpenseDialog> {
                             child: Text(item.name),
                           ))
                       .toList(),
-                  onChanged: (value) {
-                    if (value == null) return;
-                    setState(() {
-                      _propertyId = value;
-                      _ownerId = _ownersFor(value).first.id;
-                      _complianceId = null;
-                      _compliance = const [];
-                    });
-                    _loadCompliance();
-                  },
+                  onChanged: widget.initialMaintenanceIssueId != null
+                      ? null
+                      : (value) {
+                          if (value == null) return;
+                          setState(() {
+                            _propertyId = value;
+                            _ownerId = _ownersFor(value).first.id;
+                            _complianceId = null;
+                            _compliance = const [];
+                          });
+                          _loadCompliance();
+                        },
                 ),
                 const SizedBox(height: 12),
                 DropdownButtonFormField<String>(
