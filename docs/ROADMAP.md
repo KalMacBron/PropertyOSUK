@@ -42,10 +42,11 @@ Subject to an approved implementation contract:
 - ~~Property Dashboard: property identity, compliance, tenancy, tasks, expenses
   and timeline with property-scoped drill-downs and writer quick actions.~~
   Merged, deployed and accepted.
-- **Awaiting review under an approved contract:** Maintenance Alpha issue
-  recording, progression, Today surfacing and Property Dashboard integration.
-  Local Flutter and database gates pass; Alpha browser acceptance follows
-  deployment.
+- ~~Maintenance Alpha issue recording, progression, Today surfacing and
+  Property Dashboard integration.~~ Merged, migrated, deployed and accepted.
+- **In progress under approved bounded scope:** Contractor Directory with
+  organisation-scoped create/edit/archive/reactivate and Maintenance in-flow
+  creation. Contractor accounts, portals and dispatch remain excluded.
 - Then complete organisation-scoped JSON/CSV export and authorised document
   export.
 - Then Customer Signup and Organisation Onboarding.

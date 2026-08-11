@@ -58,20 +58,59 @@ enum MaintenanceFilter {
 class MaintenanceContractor {
   const MaintenanceContractor({
     required this.id,
+    required this.organisationId,
     required this.name,
     this.trade,
+    this.email,
+    this.phone,
+    this.notes,
+    this.status = 'active',
   });
 
   factory MaintenanceContractor.fromJson(Map<String, dynamic> json) =>
       MaintenanceContractor(
         id: json['id'] as String,
+        organisationId: json['organisation_id'] as String,
         name: json['name'] as String,
         trade: json['trade'] as String?,
+        email: json['email'] as String?,
+        phone: json['phone'] as String?,
+        notes: json['notes'] as String?,
+        status: json['status'] as String? ?? 'active',
       );
 
   final String id;
+  final String organisationId;
   final String name;
   final String? trade;
+  final String? email;
+  final String? phone;
+  final String? notes;
+  final String status;
+
+  bool get isActive => status == 'active';
+}
+
+class ContractorInput {
+  const ContractorInput({
+    required this.organisationId,
+    required this.name,
+    this.contractorId,
+    this.trade,
+    this.email,
+    this.phone,
+    this.notes,
+    this.status = 'active',
+  });
+
+  final String? contractorId;
+  final String organisationId;
+  final String name;
+  final String? trade;
+  final String? email;
+  final String? phone;
+  final String? notes;
+  final String status;
 }
 
 class MaintenanceIssue {
