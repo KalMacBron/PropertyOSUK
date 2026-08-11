@@ -28,15 +28,43 @@ class MaintenanceRepository {
   }
 
   Future<List<MaintenanceContractor>> listContractors(
-    String organisationId,
-  ) async {
-    final rows = await _client
+    String organisationId, {
+    bool activeOnly = true,
+  }) async {
+    var query = _client
         .from('contractors')
-        .select('id,name,trade')
-        .eq('organisation_id', organisationId)
-        .eq('status', 'active')
-        .order('name');
+        .select('id,organisation_id,name,trade,email,phone,notes,status')
+        .eq('organisation_id', organisationId);
+    if (activeOnly) query = query.eq('status', 'active');
+    final rows = await query.order('name');
     return rows.map(MaintenanceContractor.fromJson).toList();
+  }
+
+  Future<String> saveContractor(ContractorInput input) {
+    final params = {
+      'contractor_name': input.name.trim(),
+      'contractor_trade': _optional(input.trade),
+      'contractor_email': _optional(input.email),
+      'contractor_phone': _optional(input.phone),
+      'contractor_notes': _optional(input.notes),
+    };
+    if (input.contractorId == null) {
+      return _client.rpc<String>(
+        'create_contractor',
+        params: {
+          ...params,
+          'target_organisation_id': input.organisationId,
+        },
+      );
+    }
+    return _client.rpc<String>(
+      'update_contractor',
+      params: {
+        ...params,
+        'target_contractor_id': input.contractorId,
+        'contractor_status': input.status,
+      },
+    );
   }
 
   Future<String> save(MaintenanceInput input) {

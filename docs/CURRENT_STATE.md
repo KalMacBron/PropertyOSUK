@@ -6,25 +6,25 @@
 
 | Item | Verified state |
 |---|---|
-| Repository `main` | `7a694511a3d807d87c8872283d01a4cbdbc17cec` |
+| Repository `main` | `79a0ec146487c8cb636ea2f8e56fb35e94e58e10` |
 | `origin/main` at baseline | Same commit as local `main` |
 | Worktree at baseline review | Clean before documentation updates |
 | Alpha URL | `https://alpha.propertyosuk.com` |
-| Alpha `version.json` | Commit `7a694511a3d807d87c8872283d01a4cbdbc17cec` |
-| Alpha deployment time | `2026-08-10T22:40:36Z` |
+| Alpha `version.json` | Commit `79a0ec146487c8cb636ea2f8e56fb35e94e58e10` |
+| Alpha deployment time | `2026-08-11T09:25:32Z` |
 | Deployment source | Push to `main` via `.github/workflows/deploy-alpha.yml` |
 | Production | Not evidenced as established or approved |
 
-The hosted Flutter Alpha metadata was verified after PR #38 and matches `main`
-at `7a69451`. TC-000 has been merged and deployed. Karl has also
+The hosted Flutter Alpha metadata was verified after PR #39 and matches `main`
+at `79a0ec1`. TC-000 has been merged and deployed. Karl has also
 accepted the refreshed KaelVaren UI, sign-out/landing flow, Today compliance
-summary, filtered compliance drill-downs and Property Dashboard.
+summary, filtered compliance drill-downs, Property Dashboard and Maintenance
+Alpha.
 
 This proves the frontend bundle version only. It does not by itself prove that
 the linked Supabase project has every migration and Edge Function from the same
-commit. Post-merge GitHub Actions CI run `31439201377` passed on `7a69451`.
-Alpha deployment run `31439201378` completed successfully, including the
-Hostinger FTPS upload.
+commit. PR #39 passed all required CI jobs. Alpha deployment run `31477236671`
+completed successfully after one transient Hostinger FTPS timeout and retry.
 The Tasks database migration was applied to the hosted project as
 `20260810120613_task_workflow_actions` after the web-only deployment exposed
 the missing RPC; Karl then confirmed task creation worked on Alpha.
@@ -38,6 +38,9 @@ create/save worked.
 The historical-editing migration was applied as
 `20260810220114_tenancy_historical_editing`; PR #37 passed post-merge CI and
 Karl accepted historical correction and reopening in Alpha.
+The Maintenance migration was applied as
+`20260811092216_maintenance_alpha_workflow`; PR #39 was deployed and Karl
+accepted the Maintenance screen and workflow on 11/08/2026.
 
 ## Delivered implementation increments
 
@@ -62,7 +65,8 @@ Karl accepted historical correction and reopening in Alpha.
 | Viewer Read-Only Hardening | Merged, deployed and accepted; expense CSV export intentionally remains available to Viewer |
 | Tenancies Alpha and historical-editing follow-up | Merged, deployed and accepted |
 | Property Dashboard | Merged in PR #38, deployed and accepted |
-| Maintenance Alpha | Contract approved; implementation and local verification complete on `codex/maintenance-alpha-contract`, awaiting review |
+| Maintenance Alpha | Merged in PR #39, migrated, deployed and accepted |
+| Contractor Directory follow-up | Scope approved; implementation in progress on `codex/contractor-directory` |
 
 “Merged” does not mean the frozen Alpha acceptance criteria are complete. The
 repository milestone numbers describe implementation increments and do not map
@@ -101,16 +105,16 @@ TC-000.
 ## Remaining material acceptance gaps
 
 - Formal tracker cases other than TC-000 remain unexecuted.
-- Maintenance, Settings and complete organisation export are not exposed as
-  routed application workflows.
+- Settings and complete organisation export are not exposed as routed
+  application workflows.
 - Backup/restore, deletion, accessibility, responsive and full role/tenant
   separation evidence is not recorded.
 - Private validation with real portfolio data is not documented as complete.
 
 ## Immediate priority
 
-Complete, review, deploy and UAT the approved Maintenance Alpha contract, then complete
-organisation export and authorised document export. Customer Signup and
+Complete, review, deploy and UAT the bounded Contractor Directory follow-up,
+then complete organisation export and authorised document export. Customer Signup and
 Organisation Onboarding follows, then MFA and further user-management
 hardening, followed by formal Alpha acceptance, responsive, accessibility and
 tenant-isolation testing. Alpha account bootstrap remains controlled and

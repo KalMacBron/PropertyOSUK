@@ -9,6 +9,7 @@ import 'package:property_os/features/compliance/presentation/compliance_record_s
 import 'package:property_os/features/compliance/presentation/compliance_register_screen.dart';
 import 'package:property_os/features/expenses/presentation/expenses_screen.dart';
 import 'package:property_os/features/maintenance/presentation/maintenance_screen.dart';
+import 'package:property_os/features/maintenance/presentation/contractor_directory_screen.dart';
 import 'package:property_os/features/ownership/presentation/ownership_entities_screen.dart';
 import 'package:property_os/features/portfolio/application/portfolio_providers.dart';
 import 'package:property_os/features/portfolio/data/portfolio_repository.dart';
@@ -94,6 +95,10 @@ final propertyOsRouter = GoRouter(
           builder: (_, state) => MaintenanceScreen(
             initialIssueId: state.pathParameters['issueId'],
           ),
+        ),
+        GoRoute(
+          path: '/maintenance-contractors',
+          builder: (_, __) => const ContractorDirectoryScreen(),
         ),
         GoRoute(
           path: '/tenancies',

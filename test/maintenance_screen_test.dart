@@ -114,6 +114,49 @@ void main() {
 
     expect(find.text('Maintenance issue unavailable'), findsOneWidget);
   });
+
+  testWidgets('issue form exposes bounded in-flow contractor creation', (
+    tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(1200, 1000));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          organisationProvider.overrideWith(
+            (_) async => const OrganisationSummary(
+              id: 'organisation',
+              name: 'Portfolio',
+              role: 'member',
+            ),
+          ),
+          maintenanceIssuesProvider.overrideWith((_) async => []),
+          maintenanceContractorsProvider.overrideWith((_) async => []),
+          propertiesProvider.overrideWith(
+            (_) async => [
+              {
+                'id': 'property',
+                'display_name': 'Oak House',
+                'address_line_1': '1 Oak Road',
+              },
+            ],
+          ),
+        ],
+        child: MaterialApp(
+          theme: buildPropertyOsTheme(),
+          home: const Scaffold(
+            body: MaintenanceScreen(openCreate: true),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(OutlinedButton, 'Add'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Add contractor'), findsWidgets);
+    expect(find.text('Contractor or business name'), findsOneWidget);
+  });
 }
 
 MaintenanceIssue _issue(String id) => MaintenanceIssue(

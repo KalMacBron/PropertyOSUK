@@ -8,6 +8,7 @@ import 'package:property_os/features/documents/domain/compliance_evidence.dart';
 import 'package:property_os/features/maintenance/application/maintenance_providers.dart';
 import 'package:property_os/features/maintenance/data/maintenance_repository.dart';
 import 'package:property_os/features/maintenance/domain/maintenance_models.dart';
+import 'package:property_os/features/maintenance/presentation/contractor_directory_screen.dart';
 import 'package:property_os/features/portfolio/application/portfolio_providers.dart';
 import 'package:property_os/features/portfolio/data/portfolio_repository.dart';
 import 'package:property_os/features/tasks/domain/task_models.dart';
@@ -73,13 +74,25 @@ class _MaintenanceScreenState extends ConsumerState<MaintenanceScreen> {
       title: 'Maintenance',
       subtitle:
           'Record and progress property issues from report to resolution.',
-      action: canWrite
-          ? FilledButton.icon(
+      action: Wrap(
+        spacing: 10,
+        runSpacing: 8,
+        children: [
+          OutlinedButton.icon(
+            onPressed: () => context.go('/maintenance-contractors'),
+            icon: const Icon(Icons.engineering_outlined),
+            label: const Text('Contractors'),
+          ),
+          if (canWrite)
+            FilledButton.icon(
               onPressed: () => _editIssue(null),
               icon: const Icon(Icons.add),
               label: const Text('Report issue'),
             )
-          : const Chip(label: Text('VIEW ONLY')),
+          else
+            const Chip(label: Text('VIEW ONLY')),
+        ],
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -160,12 +173,47 @@ class _MaintenanceScreenState extends ConsumerState<MaintenanceScreen> {
         organisationId: organisation.id,
         properties: properties,
         contractors: contractors,
+        onCreateContractor: () => _createContractor(organisation.id),
         onSave: (input) => ref.read(maintenanceRepositoryProvider).save(input),
         issue: issue,
         initialPropertyId: widget.initialPropertyId,
       ),
     );
     if (saved == true) _refresh(issue?.propertyId);
+  }
+
+  Future<MaintenanceContractor?> _createContractor(
+    String organisationId,
+  ) async {
+    final input = await showDialog<ContractorInput>(
+      context: context,
+      builder: (_) => ContractorEditorDialog(
+        organisationId: organisationId,
+      ),
+    );
+    if (input == null) return null;
+    try {
+      final id =
+          await ref.read(maintenanceRepositoryProvider).saveContractor(input);
+      final contractor = MaintenanceContractor(
+        id: id,
+        organisationId: organisationId,
+        name: input.name.trim(),
+        trade: _trimmed(input.trade),
+        email: _trimmed(input.email)?.toLowerCase(),
+        phone: _trimmed(input.phone),
+        notes: _trimmed(input.notes),
+      );
+      refreshMaintenance(ref);
+      return contractor;
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('The contractor could not be saved.')),
+        );
+      }
+      return null;
+    }
   }
 
   Future<void> _transition(
@@ -409,6 +457,7 @@ class _IssueDialog extends StatefulWidget {
     required this.properties,
     required this.contractors,
     required this.onSave,
+    required this.onCreateContractor,
     this.issue,
     this.initialPropertyId,
   });
@@ -416,6 +465,7 @@ class _IssueDialog extends StatefulWidget {
   final List<Map<String, dynamic>> properties;
   final List<MaintenanceContractor> contractors;
   final Future<String> Function(MaintenanceInput input) onSave;
+  final Future<MaintenanceContractor?> Function() onCreateContractor;
   final MaintenanceIssue? issue;
   final String? initialPropertyId;
 
@@ -429,6 +479,9 @@ class _IssueDialogState extends State<_IssueDialog> {
       widget.initialPropertyId ??
       widget.properties.first['id'] as String;
   late String? _contractorId = widget.issue?.contractorId;
+  late final List<MaintenanceContractor> _contractors = [
+    ...widget.contractors,
+  ];
   late TaskPriority _priority = widget.issue?.priority ?? TaskPriority.medium;
   late DateTime _reportedDate = widget.issue?.reportedAt ?? DateTime.now();
   late DateTime? _targetDate = widget.issue?.targetDate;
@@ -550,21 +603,45 @@ class _IssueDialogState extends State<_IssueDialog> {
                     allowClear: true,
                     onChanged: (value) => setState(() => _targetDate = value),
                   ),
-                  DropdownButtonFormField<String?>(
-                    initialValue: _contractorId,
-                    decoration: const InputDecoration(
-                        labelText: 'Contractor (optional)'),
-                    items: [
-                      const DropdownMenuItem(
-                          value: null, child: Text('Not assigned')),
-                      for (final contractor in widget.contractors)
-                        DropdownMenuItem(
-                          value: contractor.id,
-                          child: Text(
-                              '${contractor.name}${contractor.trade == null ? '' : ' · ${contractor.trade}'}'),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Expanded(
+                        child: DropdownButtonFormField<String?>(
+                          key: ValueKey(_contractorId),
+                          initialValue: _contractorId,
+                          decoration: const InputDecoration(
+                              labelText: 'Contractor (optional)'),
+                          items: [
+                            const DropdownMenuItem(
+                                value: null, child: Text('Not assigned')),
+                            for (final contractor in _contractors)
+                              DropdownMenuItem(
+                                value: contractor.id,
+                                child: Text(
+                                    '${contractor.name}${contractor.trade == null ? '' : ' · ${contractor.trade}'}'),
+                              ),
+                          ],
+                          onChanged: (value) => _contractorId = value,
                         ),
+                      ),
+                      const SizedBox(width: 10),
+                      OutlinedButton.icon(
+                        onPressed: () async {
+                          final contractor = await widget.onCreateContractor();
+                          if (contractor == null || !mounted) return;
+                          setState(() {
+                            _contractors.add(contractor);
+                            _contractors.sort(
+                              (a, b) => a.name.compareTo(b.name),
+                            );
+                            _contractorId = contractor.id;
+                          });
+                        },
+                        icon: const Icon(Icons.add),
+                        label: const Text('Add'),
+                      ),
                     ],
-                    onChanged: (value) => _contractorId = value,
                   ),
                   const SizedBox(height: 12),
                   TextFormField(
@@ -886,6 +963,11 @@ String _propertyName(Map<String, dynamic> property) {
 String _date(DateTime value) => DateFormat('dd/MM/yyyy').format(value);
 String _money(int pence) =>
     NumberFormat.currency(locale: 'en_GB', symbol: '£').format(pence / 100);
+
+String? _trimmed(String? value) {
+  final trimmed = value?.trim();
+  return trimmed == null || trimmed.isEmpty ? null : trimmed;
+}
 
 int? _optionalPence(String value) {
   final cleaned = value.trim().replaceAll(',', '');

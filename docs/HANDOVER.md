@@ -2,10 +2,9 @@
 
 **Baseline reviewed:** 11/08/2026
 **Repository source of truth:** `KalMacBron/PropertyOSUK`
-**Baseline `main`:** `7a69451` — *Merge PR #38: Property Dashboard*
-**Active implementation:** `codex/maintenance-alpha-contract` — Maintenance
-Alpha contract approved; implementation and local verification complete,
-awaiting review
+**Baseline `main`:** `79a0ec1` — *Merge PR #39: Maintenance Alpha*
+**Active implementation:** `codex/contractor-directory` — bounded Contractor
+Directory and in-flow creation follow-up approved and in progress
 
 This is the entry point for a new PropertyOS engineering session. GitHub is the
 source of truth for code. The frozen Alpha boundary remains
@@ -40,14 +39,13 @@ historical, not current-state evidence. TC-000 now records a local automated
 
 TC-000, Tasks, SaaS Foundations 1 and 2, Viewer Read-Only Hardening and
 Tenancies Alpha and its editing follow-up are merged. The hosted Alpha is at
-`7a69451`; both Tenancies migrations are applied and Karl has accepted creation,
+`79a0ec1`; both Tenancies migrations are applied and Karl has accepted creation,
 editing, historical correction and reopening. Property Dashboard PR #38 passed
 pre-merge and post-merge CI, deployed successfully, and was accepted by Karl on
-11/08/2026. The bounded Maintenance Alpha contract is approved and active. It
-adds the routed register, secure workflow RPCs, private evidence, Today and
-Property Dashboard integration, and linked task/expense context. The full local
-quality gate passes; authenticated Alpha browser acceptance remains pending
-deployment.
+11/08/2026. Maintenance Alpha PR #39 passed CI, was merged, migrated and
+deployed, and Karl accepted the screen and workflow. The active bounded
+follow-up adds a Contractor Directory and in-form contractor creation while
+keeping contractor portals, dispatch and messaging outside Alpha scope.
 
 ## First-session verification
 

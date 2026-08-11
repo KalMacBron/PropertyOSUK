@@ -25,7 +25,17 @@ final maintenanceContractorsProvider =
       .listContractors(organisation.id);
 });
 
+final contractorDirectoryProvider =
+    FutureProvider<List<MaintenanceContractor>>((ref) async {
+  final organisation = await ref.watch(organisationProvider.future);
+  if (organisation == null) return [];
+  return ref
+      .watch(maintenanceRepositoryProvider)
+      .listContractors(organisation.id, activeOnly: false);
+});
+
 void refreshMaintenance(WidgetRef ref) {
   ref.invalidate(maintenanceIssuesProvider);
   ref.invalidate(maintenanceContractorsProvider);
+  ref.invalidate(contractorDirectoryProvider);
 }
