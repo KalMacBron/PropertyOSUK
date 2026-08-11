@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:property_os/app/theme.dart';
 import 'package:property_os/features/export/application/organisation_export_providers.dart';
+import 'package:property_os/features/export/data/organisation_export_repository.dart';
 import 'package:property_os/features/export/domain/organisation_export_models.dart';
 import 'package:property_os/features/export/presentation/organisation_export_screen.dart';
 import 'package:property_os/features/portfolio/application/portfolio_providers.dart';
@@ -130,4 +131,88 @@ void main() {
     expect(find.text('repair.jpg'), findsOneWidget);
     expect(find.text('gas.pdf'), findsNothing);
   });
+
+  testWidgets('document download reserves and reuses a named browser tab', (
+    tester,
+  ) async {
+    final launches = <({Uri uri, String? windowName})>[];
+    final repository = _ExportRepository();
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          organisationProvider.overrideWith(
+            (_) async => const OrganisationSummary(
+              id: 'organisation',
+              name: 'Portfolio',
+              role: 'owner',
+            ),
+          ),
+          organisationExportDocumentsProvider.overrideWith(
+            (_) async => [
+              ExportDocument(
+                id: 'document',
+                propertyName: 'Oak House',
+                scope: 'compliance',
+                documentType: 'compliance_evidence',
+                originalFilename: 'gas-safety.pdf',
+                createdAt: DateTime(2026, 8, 11),
+              ),
+            ],
+          ),
+          organisationExportRepositoryProvider.overrideWithValue(repository),
+        ],
+        child: MaterialApp(
+          theme: buildPropertyOsTheme(),
+          home: Scaffold(
+            body: OrganisationExportScreen(
+              urlLauncher: (uri, {webOnlyWindowName}) async {
+                launches.add((uri: uri, windowName: webOnlyWindowName));
+                return true;
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final downloadButton = find.byTooltip('Download authorised document');
+    await tester.ensureVisible(downloadButton);
+    await tester.pumpAndSettle();
+    await tester.tap(downloadButton);
+    await tester.pumpAndSettle();
+
+    expect(repository.authorisedDocumentIds, ['document']);
+    expect(launches, [
+      (
+        uri: Uri.parse('about:blank'),
+        windowName: 'propertyos-document-document',
+      ),
+      (
+        uri: Uri.parse('https://storage.example/document'),
+        windowName: 'propertyos-document-document',
+      ),
+    ]);
+  });
+}
+
+class _ExportRepository implements OrganisationExportRepository {
+  final authorisedDocumentIds = <String>[];
+
+  @override
+  Future<String> authorisedDocumentUrl({
+    required String organisationId,
+    required String documentId,
+  }) async {
+    authorisedDocumentIds.add(documentId);
+    return 'https://storage.example/document';
+  }
+
+  @override
+  Future<Map<String, dynamic>> exportData(String organisationId) =>
+      throw UnimplementedError();
+
+  @override
+  Future<List<ExportDocument>> listDocuments(String organisationId) =>
+      throw UnimplementedError();
 }
