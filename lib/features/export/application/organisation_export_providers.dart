@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:property_os/features/export/application/portfolio_workbook_builder.dart';
 import 'package:property_os/core/database/supabase_provider.dart';
 import 'package:property_os/features/export/data/organisation_export_repository.dart';
 import 'package:property_os/features/export/domain/organisation_export_models.dart';
@@ -6,6 +7,10 @@ import 'package:property_os/features/portfolio/application/portfolio_providers.d
 
 final organisationExportRepositoryProvider = Provider(
   (ref) => OrganisationExportRepository(ref.watch(supabaseProvider)),
+);
+
+final portfolioWorkbookBuilderProvider = Provider<PortfolioWorkbookBuilder>(
+  (_) => const PortfolioWorkbookBuilder(),
 );
 
 final organisationExportDocumentsProvider =
