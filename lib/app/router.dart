@@ -8,6 +8,7 @@ import 'package:property_os/features/auth/data/auth_repository.dart';
 import 'package:property_os/features/compliance/presentation/compliance_record_screen.dart';
 import 'package:property_os/features/compliance/presentation/compliance_register_screen.dart';
 import 'package:property_os/features/expenses/presentation/expenses_screen.dart';
+import 'package:property_os/features/export/presentation/organisation_export_screen.dart';
 import 'package:property_os/features/maintenance/presentation/maintenance_screen.dart';
 import 'package:property_os/features/maintenance/presentation/contractor_directory_screen.dart';
 import 'package:property_os/features/ownership/presentation/ownership_entities_screen.dart';
@@ -116,6 +117,10 @@ final propertyOsRouter = GoRouter(
           path: '/settings/users',
           builder: (_, __) => const UserAdminScreen(),
         ),
+        GoRoute(
+          path: '/settings/export',
+          builder: (_, __) => const OrganisationExportScreen(),
+        ),
       ],
     ),
   ],
@@ -216,6 +221,7 @@ const _destinations = [
     path: '/settings/users',
     icon: Icons.manage_accounts_outlined
   ),
+  (label: 'Export', path: '/settings/export', icon: Icons.download_outlined),
 ];
 
 class _DesktopNavigation extends StatelessWidget {

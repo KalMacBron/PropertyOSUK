@@ -44,11 +44,10 @@ Subject to an approved implementation contract:
   Merged, deployed and accepted.
 - ~~Maintenance Alpha issue recording, progression, Today surfacing and
   Property Dashboard integration.~~ Merged, migrated, deployed and accepted.
-- **In progress under approved bounded scope:** Contractor Directory with
-  organisation-scoped create/edit/archive/reactivate and Maintenance in-flow
-  creation. Contractor accounts, portals and dispatch remain excluded.
-- Then complete organisation-scoped JSON/CSV export and authorised document
-  export.
+- ~~Contractor Directory with organisation-scoped create/edit/archive/reactivate
+  and Maintenance in-flow creation.~~ Merged, deployed and accepted.
+- **In progress under an approved contract:** Organisation-scoped versioned
+  JSON export and separately authorised document downloads for Owner/Admin.
 - Then Customer Signup and Organisation Onboarding.
 - Then MFA and further user-management hardening.
 - Then perform formal Alpha acceptance, role and tenant-isolation, recovery,
