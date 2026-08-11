@@ -6,20 +6,20 @@
 
 | Item | Verified state |
 |---|---|
-| Repository `main` | `79a0ec146487c8cb636ea2f8e56fb35e94e58e10` |
+| Repository `main` | `e9f2891aa103208f3fa3b97ab5856bff3d1676b5` |
 | `origin/main` at baseline | Same commit as local `main` |
 | Worktree at baseline review | Clean before documentation updates |
 | Alpha URL | `https://alpha.propertyosuk.com` |
-| Alpha `version.json` | Commit `79a0ec146487c8cb636ea2f8e56fb35e94e58e10` |
-| Alpha deployment time | `2026-08-11T09:25:32Z` |
+| Alpha `version.json` | Commit `e9f2891aa103208f3fa3b97ab5856bff3d1676b5` |
+| Alpha deployment time | `2026-08-11T12:51:07Z` |
 | Deployment source | Push to `main` via `.github/workflows/deploy-alpha.yml` |
 | Production | Not evidenced as established or approved |
 
-The hosted Flutter Alpha metadata was verified after PR #39 and matches `main`
-at `79a0ec1`. TC-000 has been merged and deployed. Karl has also
+The hosted Flutter Alpha metadata was verified after PR #40 and matches `main`
+at `e9f2891`. TC-000 has been merged and deployed. Karl has also
 accepted the refreshed KaelVaren UI, sign-out/landing flow, Today compliance
 summary, filtered compliance drill-downs, Property Dashboard and Maintenance
-Alpha.
+Alpha and the Contractor Directory follow-up.
 
 This proves the frontend bundle version only. It does not by itself prove that
 the linked Supabase project has every migration and Edge Function from the same
@@ -41,6 +41,9 @@ Karl accepted historical correction and reopening in Alpha.
 The Maintenance migration was applied as
 `20260811092216_maintenance_alpha_workflow`; PR #39 was deployed and Karl
 accepted the Maintenance screen and workflow on 11/08/2026.
+The Contractor Directory migration was applied as
+`20260811125028_contractor_directory_workflow`; PR #40 was deployed and Karl
+accepted both directory and in-flow contractor creation journeys.
 
 ## Delivered implementation increments
 
@@ -66,7 +69,8 @@ accepted the Maintenance screen and workflow on 11/08/2026.
 | Tenancies Alpha and historical-editing follow-up | Merged, deployed and accepted |
 | Property Dashboard | Merged in PR #38, deployed and accepted |
 | Maintenance Alpha | Merged in PR #39, migrated, deployed and accepted |
-| Contractor Directory follow-up | Scope approved; implementation in progress on `codex/contractor-directory` |
+| Contractor Directory follow-up | Merged in PR #40, migrated, deployed and accepted |
+| Organisation Export Alpha | Contract approved; implementation and local verification in progress on `codex/organisation-export-alpha` |
 
 “Merged” does not mean the frozen Alpha acceptance criteria are complete. The
 repository milestone numbers describe implementation increments and do not map
@@ -105,16 +109,15 @@ TC-000.
 ## Remaining material acceptance gaps
 
 - Formal tracker cases other than TC-000 remain unexecuted.
-- Settings and complete organisation export are not exposed as routed
-  application workflows.
+- Complete organisation export is not yet deployed as a routed application
+  workflow.
 - Backup/restore, deletion, accessibility, responsive and full role/tenant
   separation evidence is not recorded.
 - Private validation with real portfolio data is not documented as complete.
 
 ## Immediate priority
 
-Complete, review, deploy and UAT the bounded Contractor Directory follow-up,
-then complete organisation export and authorised document export. Customer Signup and
+Complete, review, deploy and UAT Organisation Export Alpha. Customer Signup and
 Organisation Onboarding follows, then MFA and further user-management
 hardening, followed by formal Alpha acceptance, responsive, accessibility and
 tenant-isolation testing. Alpha account bootstrap remains controlled and
