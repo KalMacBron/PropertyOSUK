@@ -11,8 +11,18 @@ import 'package:property_os/features/export/domain/organisation_export_models.da
 import 'package:property_os/features/portfolio/application/portfolio_providers.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+typedef ExportUrlLauncher = Future<bool> Function(
+  Uri url, {
+  String? webOnlyWindowName,
+});
+
 class OrganisationExportScreen extends ConsumerStatefulWidget {
-  const OrganisationExportScreen({super.key});
+  const OrganisationExportScreen({
+    super.key,
+    this.urlLauncher = launchUrl,
+  });
+
+  final ExportUrlLauncher urlLauncher;
 
   @override
   ConsumerState<OrganisationExportScreen> createState() =>
@@ -148,22 +158,31 @@ class _OrganisationExportScreenState
   }
 
   Future<void> _downloadDocument(ExportDocument document) async {
-    final organisation = await ref.read(organisationProvider.future);
+    final organisation = ref.read(organisationProvider).valueOrNull;
     if (organisation == null ||
         !const ['owner', 'admin'].contains(organisation.role)) {
       return;
     }
+    final windowName = 'propertyos-document-${document.id}';
     setState(() => _downloadingDocumentId = document.id);
     try {
+      // Safari only permits a new tab while the original click activation is
+      // still active. Reserve it before either authorisation network request,
+      // then navigate that same named tab once the signed URL is available.
+      final reserved = await widget.urlLauncher(
+        Uri.parse('about:blank'),
+        webOnlyWindowName: windowName,
+      );
+      if (!reserved) throw StateError('document_window_not_reserved');
       final url = await ref
           .read(organisationExportRepositoryProvider)
           .authorisedDocumentUrl(
             organisationId: organisation.id,
             documentId: document.id,
           );
-      final opened = await launchUrl(
+      final opened = await widget.urlLauncher(
         Uri.parse(url),
-        webOnlyWindowName: '_blank',
+        webOnlyWindowName: windowName,
       );
       if (!opened) throw StateError('document_link_not_opened');
     } catch (_) {
