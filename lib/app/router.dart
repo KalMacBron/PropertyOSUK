@@ -21,7 +21,14 @@ import 'package:property_os/features/tenancies/presentation/tenancies_screen.dar
 import 'package:property_os/features/today/presentation/today_screen.dart';
 import 'package:property_os/features/user_admin/presentation/user_admin_screen.dart';
 
-final propertyOsRouter = createPropertyOsRouter();
+final propertyOsRouter = createPropertyOsRouter(
+  initialLocation: initialWorkspaceLocation(Uri.base),
+);
+
+String? initialWorkspaceLocation(Uri browserUri) {
+  final fragment = browserUri.fragment;
+  return fragment.startsWith('/') ? fragment : null;
+}
 
 GoRouter createPropertyOsRouter({String? initialLocation}) => GoRouter(
       initialLocation: initialLocation,

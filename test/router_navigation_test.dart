@@ -13,6 +13,32 @@ void main() {
     role: 'owner',
   );
 
+  test('captures a hash workspace route before authenticated startup', () {
+    expect(
+      initialWorkspaceLocation(
+        Uri.parse('https://alpha.propertyosuk.com/#/ownership'),
+      ),
+      '/ownership',
+    );
+    expect(
+      initialWorkspaceLocation(
+        Uri.parse(
+          'https://alpha.propertyosuk.com/#/compliance?status=notRecorded',
+        ),
+      ),
+      '/compliance?status=notRecorded',
+    );
+  });
+
+  test('ignores non-route fragments such as authentication callbacks', () {
+    expect(
+      initialWorkspaceLocation(
+        Uri.parse('https://alpha.propertyosuk.com/#access_token=secret'),
+      ),
+      isNull,
+    );
+  });
+
   testWidgets('an authenticated deep link opens ownership directly', (
     tester,
   ) async {
