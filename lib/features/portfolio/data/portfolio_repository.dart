@@ -78,12 +78,23 @@ class PortfolioRepository {
         params: {'target_organisation_id': organisationId},
       );
 
-  Future<OrganisationSummary> createOrganisation(String name) async {
+  Future<OrganisationSummary> createOrganisation(
+    String name, {
+    String? displayName,
+  }) async {
     final slug =
         '${name.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]+'), '-')}-${DateTime.now().millisecondsSinceEpoch}';
     final id = await _client.rpc<String>(
-      'create_organisation',
-      params: {'organisation_name': name.trim(), 'organisation_slug': slug},
+      'bootstrap_customer_organisation',
+      params: {
+        'organisation_name': name.trim(),
+        'organisation_slug': slug,
+        'customer_display_name': displayName?.trim() ??
+            _client.auth.currentUser?.userMetadata?['display_name']
+                ?.toString()
+                .trim() ??
+            '',
+      },
     );
     return OrganisationSummary(id: id, name: name.trim(), role: 'owner');
   }
@@ -100,21 +111,26 @@ class PortfolioRepository {
     return rows.map(OwnershipEntity.fromJson).toList();
   }
 
-  Future<void> createOwnershipEntity({
+  Future<String> createOwnershipEntity({
     required String organisationId,
     required String entityType,
     required String legalName,
     String? companyNumber,
   }) async {
-    await _client.from('ownership_entities').insert({
-      'organisation_id': organisationId,
-      'entity_type': entityType,
-      'legal_name': legalName.trim(),
-      'company_number': companyNumber?.trim().isEmpty == true
-          ? null
-          : companyNumber?.trim().toUpperCase(),
-      'created_by': _userId,
-    });
+    final row = await _client
+        .from('ownership_entities')
+        .insert({
+          'organisation_id': organisationId,
+          'entity_type': entityType,
+          'legal_name': legalName.trim(),
+          'company_number': companyNumber?.trim().isEmpty == true
+              ? null
+              : companyNumber?.trim().toUpperCase(),
+          'created_by': _userId,
+        })
+        .select('id')
+        .single();
+    return row['id'] as String;
   }
 
   Future<List<Map<String, dynamic>>> listProperties(String organisationId) {

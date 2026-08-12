@@ -28,6 +28,7 @@ void main() {
     expect(find.text('PROPERTYOS'), findsOneWidget);
     expect(find.text('Welcome back'), findsOneWidget);
     expect(find.text('Open property workspace  →'), findsOneWidget);
+    expect(find.text('Create a PropertyOS account'), findsOneWidget);
   });
 
   testWidgets('sign-out landing renders and scrolls at mobile size',
@@ -44,5 +45,21 @@ void main() {
     await tester.pump();
     expect(find.text('Open property workspace  →'), findsOneWidget);
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('customer can open signup and receives local validation',
+      (tester) async {
+    await renderAt(tester, const Size(1440, 900));
+
+    await tester.tap(find.text('Create a PropertyOS account'));
+    await tester.pumpAndSettle();
+    expect(find.text('Create your account'), findsOneWidget);
+    expect(find.textContaining('verify your email'), findsOneWidget);
+
+    await tester.tap(find.widgetWithText(FilledButton, 'Create account'));
+    await tester.pump();
+    expect(find.text('Enter your name'), findsOneWidget);
+    expect(find.text('Enter a valid email address'), findsOneWidget);
+    expect(find.text('Use at least 8 characters'), findsOneWidget);
   });
 }

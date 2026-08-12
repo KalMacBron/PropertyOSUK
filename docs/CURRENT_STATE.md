@@ -70,7 +70,8 @@ accepted both directory and in-flow contractor creation journeys.
 | Property Dashboard | Merged in PR #38, deployed and accepted |
 | Maintenance Alpha | Merged in PR #39, migrated, deployed and accepted |
 | Contractor Directory follow-up | Merged in PR #40, migrated, deployed and accepted |
-| Organisation Export Alpha | JSON foundation merged and deployed; Excel Portfolio Report UX follow-up implemented and locally verified, awaiting commit/review/deployment |
+| Organisation Export Alpha | Excel Portfolio Report merged in PR #43, deployed and accepted |
+| Customer Signup and Organisation Onboarding | Approved; implemented and locally verified on `codex/customer-signup-onboarding` |
 
 “Merged” does not mean the frozen Alpha acceptance criteria are complete. The
 repository milestone numbers describe implementation increments and do not map
@@ -109,16 +110,16 @@ TC-000.
 ## Remaining material acceptance gaps
 
 - Formal tracker cases other than TC-000 remain unexecuted.
-- The user-facing Excel Portfolio Report replacement is not yet committed,
-  reviewed or deployed.
+- Customer Signup and Organisation Onboarding is not yet committed, reviewed,
+  migrated or deployed.
 - Backup/restore, deletion, accessibility, responsive and full role/tenant
   separation evidence is not recorded.
 - Private validation with real portfolio data is not documented as complete.
 
 ## Immediate priority
 
-Commit, review, deploy and UAT the Excel Portfolio Report follow-up. Customer
-Signup and Organisation Onboarding follows, then MFA and further user-management
+Implement, review, deploy and UAT Customer Signup and Organisation Onboarding,
+then MFA and further user-management
 hardening, followed by formal Alpha acceptance, responsive, accessibility and
 tenant-isolation testing. Alpha account bootstrap remains controlled and
 invitation-only. Do not infer overall Alpha readiness from merged increments

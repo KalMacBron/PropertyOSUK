@@ -12,6 +12,22 @@ class AuthRepository {
     );
   }
 
+  Future<void> signUp({
+    required String displayName,
+    required String email,
+    required String password,
+  }) async {
+    await _client.auth.signUp(
+      email: email.trim(),
+      password: password,
+      emailRedirectTo: Uri.base.origin,
+      data: {
+        'display_name': displayName.trim(),
+        'propertyos_customer_signup': true,
+      },
+    );
+  }
+
   Future<void> requestPasswordReset({required String email}) => _client.auth
       .resetPasswordForEmail(email.trim(), redirectTo: Uri.base.origin);
 

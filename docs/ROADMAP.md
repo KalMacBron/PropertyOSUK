@@ -49,10 +49,10 @@ Subject to an approved implementation contract:
 - ~~Organisation-scoped versioned JSON export and separately authorised
   document downloads for Owner/Admin.~~ Deployed; Alpha UAT approved replacing
   the technical interface with a formatted Excel Portfolio Report.
-- **Implemented and locally verified under an approved follow-up; awaiting
-  commit/review/deployment:** Owner/Admin Excel Portfolio Report with document
-  metadata only and no individual-document controls.
-- Then Customer Signup and Organisation Onboarding.
+- ~~Owner/Admin Excel Portfolio Report with document metadata only and no
+  individual-document controls.~~ Merged in PR #43, deployed and accepted.
+- **In progress under an approved contract:** Customer Signup and Organisation
+  Onboarding.
 - Then MFA and further user-management hardening.
 - Then perform formal Alpha acceptance, role and tenant-isolation, recovery,
   deletion, privacy, responsive, accessibility and keyboard testing.

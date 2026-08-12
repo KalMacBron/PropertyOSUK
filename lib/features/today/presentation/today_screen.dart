@@ -18,6 +18,8 @@ class TodayScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final actions = ref.watch(todayActionsProvider);
     final properties = ref.watch(propertiesProvider);
+    final ownershipEntities = ref.watch(ownershipEntitiesProvider);
+    final organisation = ref.watch(organisationProvider).valueOrNull;
     final summary = ref.watch(portfolioSummaryProvider);
     final tasks = ref.watch(tasksProvider);
     return ListView(padding: const EdgeInsets.all(32), children: [
@@ -36,6 +38,24 @@ class TodayScreen extends ConsumerWidget {
                           'Prioritised management prompts from confirmed portfolio records.',
                     ),
                     const SizedBox(height: 28),
+                    if (organisation?.role == 'owner')
+                      ownershipEntities.when(
+                        loading: () => const SizedBox.shrink(),
+                        error: (_, __) => const SizedBox.shrink(),
+                        data: (entities) => properties.when(
+                          loading: () => const SizedBox.shrink(),
+                          error: (_, __) => const SizedBox.shrink(),
+                          data: (propertyRows) =>
+                              entities.isEmpty || propertyRows.isEmpty
+                                  ? _SetupChecklist(
+                                      hasOwnership: entities.isNotEmpty,
+                                      hasProperty: propertyRows.isNotEmpty,
+                                    )
+                                  : const SizedBox.shrink(),
+                        ),
+                      ),
+                    if (organisation?.role == 'owner')
+                      const SizedBox(height: 16),
                     summary.when(
                       loading: () => const LinearProgressIndicator(),
                       error: (_, __) => _SummaryError(
@@ -115,6 +135,66 @@ class TodayScreen extends ConsumerWidget {
                   ])))
     ]);
   }
+}
+
+class _SetupChecklist extends StatelessWidget {
+  const _SetupChecklist({
+    required this.hasOwnership,
+    required this.hasProperty,
+  });
+
+  final bool hasOwnership;
+  final bool hasProperty;
+
+  @override
+  Widget build(BuildContext context) => SectionPanel(
+        title: 'Finish setting up your portfolio',
+        subtitle: 'Complete these details when you are ready.',
+        child: Column(
+          children: [
+            _SetupItem(
+              complete: hasOwnership,
+              label: 'Add an individual or company owner',
+              action: 'Open ownership',
+              onTap: () => context.go('/ownership'),
+            ),
+            const Divider(height: 1),
+            _SetupItem(
+              complete: hasProperty,
+              label: 'Add your first property',
+              action: 'Open properties',
+              onTap: () => context.go('/properties'),
+            ),
+          ],
+        ),
+      );
+}
+
+class _SetupItem extends StatelessWidget {
+  const _SetupItem({
+    required this.complete,
+    required this.label,
+    required this.action,
+    required this.onTap,
+  });
+
+  final bool complete;
+  final String label;
+  final String action;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => ListTile(
+        contentPadding: EdgeInsets.zero,
+        leading: Icon(
+          complete ? Icons.check_circle : Icons.radio_button_unchecked,
+          color: complete ? PropertyOsColours.success : PropertyOsColours.muted,
+        ),
+        title: Text(label),
+        trailing: complete
+            ? const Text('Complete')
+            : TextButton(onPressed: onTap, child: Text(action)),
+      );
 }
 
 class _TaskSummary extends StatelessWidget {
