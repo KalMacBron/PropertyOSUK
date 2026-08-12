@@ -76,6 +76,36 @@ void main() {
     expect(router.routeInformationProvider.value.uri.path, '/ownership');
   });
 
+  testWidgets('explicit web hash route overrides a consumed platform route', (
+    tester,
+  ) async {
+    tester.binding.platformDispatcher.defaultRouteNameTestValue = '/';
+    addTearDown(
+      tester.binding.platformDispatcher.clearDefaultRouteNameTestValue,
+    );
+    final router = createPropertyOsRouter(initialLocation: '/ownership');
+    addTearDown(router.dispose);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          organisationMembershipsProvider.overrideWith(
+            (_) async => [organisation],
+          ),
+          organisationProvider.overrideWith((_) async => organisation),
+          ownershipEntitiesProvider.overrideWith((_) async => const []),
+        ],
+        child: MaterialApp.router(
+          theme: buildPropertyOsTheme(),
+          routerConfig: router,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(router.routeInformationProvider.value.uri.path, '/ownership');
+  });
+
   testWidgets('the bare root redirects to Today', (tester) async {
     final router = createPropertyOsRouter(initialLocation: '/');
     addTearDown(router.dispose);

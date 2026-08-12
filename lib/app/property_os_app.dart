@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:property_os/app/router.dart';
 import 'package:property_os/app/theme.dart';
 import 'package:property_os/features/auth/application/auth_state.dart';
@@ -13,15 +14,19 @@ import 'package:property_os/features/user_admin/application/user_admin_providers
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class PropertyOsApp extends StatelessWidget {
-  const PropertyOsApp({super.key});
+  const PropertyOsApp({super.key, this.router});
+
+  final GoRouter? router;
 
   @override
   Widget build(BuildContext context) =>
-      const ProviderScope(child: _AuthenticatedApp());
+      ProviderScope(child: _AuthenticatedApp(router: router));
 }
 
 class _AuthenticatedApp extends ConsumerWidget {
-  const _AuthenticatedApp();
+  const _AuthenticatedApp({this.router});
+
+  final GoRouter? router;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -131,7 +136,7 @@ class _AuthenticatedApp extends ConsumerWidget {
                   title: 'PropertyOS',
                   debugShowCheckedModeBanner: false,
                   theme: buildPropertyOsTheme(),
-                  routerConfig: propertyOsRouter,
+                  routerConfig: router ?? propertyOsRouter,
                 ),
         );
       },

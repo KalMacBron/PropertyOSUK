@@ -21,9 +21,7 @@ import 'package:property_os/features/tenancies/presentation/tenancies_screen.dar
 import 'package:property_os/features/today/presentation/today_screen.dart';
 import 'package:property_os/features/user_admin/presentation/user_admin_screen.dart';
 
-final propertyOsRouter = createPropertyOsRouter(
-  initialLocation: initialWorkspaceLocation(Uri.base),
-);
+final propertyOsRouter = createPropertyOsRouter();
 
 String? initialWorkspaceLocation(Uri browserUri) {
   final fragment = browserUri.fragment;
@@ -32,6 +30,7 @@ String? initialWorkspaceLocation(Uri browserUri) {
 
 GoRouter createPropertyOsRouter({String? initialLocation}) => GoRouter(
       initialLocation: initialLocation,
+      overridePlatformDefaultLocation: initialLocation != null,
       routes: [
         GoRoute(path: '/', redirect: (_, __) => '/today'),
         ShellRoute(
