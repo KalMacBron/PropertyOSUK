@@ -62,7 +62,23 @@ class _AuthenticatedApp extends ConsumerWidget {
         home: const InvitationOnboardingScreen(),
       );
     }
-    ref.watch(invitationAcceptanceProvider);
+    final invitationAcceptance = ref.watch(invitationAcceptanceProvider);
+    if (invitationAcceptance.isLoading) {
+      return MaterialApp(
+        theme: buildPropertyOsTheme(),
+        home: const Scaffold(body: Center(child: CircularProgressIndicator())),
+      );
+    }
+    if (invitationAcceptance.hasError) {
+      return MaterialApp(
+        theme: buildPropertyOsTheme(),
+        home: const Scaffold(
+          body: Center(
+            child: Text('PropertyOS could not check your invitations.'),
+          ),
+        ),
+      );
+    }
     final memberships = ref.watch(organisationMembershipsProvider);
     return memberships.when(
       loading: () => MaterialApp(

@@ -6,6 +6,7 @@ import 'package:property_os/app/suite_ui.dart';
 import 'package:property_os/app/theme.dart';
 import 'package:property_os/core/database/supabase_provider.dart';
 import 'package:property_os/features/auth/data/auth_repository.dart';
+import 'package:property_os/features/auth/presentation/customer_signup_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SignInScreen extends ConsumerStatefulWidget {
@@ -24,6 +25,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
   final _briefingSectionKey = GlobalKey();
   bool _submitting = false;
   bool _obscure = true;
+  bool _creatingAccount = false;
   String? _error;
   String? _notice;
 
@@ -102,135 +104,143 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        backgroundColor: Colors.white,
-        body: LayoutBuilder(builder: (context, constraints) {
-          final narrow = constraints.maxWidth < 900;
-          final form = _SignInCard(
-            key: _signInSectionKey,
-            formKey: _formKey,
-            email: _email,
-            password: _password,
-            obscure: _obscure,
-            submitting: _submitting,
-            error: _error,
-            notice: _notice,
-            onTogglePassword: () => setState(() => _obscure = !_obscure),
-            onSignIn: _signIn,
-            onResetPassword: _requestPasswordReset,
-          );
-          final landing = Flex(
-              direction: narrow ? Axis.vertical : Axis.horizontal,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Flexible(
-                    flex: narrow ? 0 : 3,
-                    fit: narrow ? FlexFit.loose : FlexFit.tight,
-                    child: Container(
-                        constraints: BoxConstraints(
-                            minHeight: narrow ? 460 : constraints.maxHeight),
-                        padding: EdgeInsets.all(narrow ? 32 : 64),
-                        decoration: const BoxDecoration(
-                            gradient: LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [
-                              PropertyOsColours.deepNavy,
-                              PropertyOsColours.navy,
-                              Color(0xFF123E56)
-                            ])),
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const SuiteBrand(),
-                              if (narrow)
-                                const SizedBox(height: 48)
-                              else
-                                const Spacer(),
-                              Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 14, vertical: 8),
-                                  decoration: BoxDecoration(
-                                      color: const Color(0xFFFFF4D8),
-                                      borderRadius: BorderRadius.circular(30)),
-                                  child: const Text(
-                                      'PRIVATE ALPHA · PROPERTY OPERATIONS',
-                                      style: TextStyle(
-                                          color: PropertyOsColours.amberText,
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.w800,
-                                          letterSpacing: 1.1))),
-                              const SizedBox(height: 28),
-                              const Text(
-                                  'Every property.\nEvery obligation.\nOne clear view.',
-                                  style: TextStyle(
-                                      fontFamily: 'Georgia',
-                                      color: Colors.white,
-                                      fontSize: 52,
-                                      height: 1.08)),
-                              const SizedBox(height: 24),
-                              const Text(
-                                  'Coordinate compliance, costs, ownership and daily actions across your portfolio.',
-                                  style: TextStyle(
-                                      color: Color(0xFFB7C8D2),
-                                      fontSize: 18,
-                                      height: 1.6)),
-                              if (narrow)
-                                const SizedBox(height: 48)
-                              else
-                                const Spacer(),
-                              Container(
-                                  padding: const EdgeInsets.all(20),
-                                  decoration: const BoxDecoration(
-                                      color: Color(0xFF173D52),
-                                      border: Border(
-                                          left: BorderSide(
-                                              color: PropertyOsColours.amber,
-                                              width: 4))),
-                                  child: const Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text('TODAY',
-                                            style: TextStyle(
-                                                color: PropertyOsColours.amber,
-                                                fontWeight: FontWeight.w800,
-                                                fontSize: 10,
-                                                letterSpacing: 1.5)),
-                                        SizedBox(height: 8),
-                                        Text(
-                                            'Your operational priorities, traced to confirmed portfolio records.',
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontFamily: 'Georgia',
-                                                fontSize: 20))
-                                      ])),
-                            ]))),
-                Flexible(
-                    flex: narrow ? 0 : 2,
-                    fit: narrow ? FlexFit.loose : FlexFit.tight,
-                    child: Container(
-                        constraints: BoxConstraints(
-                            minHeight: narrow ? 560 : constraints.maxHeight),
-                        padding: EdgeInsets.symmetric(
-                            horizontal: narrow ? 28 : 70, vertical: 60),
-                        alignment: Alignment.center,
-                        child: ConstrainedBox(
-                            constraints: const BoxConstraints(maxWidth: 560),
-                            child: form))),
-              ]);
-          if (!narrow) {
-            return landing;
-          }
-          return SingleChildScrollView(
-            controller: _scrollController,
-            child: ConstrainedBox(
-              constraints: BoxConstraints(minHeight: constraints.maxHeight),
-              child: landing,
-            ),
-          );
-        }),
+  Widget build(BuildContext context) {
+    if (_creatingAccount) {
+      return CustomerSignupScreen(
+        onBackToSignIn: () => setState(() => _creatingAccount = false),
       );
+    }
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: LayoutBuilder(builder: (context, constraints) {
+        final narrow = constraints.maxWidth < 900;
+        final form = _SignInCard(
+          key: _signInSectionKey,
+          formKey: _formKey,
+          email: _email,
+          password: _password,
+          obscure: _obscure,
+          submitting: _submitting,
+          error: _error,
+          notice: _notice,
+          onTogglePassword: () => setState(() => _obscure = !_obscure),
+          onSignIn: _signIn,
+          onResetPassword: _requestPasswordReset,
+          onCreateAccount: () => setState(() => _creatingAccount = true),
+        );
+        final landing = Flex(
+            direction: narrow ? Axis.vertical : Axis.horizontal,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Flexible(
+                  flex: narrow ? 0 : 3,
+                  fit: narrow ? FlexFit.loose : FlexFit.tight,
+                  child: Container(
+                      constraints: BoxConstraints(
+                          minHeight: narrow ? 460 : constraints.maxHeight),
+                      padding: EdgeInsets.all(narrow ? 32 : 64),
+                      decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                            PropertyOsColours.deepNavy,
+                            PropertyOsColours.navy,
+                            Color(0xFF123E56)
+                          ])),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SuiteBrand(),
+                            if (narrow)
+                              const SizedBox(height: 48)
+                            else
+                              const Spacer(),
+                            Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 14, vertical: 8),
+                                decoration: BoxDecoration(
+                                    color: const Color(0xFFFFF4D8),
+                                    borderRadius: BorderRadius.circular(30)),
+                                child: const Text(
+                                    'PRIVATE ALPHA · PROPERTY OPERATIONS',
+                                    style: TextStyle(
+                                        color: PropertyOsColours.amberText,
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w800,
+                                        letterSpacing: 1.1))),
+                            const SizedBox(height: 28),
+                            const Text(
+                                'Every property.\nEvery obligation.\nOne clear view.',
+                                style: TextStyle(
+                                    fontFamily: 'Georgia',
+                                    color: Colors.white,
+                                    fontSize: 52,
+                                    height: 1.08)),
+                            const SizedBox(height: 24),
+                            const Text(
+                                'Coordinate compliance, costs, ownership and daily actions across your portfolio.',
+                                style: TextStyle(
+                                    color: Color(0xFFB7C8D2),
+                                    fontSize: 18,
+                                    height: 1.6)),
+                            if (narrow)
+                              const SizedBox(height: 48)
+                            else
+                              const Spacer(),
+                            Container(
+                                padding: const EdgeInsets.all(20),
+                                decoration: const BoxDecoration(
+                                    color: Color(0xFF173D52),
+                                    border: Border(
+                                        left: BorderSide(
+                                            color: PropertyOsColours.amber,
+                                            width: 4))),
+                                child: const Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text('TODAY',
+                                          style: TextStyle(
+                                              color: PropertyOsColours.amber,
+                                              fontWeight: FontWeight.w800,
+                                              fontSize: 10,
+                                              letterSpacing: 1.5)),
+                                      SizedBox(height: 8),
+                                      Text(
+                                          'Your operational priorities, traced to confirmed portfolio records.',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontFamily: 'Georgia',
+                                              fontSize: 20))
+                                    ])),
+                          ]))),
+              Flexible(
+                  flex: narrow ? 0 : 2,
+                  fit: narrow ? FlexFit.loose : FlexFit.tight,
+                  child: Container(
+                      constraints: BoxConstraints(
+                          minHeight: narrow ? 560 : constraints.maxHeight),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: narrow ? 28 : 70, vertical: 60),
+                      alignment: Alignment.center,
+                      child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 560),
+                          child: form))),
+            ]);
+        if (!narrow) {
+          return landing;
+        }
+        return SingleChildScrollView(
+          controller: _scrollController,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: constraints.maxHeight),
+            child: landing,
+          ),
+        );
+      }),
+    );
+  }
 }
 
 class _HeroSection extends StatelessWidget {
@@ -540,6 +550,7 @@ class _SignInCard extends StatelessWidget {
     required this.onTogglePassword,
     required this.onSignIn,
     required this.onResetPassword,
+    required this.onCreateAccount,
   });
 
   final GlobalKey<FormState> formKey;
@@ -552,6 +563,7 @@ class _SignInCard extends StatelessWidget {
   final VoidCallback onTogglePassword;
   final VoidCallback onSignIn;
   final VoidCallback onResetPassword;
+  final VoidCallback onCreateAccount;
 
   @override
   Widget build(BuildContext context) => Padding(
@@ -630,6 +642,11 @@ class _SignInCard extends StatelessWidget {
               TextButton(
                 onPressed: submitting ? null : onResetPassword,
                 child: const Text('Forgot password?'),
+              ),
+              const Divider(height: 28),
+              OutlinedButton(
+                onPressed: submitting ? null : onCreateAccount,
+                child: const Text('Create a PropertyOS account'),
               ),
             ],
           ),
