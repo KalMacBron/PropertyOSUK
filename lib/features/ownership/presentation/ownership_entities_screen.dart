@@ -172,7 +172,7 @@ class OwnershipEntitiesScreen extends ConsumerWidget {
                           ),
                           trailing: item.companyNumber == null
                               ? null
-                              : Text(item.companyNumber!),
+                              : Text('Company number: ${item.companyNumber}'),
                         ),
                       )
                       .toList(),

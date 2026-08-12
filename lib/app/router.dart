@@ -21,110 +21,113 @@ import 'package:property_os/features/tenancies/presentation/tenancies_screen.dar
 import 'package:property_os/features/today/presentation/today_screen.dart';
 import 'package:property_os/features/user_admin/presentation/user_admin_screen.dart';
 
-final propertyOsRouter = GoRouter(
-  initialLocation: '/today',
-  routes: [
-    ShellRoute(
-      builder: (context, state, child) => _AppShell(child: child),
+final propertyOsRouter = createPropertyOsRouter();
+
+GoRouter createPropertyOsRouter({String? initialLocation}) => GoRouter(
+      initialLocation: initialLocation,
       routes: [
-        GoRoute(
-          path: '/today',
-          builder: (_, __) => const TodayScreen(),
-        ),
-        GoRoute(
-          path: '/properties',
-          builder: (_, state) => PropertiesScreen(
-            initialPropertyId: state.uri.queryParameters['propertyId'],
-          ),
-        ),
-        GoRoute(
-          path: '/properties/:propertyId',
-          builder: (_, state) => PropertyDashboardScreen(
-            propertyId: state.pathParameters['propertyId']!,
-          ),
-        ),
-        GoRoute(
-          path: '/compliance',
-          builder: (_, state) => ComplianceRegisterScreen(
-            initialStatus: state.uri.queryParameters['status'],
-            initialPropertyId: state.uri.queryParameters['propertyId'],
-          ),
-        ),
-        GoRoute(
-          path: '/compliance-record/:propertyId/:requirementId',
-          builder: (_, state) => ComplianceRecordScreen(
-            propertyId: state.pathParameters['propertyId']!,
-            requirementId: state.pathParameters['requirementId']!,
-            todaySourceId: state.uri.queryParameters['todaySourceId'],
-            todayDueDate: state.uri.queryParameters['todayDueDate'] == null
-                ? null
-                : DateTime.tryParse(
-                    state.uri.queryParameters['todayDueDate']!,
-                  ),
-          ),
-        ),
-        GoRoute(
-          path: '/expenses',
-          builder: (_, state) => ExpensesScreen(
-            initialPropertyId: state.uri.queryParameters['propertyId'],
-            initialComplianceRecordId:
-                state.uri.queryParameters['complianceRecordId'],
-            initialMaintenanceIssueId:
-                state.uri.queryParameters['maintenanceIssueId'],
-            openCreate: state.uri.queryParameters['create'] == 'true',
-          ),
-        ),
-        GoRoute(
-          path: '/tasks',
-          builder: (_, state) => TasksScreen(
-            initialFilter: state.uri.queryParameters['filter'],
-            initialPropertyId: state.uri.queryParameters['propertyId'],
-            initialMaintenanceIssueId:
-                state.uri.queryParameters['maintenanceIssueId'],
-            openCreate: state.uri.queryParameters['create'] == 'true',
-          ),
-        ),
-        GoRoute(
-          path: '/maintenance',
-          builder: (_, state) => MaintenanceScreen(
-            initialPropertyId: state.uri.queryParameters['propertyId'],
-            openCreate: state.uri.queryParameters['create'] == 'true',
-          ),
-        ),
-        GoRoute(
-          path: '/maintenance/:issueId',
-          builder: (_, state) => MaintenanceScreen(
-            initialIssueId: state.pathParameters['issueId'],
-          ),
-        ),
-        GoRoute(
-          path: '/maintenance-contractors',
-          builder: (_, __) => const ContractorDirectoryScreen(),
-        ),
-        GoRoute(
-          path: '/tenancies',
-          builder: (_, state) => TenanciesScreen(
-            initialTenancyId: state.uri.queryParameters['tenancyId'],
-            initialPropertyId: state.uri.queryParameters['propertyId'],
-            openCreate: state.uri.queryParameters['create'] == 'true',
-          ),
-        ),
-        GoRoute(
-          path: '/ownership',
-          builder: (_, __) => const OwnershipEntitiesScreen(),
-        ),
-        GoRoute(
-          path: '/settings/users',
-          builder: (_, __) => const UserAdminScreen(),
-        ),
-        GoRoute(
-          path: '/settings/export',
-          builder: (_, __) => const OrganisationExportScreen(),
+        GoRoute(path: '/', redirect: (_, __) => '/today'),
+        ShellRoute(
+          builder: (context, state, child) => _AppShell(child: child),
+          routes: [
+            GoRoute(
+              path: '/today',
+              builder: (_, __) => const TodayScreen(),
+            ),
+            GoRoute(
+              path: '/properties',
+              builder: (_, state) => PropertiesScreen(
+                initialPropertyId: state.uri.queryParameters['propertyId'],
+              ),
+            ),
+            GoRoute(
+              path: '/properties/:propertyId',
+              builder: (_, state) => PropertyDashboardScreen(
+                propertyId: state.pathParameters['propertyId']!,
+              ),
+            ),
+            GoRoute(
+              path: '/compliance',
+              builder: (_, state) => ComplianceRegisterScreen(
+                initialStatus: state.uri.queryParameters['status'],
+                initialPropertyId: state.uri.queryParameters['propertyId'],
+              ),
+            ),
+            GoRoute(
+              path: '/compliance-record/:propertyId/:requirementId',
+              builder: (_, state) => ComplianceRecordScreen(
+                propertyId: state.pathParameters['propertyId']!,
+                requirementId: state.pathParameters['requirementId']!,
+                todaySourceId: state.uri.queryParameters['todaySourceId'],
+                todayDueDate: state.uri.queryParameters['todayDueDate'] == null
+                    ? null
+                    : DateTime.tryParse(
+                        state.uri.queryParameters['todayDueDate']!,
+                      ),
+              ),
+            ),
+            GoRoute(
+              path: '/expenses',
+              builder: (_, state) => ExpensesScreen(
+                initialPropertyId: state.uri.queryParameters['propertyId'],
+                initialComplianceRecordId:
+                    state.uri.queryParameters['complianceRecordId'],
+                initialMaintenanceIssueId:
+                    state.uri.queryParameters['maintenanceIssueId'],
+                openCreate: state.uri.queryParameters['create'] == 'true',
+              ),
+            ),
+            GoRoute(
+              path: '/tasks',
+              builder: (_, state) => TasksScreen(
+                initialFilter: state.uri.queryParameters['filter'],
+                initialPropertyId: state.uri.queryParameters['propertyId'],
+                initialMaintenanceIssueId:
+                    state.uri.queryParameters['maintenanceIssueId'],
+                openCreate: state.uri.queryParameters['create'] == 'true',
+              ),
+            ),
+            GoRoute(
+              path: '/maintenance',
+              builder: (_, state) => MaintenanceScreen(
+                initialPropertyId: state.uri.queryParameters['propertyId'],
+                openCreate: state.uri.queryParameters['create'] == 'true',
+              ),
+            ),
+            GoRoute(
+              path: '/maintenance/:issueId',
+              builder: (_, state) => MaintenanceScreen(
+                initialIssueId: state.pathParameters['issueId'],
+              ),
+            ),
+            GoRoute(
+              path: '/maintenance-contractors',
+              builder: (_, __) => const ContractorDirectoryScreen(),
+            ),
+            GoRoute(
+              path: '/tenancies',
+              builder: (_, state) => TenanciesScreen(
+                initialTenancyId: state.uri.queryParameters['tenancyId'],
+                initialPropertyId: state.uri.queryParameters['propertyId'],
+                openCreate: state.uri.queryParameters['create'] == 'true',
+              ),
+            ),
+            GoRoute(
+              path: '/ownership',
+              builder: (_, __) => const OwnershipEntitiesScreen(),
+            ),
+            GoRoute(
+              path: '/settings/users',
+              builder: (_, __) => const UserAdminScreen(),
+            ),
+            GoRoute(
+              path: '/settings/export',
+              builder: (_, __) => const OrganisationExportScreen(),
+            ),
+          ],
         ),
       ],
-    ),
-  ],
-);
+    );
 
 class _AppShell extends ConsumerWidget {
   const _AppShell({required this.child});

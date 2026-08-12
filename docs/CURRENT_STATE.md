@@ -1,25 +1,26 @@
 # PropertyOS Current State
 
-**Baseline recorded:** 11/08/2026
+**Baseline recorded:** 12/08/2026
 
 ## Source and deployment facts
 
 | Item | Verified state |
 |---|---|
-| Repository `main` | `e9f2891aa103208f3fa3b97ab5856bff3d1676b5` |
+| Repository `main` | `2cc8d3afc9337567d9603c93dc15b754efa2fd18` |
 | `origin/main` at baseline | Same commit as local `main` |
 | Worktree at baseline review | Clean before documentation updates |
 | Alpha URL | `https://alpha.propertyosuk.com` |
-| Alpha `version.json` | Commit `e9f2891aa103208f3fa3b97ab5856bff3d1676b5` |
-| Alpha deployment time | `2026-08-11T12:51:07Z` |
+| Alpha `version.json` | Commit `2cc8d3afc9337567d9603c93dc15b754efa2fd18` |
+| Alpha deployment time | `2026-08-12T10:47:23Z` |
 | Deployment source | Push to `main` via `.github/workflows/deploy-alpha.yml` |
 | Production | Not evidenced as established or approved |
 
-The hosted Flutter Alpha metadata was verified after PR #40 and matches `main`
-at `e9f2891`. TC-000 has been merged and deployed. Karl has also
+The hosted Flutter Alpha metadata was verified after PR #44 and matches `main`
+at `2cc8d3a`. TC-000 has been merged and deployed. Karl has also
 accepted the refreshed KaelVaren UI, sign-out/landing flow, Today compliance
 summary, filtered compliance drill-downs, Property Dashboard and Maintenance
-Alpha and the Contractor Directory follow-up.
+Alpha, the Contractor Directory follow-up, the Excel Portfolio Report and the
+Customer Signup and Organisation Onboarding journey.
 
 This proves the frontend bundle version only. It does not by itself prove that
 the linked Supabase project has every migration and Edge Function from the same
@@ -44,6 +45,11 @@ accepted the Maintenance screen and workflow on 11/08/2026.
 The Contractor Directory migration was applied as
 `20260811125028_contractor_directory_workflow`; PR #40 was deployed and Karl
 accepted both directory and in-flow contractor creation journeys.
+The Customer Signup and Organisation Onboarding migration was applied to Alpha
+as `20260812105012_customer_signup_organisation_onboarding`; PR #44 passed CI,
+was merged and deployed. Hosted email/password signup and email confirmation
+were verified as enabled. Karl completed a fresh customer signup and confirmed
+that organisation onboarding worked on 12/08/2026.
 
 ## Delivered implementation increments
 
@@ -71,7 +77,7 @@ accepted both directory and in-flow contractor creation journeys.
 | Maintenance Alpha | Merged in PR #39, migrated, deployed and accepted |
 | Contractor Directory follow-up | Merged in PR #40, migrated, deployed and accepted |
 | Organisation Export Alpha | Excel Portfolio Report merged in PR #43, deployed and accepted |
-| Customer Signup and Organisation Onboarding | Approved; implemented and locally verified on `codex/customer-signup-onboarding` |
+| Customer Signup and Organisation Onboarding | Merged in PR #44, migrated, deployed and accepted through Alpha UAT |
 
 “Merged” does not mean the frozen Alpha acceptance criteria are complete. The
 repository milestone numbers describe implementation increments and do not map
@@ -110,17 +116,16 @@ TC-000.
 ## Remaining material acceptance gaps
 
 - Formal tracker cases other than TC-000 remain unexecuted.
-- Customer Signup and Organisation Onboarding is not yet committed, reviewed,
-  migrated or deployed.
+- MFA, account recovery and further user-management hardening remain to be
+  designed and accepted under a bounded implementation contract.
 - Backup/restore, deletion, accessibility, responsive and full role/tenant
   separation evidence is not recorded.
 - Private validation with real portfolio data is not documented as complete.
 
 ## Immediate priority
 
-Implement, review, deploy and UAT Customer Signup and Organisation Onboarding,
-then MFA and further user-management
-hardening, followed by formal Alpha acceptance, responsive, accessibility and
-tenant-isolation testing. Alpha account bootstrap remains controlled and
-invitation-only. Do not infer overall Alpha readiness from merged increments
-alone.
+Prepare and approve a bounded MFA, account recovery and user-security hardening
+milestone, followed by formal Alpha acceptance, responsive, accessibility and
+tenant-isolation testing. Customer signup and organisation bootstrap are now
+available on Alpha, but this does not establish overall Alpha readiness or
+authorise invitations to external testers.
