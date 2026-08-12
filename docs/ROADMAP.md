@@ -51,9 +51,12 @@ Subject to an approved implementation contract:
   the technical interface with a formatted Excel Portfolio Report.
 - ~~Owner/Admin Excel Portfolio Report with document metadata only and no
   individual-document controls.~~ Merged in PR #43, deployed and accepted.
-- **In progress under an approved contract:** Customer Signup and Organisation
-  Onboarding.
-- Then MFA and further user-management hardening.
+- ~~Customer Signup and Organisation Onboarding: public email/password signup,
+  confirmed-email boundary, transactional Owner organisation bootstrap and
+  first-run ownership/property setup.~~ Merged in PR #44, migrated, deployed
+  and accepted through Alpha UAT.
+- **Next:** MFA, account recovery and further user-management hardening under a
+  bounded implementation contract.
 - Then perform formal Alpha acceptance, role and tenant-isolation, recovery,
   deletion, privacy, responsive, accessibility and keyboard testing.
 - Validate daily use with Karl's portfolio before inviting additional testers.
