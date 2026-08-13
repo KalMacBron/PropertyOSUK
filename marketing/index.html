@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PropertyOS | Calm property operations for UK landlords</title>
+  <meta name="description" content="PropertyOS brings compliance dates, maintenance, tenancies, tasks, expenses and property records into one clear workspace for self-managing UK landlords.">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#071f2f">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="PropertyOS | Know what needs attention across your properties">
+  <meta property="og:description" content="A calm property operations workspace for self-managing UK landlords. Currently in private Alpha.">
+  <meta property="og:url" content="https://propertyosuk.com/">
+  <meta name="twitter:card" content="summary">
+  <link rel="canonical" href="https://propertyosuk.com/">
+  <style>
+    :root {
+      --navy: #0b2a3c;
+      --deep-navy: #071f2f;
+      --selected: #194a64;
+      --gold: #f2b426;
+      --gold-dark: #a76a08;
+      --paper: #f3f6f7;
+      --surface: #ffffff;
+      --ink: #102b3d;
+      --muted: #647b8c;
+      --border: #d7e0e5;
+      --success: #238a68;
+      --warning: #d99a16;
+      --critical: #d65353;
+      --max: 1180px;
+      --serif: Georgia, "Times New Roman", serif;
+      --sans: Arial, Helvetica, sans-serif;
+      --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      line-height: 1.55;
+    }
+    img, svg { display: block; max-width: 100%; }
+    a { color: inherit; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    :focus-visible { outline: 3px solid var(--gold); outline-offset: 4px; }
+
+    .skip-link {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      z-index: 1000;
+      transform: translateY(-160%);
+      background: var(--surface);
+      color: var(--ink);
+      padding: 10px 14px;
+      border: 2px solid var(--gold);
+    }
+    .skip-link:focus { transform: none; }
+    .container { width: min(calc(100% - 40px), var(--max)); margin-inline: auto; }
+    .section { padding: 88px 0; border-bottom: 1px solid var(--border); }
+    .eyebrow {
+      margin: 0 0 18px;
+      color: var(--gold-dark);
+      font: 700 12px/1.3 var(--mono);
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+    h1, h2, h3 { margin: 0; font-family: var(--serif); font-weight: 400; line-height: 1.05; }
+    h1 { max-width: 920px; font-size: clamp(46px, 7.4vw, 92px); letter-spacing: -.035em; }
+    h2 { font-size: clamp(36px, 5vw, 60px); letter-spacing: -.025em; }
+    h3 { font-size: 27px; }
+    p { margin: 0; }
+    .lead { max-width: 720px; color: var(--muted); font-size: clamp(18px, 2vw, 22px); }
+    .fine-print { color: var(--muted); font-size: 13px; }
+
+    .button {
+      display: inline-flex;
+      min-height: 50px;
+      align-items: center;
+      justify-content: center;
+      padding: 13px 22px;
+      border: 1px solid var(--deep-navy);
+      background: var(--deep-navy);
+      color: white;
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .button:hover { background: var(--selected); }
+    .button.secondary { background: transparent; color: var(--ink); border-color: var(--border); }
+    .button.secondary:hover { border-color: var(--ink); }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid var(--border);
+      background: color-mix(in srgb, var(--paper) 94%, transparent);
+      backdrop-filter: blur(10px);
+    }
+    .header-inner { min-height: 74px; display: flex; align-items: center; gap: 26px; }
+    .brand { display: inline-flex; align-items: center; gap: 13px; margin-right: auto; text-decoration: none; }
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      background: var(--gold);
+      color: var(--deep-navy);
+      font: 700 25px/1 var(--serif);
+    }
+    .brand-name { font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+    .brand-state { display: block; margin-top: 2px; color: var(--muted); font: 10px/1.2 var(--mono); letter-spacing: .12em; }
+    nav { display: flex; align-items: center; gap: 24px; }
+    nav a { color: var(--ink); font-size: 14px; font-weight: 700; text-decoration: none; }
+    nav a:hover { color: var(--gold-dark); }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 110px 0 72px;
+      border-bottom: 1px solid var(--border);
+      background-image:
+        linear-gradient(to right, rgb(11 42 60 / .045) 1px, transparent 1px),
+        linear-gradient(to bottom, rgb(11 42 60 / .045) 1px, transparent 1px);
+      background-size: 64px 64px;
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 440px;
+      height: 440px;
+      right: -180px;
+      top: -190px;
+      border: 90px solid rgb(11 42 60 / .035);
+      border-radius: 50%;
+    }
+    .alpha-line { display: flex; flex-wrap: wrap; gap: 12px 22px; margin-bottom: 34px; color: var(--muted); font: 11px/1.4 var(--mono); letter-spacing: .12em; text-transform: uppercase; }
+    .alpha-line strong { color: var(--gold-dark); }
+    .hero .lead { margin-top: 30px; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 36px; }
+    .trust-strip { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 64px; border-top: 1px solid var(--border); }
+    .trust-item { padding: 19px 28px 0 0; font-size: 14px; }
+    .trust-item + .trust-item { padding-left: 28px; border-left: 1px solid var(--border); }
+    .trust-item b { display: block; margin-bottom: 5px; color: var(--gold-dark); font: 11px/1.2 var(--mono); letter-spacing: .12em; text-transform: uppercase; }
+
+    .proof-grid { display: grid; grid-template-columns: .8fr 1.4fr; gap: 52px; align-items: start; }
+    .alpha-shot { margin: 0; border: 1px solid var(--border); background: var(--surface); box-shadow: 0 18px 50px rgb(7 31 47 / .08); }
+    .alpha-shot img { width: 100%; height: auto; }
+    .alpha-shot figcaption { display: flex; justify-content: space-between; gap: 20px; padding: 12px 15px; border-top: 1px solid var(--border); color: var(--muted); font: 10px/1.35 var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+    .shot-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 20px; margin-top: 28px; }
+    .app-frame { border: 1px solid var(--border); background: var(--surface); box-shadow: 0 18px 50px rgb(7 31 47 / .08); }
+    .app-bar { min-height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; border-bottom: 1px solid var(--border); color: var(--muted); font: 10px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+    .app-body { display: grid; grid-template-columns: 178px 1fr; min-height: 430px; }
+    .app-nav { padding: 24px 16px; background: var(--deep-navy); color: #b8cad5; }
+    .app-nav strong { display: block; margin-bottom: 25px; color: white; letter-spacing: .12em; }
+    .app-nav span { display: block; margin: 6px 0; padding: 9px 10px; font-size: 12px; }
+    .app-nav span:first-of-type { border-left: 4px solid var(--gold); background: var(--selected); color: white; }
+    .app-content { padding: 28px; background: var(--paper); }
+    .app-content h3 { font-size: 32px; }
+    .metric-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 24px; }
+    .metric { min-height: 104px; padding: 14px; border: 1px solid var(--border); background: white; }
+    .metric small { color: var(--muted); font: 9px/1.2 var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+    .metric strong { display: block; margin-top: 12px; font: 30px/1 var(--serif); }
+    .attention { margin-top: 12px; border: 1px solid var(--border); background: white; }
+    .attention div { display: flex; justify-content: space-between; gap: 20px; padding: 13px 15px; border-bottom: 1px solid var(--border); font-size: 12px; }
+    .attention div:last-child { border-bottom: 0; }
+    .status-red { color: var(--critical); }
+    .status-amber { color: var(--warning); }
+
+    .outcome-intro { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: end; }
+    .outcomes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 48px; }
+    .card { position: relative; min-height: 320px; padding: 30px; border: 1px solid var(--border); background: var(--surface); }
+    .card::before, .card::after { content: ""; position: absolute; width: 11px; height: 11px; border-color: var(--gold-dark); }
+    .card::before { top: -5px; left: -5px; border-top: 1px solid; border-left: 1px solid; }
+    .card::after { right: -5px; bottom: -5px; border-right: 1px solid; border-bottom: 1px solid; }
+    .card-number { margin-bottom: 50px; color: var(--gold-dark); font: 11px/1 var(--mono); letter-spacing: .12em; }
+    .card p { margin-top: 18px; color: var(--muted); }
+
+    .story { background: var(--deep-navy); color: white; }
+    .story .eyebrow { color: var(--gold); }
+    .story-grid { display: grid; grid-template-columns: .8fr 1.4fr; gap: 64px; }
+    .story-note { padding: 28px; border: 1px solid rgb(255 255 255 / .18); background: rgb(255 255 255 / .04); }
+    .story-note strong { display: block; margin-bottom: 12px; color: var(--gold); font: 11px/1.3 var(--mono); letter-spacing: .13em; text-transform: uppercase; }
+    .story-copy { display: grid; gap: 18px; color: #c4d1d8; font-size: 17px; }
+    .story-copy b { color: white; }
+
+    .fit-grid, .custody-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 44px; }
+    .fit-panel { padding: 30px; border: 1px solid var(--border); background: var(--surface); }
+    .fit-panel ul { display: grid; gap: 12px; margin: 22px 0 0; padding: 0; list-style: none; }
+    .fit-panel li { position: relative; padding-left: 24px; color: var(--muted); }
+    .fit-panel li::before { position: absolute; left: 0; color: var(--gold-dark); content: "+"; font-family: var(--mono); }
+    .fit-panel.not li::before { content: "—"; }
+
+    .custody-card { padding: 26px; border: 1px solid var(--border); background: var(--surface); }
+    .custody-card p { margin-top: 12px; color: var(--muted); }
+    .truth-note { margin-top: 22px; padding: 18px 20px; border-left: 4px solid var(--gold); background: #fff8e8; color: #6e520f; font-size: 14px; }
+
+    .programme { text-align: center; background: var(--surface); }
+    .programme .container { max-width: 850px; }
+    .programme .lead { margin: 24px auto 0; }
+    .programme-status { display: inline-block; margin-top: 30px; padding: 10px 14px; border: 1px solid var(--border); background: var(--paper); color: var(--muted); font: 11px/1.2 var(--mono); letter-spacing: .11em; text-transform: uppercase; }
+    .programme .button { margin-top: 26px; }
+
+    footer { padding: 46px 0; background: var(--deep-navy); color: #a8bdca; }
+    .footer-grid { display: flex; justify-content: space-between; gap: 40px; align-items: flex-start; }
+    footer strong { color: white; letter-spacing: .12em; text-transform: uppercase; }
+    .footer-links { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 18px; }
+    .footer-links a { font-size: 13px; }
+
+    @media (max-width: 900px) {
+      nav { display: none; }
+      .section { padding: 66px 0; }
+      .proof-grid, .story-grid { grid-template-columns: 1fr; }
+      .shot-grid { grid-template-columns: 1fr; }
+      .outcomes { grid-template-columns: 1fr; }
+      .card { min-height: auto; }
+      .card-number { margin-bottom: 28px; }
+      .app-body { grid-template-columns: 145px 1fr; }
+    }
+    @media (max-width: 680px) {
+      .container { width: min(calc(100% - 28px), var(--max)); }
+      .site-header .button { display: none; }
+      .brand-state { display: none; }
+      .hero { padding: 78px 0 54px; }
+      .trust-strip, .outcome-intro, .fit-grid, .custody-grid { grid-template-columns: 1fr; }
+      .trust-item, .trust-item + .trust-item { padding: 15px 0; border-left: 0; border-bottom: 1px solid var(--border); }
+      .app-body { display: block; }
+      .app-nav { display: none; }
+      .app-content { padding: 18px; }
+      .metric-row { grid-template-columns: 1fr; }
+      .metric { min-height: 82px; }
+      .footer-grid { display: grid; }
+      .footer-links { justify-content: flex-start; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="#top" aria-label="PropertyOS home">
+        <span class="brand-mark" aria-hidden="true">K</span>
+        <span><span class="brand-name">PropertyOS</span><span class="brand-state">KaelVaren suite · private Alpha</span></span>
+      </a>
+      <nav aria-label="Primary navigation">
+        <a href="#product">Product</a>
+        <a href="#story">Story</a>
+        <a href="#fit">Who it is for</a>
+        <a href="#data">Data &amp; security</a>
+      </nav>
+      <a class="button" href="#programme">Founding programme</a>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="top">
+      <div class="container">
+        <div class="alpha-line"><strong>Private Alpha testing</strong><span>UK residential landlords</span><span>Founding programme follows testing</span></div>
+        <h1>Know what needs attention across your properties—before it becomes a problem.</h1>
+        <p class="lead">PropertyOS brings compliance dates, maintenance, tenancies, tasks, expenses and property records into one clear workspace for self-managing UK landlords.</p>
+        <div class="hero-actions">
+          <a class="button" href="#programme">Join the founding landlord programme</a>
+          <a class="button secondary" href="#product">See the Alpha product</a>
+        </div>
+        <div class="trust-strip" aria-label="PropertyOS principles">
+          <div class="trust-item"><b>Built from experience</b>Designed around the day-to-day work of a UK landlord.</div>
+          <div class="trust-item"><b>Operational clarity</b>Important dates and outstanding work stay visible.</div>
+          <div class="trust-item"><b>Your records</b>Organisation-scoped data with an Excel portfolio export.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="product">
+      <div class="container proof-grid">
+        <div>
+          <p class="eyebrow">Product evidence · Today</p>
+          <h2>A calm starting point for the work that matters.</h2>
+          <p class="lead" style="margin-top:24px">The private Alpha already brings together property dashboards, compliance, maintenance, tasks, tenancies, expenses, ownership and user roles.</p>
+          <p class="fine-print" style="margin-top:22px">Screenshots are from the live Alpha with organisation and property details excluded. PropertyOS does not certify legal compliance or replace professional legal, tax or accounting advice.</p>
+        </div>
+        <figure class="alpha-shot">
+          <img src="propertyosuk-assets/alpha-today.jpg" width="665" height="900" loading="eager" alt="PropertyOS Alpha Today dashboard showing portfolio and compliance summary cards">
+          <figcaption><span>Live Alpha · Today dashboard</span><span>13/08/2026</span></figcaption>
+        </figure>
+      </div>
+      <div class="container shot-grid" aria-label="More PropertyOS Alpha screenshots">
+        <figure class="alpha-shot">
+          <img src="propertyosuk-assets/alpha-compliance.jpg" width="665" height="390" loading="lazy" alt="PropertyOS Alpha Compliance register showing compliant, due soon, overdue and not recorded totals">
+          <figcaption><span>Live Alpha · Compliance summary</span><span>Management prompts</span></figcaption>
+        </figure>
+        <figure class="alpha-shot">
+          <img src="propertyosuk-assets/alpha-login.jpg" width="941" height="993" loading="lazy" alt="PropertyOS Alpha sign-in page with navy brand panel and account controls">
+          <figcaption><span>Live Alpha · Sign-in</span><span>Email confirmation enabled</span></figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="outcome-intro">
+          <div><p class="eyebrow">Three outcomes</p><h2>Property operations without the spreadsheet sprawl.</h2></div>
+          <p class="lead">PropertyOS is deliberately focused on helping independent landlords see, record and act—not on replacing letting agents, accountants or professional advisers.</p>
+        </div>
+        <div class="outcomes">
+          <article class="card"><div class="card-number">OUTCOME 01</div><h3>See what needs attention today.</h3><p>A portfolio summary surfaces missing compliance records, open tasks, maintenance issues and important tenancy dates, with links to the source records.</p></article>
+          <article class="card"><div class="card-number">OUTCOME 02</div><h3>Track compliance and renewal dates.</h3><p>Record the certificates and dates relevant to each property, keep supporting evidence private and review deterministic reminders before items become overdue.</p></article>
+          <article class="card"><div class="card-number">OUTCOME 03</div><h3>Keep records, tasks and expenses together.</h3><p>Connect property details, tenancy records, maintenance, tasks, expenses and documents in one organisation-scoped workspace.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section story" id="story">
+      <div class="container story-grid">
+        <div class="story-note"><strong>Built by a UK landlord</strong><h2>Created from the work behind the portfolio.</h2></div>
+        <div class="story-copy">
+          <p>PropertyOS began with a familiar problem: property information spread across spreadsheets, calendar reminders, email, documents and memory.</p>
+          <p>As a portfolio grows, the risk is not usually a lack of effort. It is that the next important date, repair, task or document is hidden in the wrong place.</p>
+          <p><b>PropertyOS is being built as the workspace its founder wanted to use:</b> calm, traceable and focused on the practical work of managing UK residential property.</p>
+          <p>The private Alpha is now being tested with real landlord journeys. The founding programme will open after that feedback has been assessed.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="fit">
+      <div class="container">
+        <p class="eyebrow">Who it is for</p>
+        <h2>Self-managing UK landlords with growing portfolios.</h2>
+        <div class="fit-grid">
+          <div class="fit-panel"><h3>You may be a good fit if…</h3><ul><li>You manage UK residential property yourself.</li><li>You have outgrown spreadsheets and scattered reminders.</li><li>You want property records and operational work in one place.</li><li>You value a clear audit trail and exportable data.</li></ul></div>
+          <div class="fit-panel not"><h3>It is not currently designed for…</h3><ul><li>Letting agencies managing property for multiple clients.</li><li>Commercial property or short-let operations.</li><li>Replacing legal, tax, accounting or compliance advice.</li><li>Landlords operating outside the UK.</li></ul></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="data">
+      <div class="container">
+        <p class="eyebrow">Data, access and security</p>
+        <h2>Clear boundaries, without claims ahead of the evidence.</h2>
+        <div class="custody-grid">
+          <article class="custody-card"><h3>Organisation-scoped records</h3><p>Business records are linked to an organisation and protected by database row-level security designed to prevent cross-organisation access.</p></article>
+          <article class="custody-card"><h3>Private documents</h3><p>Uploaded evidence is stored privately and accessed through authorised links rather than public file URLs.</p></article>
+          <article class="custody-card"><h3>Roles and read-only access</h3><p>Owner, Admin, Member and Viewer roles support different capabilities. Viewer write access is blocked in both the interface and database policies.</p></article>
+          <article class="custody-card"><h3>Portfolio export</h3><p>Owners and Admins can download a formatted Excel portfolio report. Bulk document ZIP export is not currently provided.</p></article>
+        </div>
+        <div class="truth-note"><b>Private Alpha status:</b> email confirmation is enabled. Multi-factor authentication, formal backup/restore evidence and wider security acceptance testing remain planned work and are not being advertised as completed.</div>
+      </div>
+    </section>
+
+    <section class="section programme" id="programme">
+      <div class="container">
+        <p class="eyebrow">Founding landlord programme</p>
+        <h2>Help shape PropertyOS after private Alpha testing.</h2>
+        <p class="lead">The programme is intended for a small number of self-managing UK landlords who are willing to test real workflows and give direct, practical feedback.</p>
+        <div class="programme-status">Applications are not being collected yet</div>
+        <p class="fine-print" style="margin-top:18px">Pricing, programme terms and support commitments will be published before anyone is asked to join. No lifetime discount or launch price has been promised.</p>
+        <a class="button" href="#top">Return to the overview</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-grid">
+      <div><strong>PropertyOS</strong><p class="fine-print" style="margin-top:10px;color:#a8bdca">A KaelVaren product for self-managing UK residential landlords.<br>Private Alpha · not a compliance certification service.</p></div>
+      <div class="footer-links"><a href="#product">Product</a><a href="#story">Story</a><a href="#data">Data &amp; security</a><a href="#programme">Founding programme</a></div>
+    </div>
+  </footer>
+</body>
+</html>
