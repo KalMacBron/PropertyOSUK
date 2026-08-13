@@ -1,0 +1,96 @@
+name: Deploy Marketing Site
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - marketing/**
+      - .github/workflows/deploy-marketing.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: propertyos-marketing
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: marketing
+      url: https://propertyosuk.com
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Prepare deployment bundle
+        shell: bash
+        run: |
+          cp -R marketing build-marketing
+          # Hostinger's initial placeholder uses index.php and may give it
+          # precedence over index.html. Both files contain identical static HTML.
+          cp build-marketing/index.html build-marketing/index.php
+          cat > build-marketing/version.json <<EOF
+          {
+            "environment": "marketing",
+            "commit": "${GITHUB_SHA}",
+            "build": "${GITHUB_SHA::12}",
+            "deployedAt": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          }
+          EOF
+
+      - name: Deploy to Hostinger
+        id: hostinger_deploy
+        continue-on-error: true
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
+        with:
+          server: ftp.propertyosuk.com
+          username: u714985569.propertyosuk.com
+          password: ${{ secrets.HOSTINGER_FTP_PASSWORD }}
+          port: 21
+          protocol: ftps
+          timeout: 60000
+          local-dir: build-marketing/
+          server-dir: /public_html/
+          state-name: .propertyos-marketing-sync-state.json
+
+      - name: Retry Hostinger deployment
+        if: steps.hostinger_deploy.outcome == 'failure'
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
+        with:
+          server: ftp.propertyosuk.com
+          username: u714985569.propertyosuk.com
+          password: ${{ secrets.HOSTINGER_FTP_PASSWORD }}
+          port: 21
+          protocol: ftps
+          timeout: 60000
+          local-dir: build-marketing/
+          server-dir: /public_html/
+          state-name: .propertyos-marketing-sync-state.json
+
+      - name: Verify published site
+        shell: bash
+        run: |
+          for attempt in {1..6}; do
+            version_ok=false
+            homepage_ok=false
+            if curl --fail --silent --show-error \
+              "https://propertyosuk.com/version.json?build=${GITHUB_SHA}" \
+              | grep -F "${GITHUB_SHA}"; then
+              version_ok=true
+            fi
+            if curl --fail --silent --show-error \
+              "https://propertyosuk.com/?build=${GITHUB_SHA}" \
+              | grep -F "<title>PropertyOS | Calm property operations for UK landlords</title>"; then
+              homepage_ok=true
+            fi
+            if [[ "${version_ok}" == true && "${homepage_ok}" == true ]]; then
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "Published marketing version could not be verified." >&2
+          exit 1
