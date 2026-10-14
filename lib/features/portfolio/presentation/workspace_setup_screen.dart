@@ -34,7 +34,12 @@ class _WorkspaceSetupScreenState extends ConsumerState<WorkspaceSetupScreen> {
 
   Future<void> _createOrganisation() async {
     if (_organisation.text.trim().isEmpty) {
-      setState(() => _error = 'Enter an organisation name.');
+      setState(() => _error = 'Enter a portfolio name.');
+      return;
+    }
+    if (_organisation.text.trim().length > 120) {
+      setState(
+          () => _error = 'Use 120 characters or fewer for the portfolio name.');
       return;
     }
     await _run(() async {
@@ -153,7 +158,7 @@ class _WorkspaceSetupScreenState extends ConsumerState<WorkspaceSetupScreen> {
                       const SizedBox(height: 8),
                       Text(
                         switch (_step) {
-                          0 => 'Create your organisation',
+                          0 => 'Set up your portfolio',
                           1 => 'Who owns the properties?',
                           _ => 'Add your first property',
                         },
@@ -166,7 +171,7 @@ class _WorkspaceSetupScreenState extends ConsumerState<WorkspaceSetupScreen> {
                       Text(
                         switch (_step) {
                           0 =>
-                            'This secure workspace will hold your portfolio and users.',
+                            'For individual landlords and companies alike. Give your private workspace a name; you can choose Individual as the owner type on the next step.',
                           1 =>
                             'Record the individual or company that legally owns property.',
                           _ =>
@@ -200,15 +205,15 @@ class _WorkspaceSetupScreenState extends ConsumerState<WorkspaceSetupScreen> {
             controller: _organisation,
             autofocus: true,
             decoration: const InputDecoration(
-              labelText: 'Organisation name',
-              hintText: 'Horvath Property Portfolio',
+              labelText: 'Portfolio name',
+              hintText: 'My property portfolio',
             ),
             onSubmitted: (_) => _createOrganisation(),
           ),
           const SizedBox(height: 22),
           FilledButton(
             onPressed: _saving ? null : _createOrganisation,
-            child: Text(_saving ? 'Creating…' : 'Create organisation'),
+            child: Text(_saving ? 'Creating…' : 'Create portfolio'),
           ),
         ],
       );
