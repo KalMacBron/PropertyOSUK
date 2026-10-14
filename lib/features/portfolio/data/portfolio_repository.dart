@@ -1,5 +1,13 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+String organisationSlug(String name, int uniqueSuffix) {
+  final base = name
+      .toLowerCase()
+      .replaceAll(RegExp(r'[^a-z0-9]+'), '-')
+      .replaceAll(RegExp(r'^-+|-+$'), '');
+  return '${base.isEmpty ? 'portfolio' : base}-$uniqueSuffix';
+}
+
 class OrganisationSummary {
   const OrganisationSummary({
     required this.id,
@@ -82,8 +90,7 @@ class PortfolioRepository {
     String name, {
     String? displayName,
   }) async {
-    final slug =
-        '${name.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]+'), '-')}-${DateTime.now().millisecondsSinceEpoch}';
+    final slug = organisationSlug(name, DateTime.now().millisecondsSinceEpoch);
     final id = await _client.rpc<String>(
       'bootstrap_customer_organisation',
       params: {
