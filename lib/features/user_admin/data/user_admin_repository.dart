@@ -1,5 +1,24 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+enum InvitationFailure { rateLimited, generic }
+
+class InvitationException implements Exception {
+  const InvitationException(this.failure);
+  final InvitationFailure failure;
+}
+
+InvitationFailure invitationFailureFor(int status, dynamic details) {
+  final error = details is Map ? details['error'] : null;
+  return status == 429 || error == 'email_rate_limit_reached'
+      ? InvitationFailure.rateLimited
+      : InvitationFailure.generic;
+}
+
+String invitationFailureMessage(InvitationFailure failure) =>
+    failure == InvitationFailure.rateLimited
+        ? 'The email sending limit has been reached. Please try again later.'
+        : 'The invitation could not be sent.';
+
 class OrganisationUser {
   const OrganisationUser(
       {required this.type,
@@ -46,14 +65,16 @@ class UserAdminRepository {
       {required String organisationId,
       required String email,
       required String role}) async {
-    final response = await _client.functions.invoke('invite-organisation-user',
-        body: {
-          'organisationId': organisationId,
-          'email': email.trim(),
-          'role': role
-        });
-    if (response.status < 200 || response.status >= 300) {
-      throw Exception('invitation_failed');
+    try {
+      await _client.functions.invoke('invite-organisation-user', body: {
+        'organisationId': organisationId,
+        'email': email.trim(),
+        'role': role
+      });
+    } on FunctionException catch (error) {
+      throw InvitationException(
+        invitationFailureFor(error.status, error.details),
+      );
     }
   }
 

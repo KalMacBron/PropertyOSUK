@@ -3,6 +3,21 @@ import 'package:property_os/features/auth/application/auth_state.dart';
 import 'package:property_os/features/user_admin/data/user_admin_repository.dart';
 
 void main() {
+  test('maps invitation email rate limits to a specific failure', () {
+    expect(
+      invitationFailureFor(429, {'error': 'email_rate_limit_reached'}),
+      InvitationFailure.rateLimited,
+    );
+    expect(
+      invitationFailureFor(409, {'error': 'invitation_email_failed'}),
+      InvitationFailure.generic,
+    );
+    expect(
+      invitationFailureMessage(InvitationFailure.rateLimited),
+      contains('limit'),
+    );
+  });
+
   test('requires onboarding only for tagged invitation sessions', () {
     expect(
       invitationOnboardingRequired(
