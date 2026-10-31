@@ -4,7 +4,9 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:property_os/app/suite_ui.dart';
 import 'package:property_os/app/theme.dart';
+import 'package:property_os/features/compliance/domain/compliance_status_labels.dart';
 import 'package:property_os/features/portfolio/application/portfolio_providers.dart';
+import 'package:property_os/features/portfolio/data/portfolio_repository.dart';
 import 'package:property_os/features/tasks/application/task_providers.dart';
 import 'package:property_os/features/tasks/domain/task_models.dart';
 import 'package:property_os/features/today/application/today_providers.dart';
@@ -41,9 +43,15 @@ class TodayScreen extends ConsumerWidget {
                     if (organisation?.role == 'owner')
                       ownershipEntities.when(
                         loading: () => const SizedBox.shrink(),
-                        error: (_, __) => const SizedBox.shrink(),
+                        error: (_, __) => SuiteErrorState(
+                          message: 'Your setup progress could not be loaded.',
+                          onRetry: () =>
+                              ref.invalidate(ownershipEntitiesProvider),
+                        ),
                         data: (entities) => properties.when(
                           loading: () => const SizedBox.shrink(),
+                          // The properties error is shown with the actions
+                          // below, so it is not repeated here.
                           error: (_, __) => const SizedBox.shrink(),
                           data: (propertyRows) =>
                               entities.isEmpty || propertyRows.isEmpty
@@ -57,28 +65,33 @@ class TodayScreen extends ConsumerWidget {
                     if (organisation?.role == 'owner')
                       const SizedBox(height: 16),
                     summary.when(
-                      loading: () => const LinearProgressIndicator(),
+                      loading: () => const LinearProgressIndicator(
+                        semanticsLabel: 'Loading portfolio summary',
+                      ),
                       error: (_, __) => _SummaryError(
                         retry: () => ref.invalidate(portfolioSummaryProvider),
                       ),
                       data: (value) => _SummaryDashboard(summary: value),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 28),
                     tasks.when(
                       loading: () => const SizedBox.shrink(),
-                      error: (_, __) => const SizedBox.shrink(),
+                      error: (_, __) => SuiteErrorState(
+                        message: 'Task totals could not be loaded.',
+                        onRetry: () => ref.invalidate(tasksProvider),
+                      ),
                       data: (items) => _TaskSummary(tasks: items),
                     ),
                     const SizedBox(height: 28),
                     actions.when(
                       loading: () =>
-                          const Center(child: CircularProgressIndicator()),
+                          const SuiteLoading(label: 'Loading Today actions'),
                       error: (_, __) => _ErrorCard(
                         retry: () => ref.invalidate(todayActionsProvider),
                       ),
                       data: (items) => properties.when(
                         loading: () =>
-                            const Center(child: CircularProgressIndicator()),
+                            const SuiteLoading(label: 'Loading properties'),
                         error: (_, __) => _ErrorCard(
                           retry: () => ref.invalidate(propertiesProvider),
                         ),
@@ -93,6 +106,23 @@ class TodayScreen extends ConsumerWidget {
                                       ? row['display_name'] as String
                                       : row['address_line_1'] as String,
                           };
+                          if (items.isEmpty && propertyRows.isEmpty) {
+                            final canWrite = canWriteOrganisation(organisation);
+                            return SuiteEmptyState(
+                              icon: Icons.home_work_outlined,
+                              title: 'No properties yet',
+                              message: canWrite
+                                  ? 'Add a property to see what needs your attention.'
+                                  : 'No properties have been added to this workspace yet.',
+                              action: canWrite
+                                  ? OutlinedButton(
+                                      onPressed: () =>
+                                          context.go('/properties'),
+                                      child: const Text('Add property'),
+                                    )
+                                  : null,
+                            );
+                          }
                           if (items.isEmpty) {
                             return const Card(
                               child: Padding(
@@ -270,7 +300,7 @@ class _SummaryDashboard extends StatelessWidget {
                 label: 'Not recorded',
                 value: '${summary.notRecorded}',
                 detail: 'Compliance records missing',
-                colour: PropertyOsColours.warning,
+                colour: PropertyOsColours.amberText,
                 onTap: () => context.go('/compliance?status=notRecorded'),
               ),
               _DashboardTile(
@@ -291,7 +321,7 @@ class _SummaryDashboard extends StatelessWidget {
               ),
               _DashboardTile(
                 width: width,
-                label: 'Recorded and current',
+                label: currentStatusLabel,
                 value: '${summary.compliant}',
                 detail: '${summary.complianceChecks} tracked checks',
                 colour: PropertyOsColours.success,
@@ -340,11 +370,9 @@ class _DashboardTile extends StatelessWidget {
                       Expanded(
                         child: Text(
                           label.toUpperCase(),
-                          style: const TextStyle(
+                          style: PropertyOsText.eyebrow.copyWith(
                             color: PropertyOsColours.muted,
-                            fontSize: 10,
                             fontWeight: FontWeight.w800,
-                            letterSpacing: 1.2,
                           ),
                         ),
                       ),
@@ -354,10 +382,7 @@ class _DashboardTile extends StatelessWidget {
                   const SizedBox(height: 14),
                   Text(
                     value,
-                    style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                          color: PropertyOsColours.ink,
-                          fontSize: 34,
-                        ),
+                    style: Theme.of(context).textTheme.displaySmall,
                   ),
                   const SizedBox(height: 8),
                   Text(detail, style: TextStyle(color: colour, fontSize: 12)),
@@ -399,6 +424,7 @@ class _TodayActionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final details = <String>[
+      _priorityLabel(action.priority),
       if (propertyName != null) propertyName!,
       if (action.dueDate != null)
         DateFormat('dd/MM/yyyy').format(action.dueDate!),
@@ -424,7 +450,7 @@ class _TodayActionCard extends StatelessWidget {
             alpha: 0.14,
           ),
           child: Icon(
-            Icons.notifications_active_outlined,
+            _priorityIcon(action.priority),
             color: _priorityColour(action.priority),
           ),
         ),
@@ -498,10 +524,27 @@ Color _priorityColour(String priority) => switch (priority) {
       _ => Colors.blueGrey.shade600,
     };
 
+IconData _priorityIcon(String priority) => switch (priority) {
+      'urgent' => Icons.error_outline,
+      'high' => Icons.warning_amber_outlined,
+      'medium' => Icons.schedule_outlined,
+      _ => Icons.info_outline,
+    };
+
+String _priorityLabel(String priority) => switch (priority) {
+      'urgent' => 'Urgent',
+      'high' => 'High priority',
+      'medium' => 'Medium priority',
+      'low' => 'Low priority',
+      _ => priority.isEmpty
+          ? 'Priority not set'
+          : '${priority[0].toUpperCase()}${priority.substring(1)} priority',
+    };
+
 String _reasonLabel(String reason) => switch (reason) {
-      'due_soon' => 'Due soon',
-      'expired' => 'Expired',
-      'overdue' => 'Overdue',
+      'due_soon' => dueSoonStatusLabel,
+      'expired' => overdueStatusLabel,
+      'overdue' => overdueStatusLabel,
       'open' => 'Open',
       _ => reason.replaceAll('_', ' '),
     };

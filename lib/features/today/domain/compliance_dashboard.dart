@@ -1,4 +1,5 @@
 import 'package:property_os/features/compliance/domain/compliance_models.dart';
+import 'package:property_os/features/compliance/domain/compliance_status_labels.dart';
 
 enum DashboardStatus { overdue, expiringSoon, compliant, missingInformation }
 
@@ -143,13 +144,20 @@ DashboardCounts dashboardCounts(Iterable<ComplianceDashboardItem> items) {
   );
 }
 
+String dashboardStatusLabel(DashboardStatus status) => switch (status) {
+      DashboardStatus.overdue => overdueStatusLabel,
+      DashboardStatus.expiringSoon => dueSoonStatusLabel,
+      DashboardStatus.compliant => currentStatusLabel,
+      DashboardStatus.missingInformation => notRecordedStatusLabel,
+    };
+
 String attentionSummary(DashboardCounts counts, int warningDays) {
-  final overdueLabel =
-      '${counts.overdue} certificate${counts.overdue == 1 ? '' : 's'}';
-  final expiringLabel =
-      '${counts.expiringSoon} expire${counts.expiringSoon == 1 ? 's' : ''}';
-  return '$overdueLabel overdue and $expiringLabel within the next '
-      '$warningDays days.';
+  final overdue = counts.overdue == 1
+      ? '1 compliance item is overdue'
+      : '${counts.overdue} compliance items are overdue';
+  final dueSoon =
+      counts.expiringSoon == 1 ? '1 is due' : '${counts.expiringSoon} are due';
+  return '$overdue and $dueSoon within the next $warningDays days.';
 }
 
 DateTime europeLondonToday([DateTime? instant]) {

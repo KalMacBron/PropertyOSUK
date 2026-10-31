@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:property_os/core/database/supabase_provider.dart';
 import 'package:property_os/features/auth/application/auth_state.dart';
 import 'package:property_os/features/auth/data/auth_repository.dart';
+import 'package:property_os/features/auth/domain/auth_error_messages.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class PasswordRecoveryScreen extends ConsumerStatefulWidget {
@@ -34,7 +35,16 @@ class _PasswordRecoveryScreenState
       await repository.signOut();
       ref.read(passwordRecoveryProvider.notifier).state = false;
     } on AuthException catch (error) {
-      if (mounted) setState(() => _error = error.message);
+      if (mounted) {
+        setState(
+          () => _error = authErrorMessage(
+            code: error.code,
+            statusCode: error.statusCode,
+            message: error.message,
+            fallback: 'Unable to update the password. Try again.',
+          ),
+        );
+      }
     } catch (_) {
       if (mounted) {
         setState(
@@ -86,6 +96,8 @@ class _PasswordRecoveryScreenState
                         decoration: InputDecoration(
                           labelText: 'New password',
                           suffixIcon: IconButton(
+                            tooltip:
+                                _obscure ? 'Show password' : 'Hide password',
                             onPressed: () =>
                                 setState(() => _obscure = !_obscure),
                             icon: Icon(

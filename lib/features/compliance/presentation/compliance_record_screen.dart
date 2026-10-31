@@ -316,9 +316,4 @@ class _MessageCard extends StatelessWidget {
 String _date(DateTime? value) =>
     value == null ? 'Not recorded' : DateFormat('dd/MM/yyyy').format(value);
 
-String _statusLabel(DashboardStatus status) => switch (status) {
-      DashboardStatus.overdue => 'Overdue',
-      DashboardStatus.expiringSoon => 'Expiring soon',
-      DashboardStatus.compliant => 'Compliant',
-      DashboardStatus.missingInformation => 'Missing information',
-    };
+String _statusLabel(DashboardStatus status) => dashboardStatusLabel(status);

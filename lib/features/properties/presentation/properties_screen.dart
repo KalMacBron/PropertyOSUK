@@ -24,28 +24,61 @@ class PropertiesScreen extends ConsumerWidget {
     final owners = await ref.read(ownershipEntitiesProvider.future);
     if (!context.mounted || organisation == null) return;
     if (owners.isEmpty) {
+      final router = GoRouter.of(context);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Add an ownership entity first.')),
+        SnackBar(
+          content: const Text('Add an owner before you add a property.'),
+          action: SnackBarAction(
+            label: 'Add owner',
+            onPressed: () => router.go('/ownership'),
+          ),
+        ),
       );
       return;
     }
-    final saved = await showDialog<_PropertyDraft>(
-      context: context,
-      builder: (_) => _PropertyDialog(owners: owners),
-    );
-    if (saved == null) return;
-    await ref.read(portfolioRepositoryProvider).createProperty(
-          organisationId: organisation.id,
-          ownershipEntityId: saved.ownerId,
-          ownershipPercentage: saved.percentage,
-          addressLine1: saved.address,
-          townOrCity: saved.town,
-          postcode: saved.postcode,
-          displayName: saved.displayName,
-          propertyType: saved.propertyType,
-          bedrooms: saved.bedrooms,
+    _PropertyDraft? draft;
+    while (true) {
+      if (!context.mounted) return;
+      final saved = await showDialog<_PropertyDraft>(
+        context: context,
+        builder: (_) => _PropertyDialog(owners: owners, initial: draft),
+      );
+      if (saved == null || !context.mounted) return;
+      final messenger = ScaffoldMessenger.of(context);
+      try {
+        await ref.read(portfolioRepositoryProvider).createProperty(
+              organisationId: organisation.id,
+              ownershipEntityId: saved.ownerId,
+              ownershipPercentage: saved.percentage,
+              addressLine1: saved.address,
+              townOrCity: saved.town,
+              postcode: saved.postcode,
+              displayName: saved.displayName,
+              propertyType: saved.propertyType,
+              bedrooms: saved.bedrooms,
+            );
+      } catch (_) {
+        // Keep what the user typed and let them try again.
+        messenger
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
+            const SnackBar(
+              content: Text(
+                'Property not added. Check your connection and try again.',
+              ),
+            ),
+          );
+        draft = saved;
+        continue;
+      }
+      ref.invalidate(propertiesProvider);
+      messenger
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(content: Text('Property added')),
         );
-    ref.invalidate(propertiesProvider);
+      return;
+    }
   }
 
   @override
@@ -66,12 +99,23 @@ class PropertiesScreen extends ConsumerWidget {
           : null,
       child: properties.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (_, __) => const Text('Properties could not be loaded.'),
+        error: (_, __) => SuiteErrorState(
+          message: 'Properties could not be loaded.',
+          onRetry: () => ref.invalidate(propertiesProvider),
+        ),
         data: (items) => items.isEmpty
-            ? const SuiteEmptyState(
+            ? SuiteEmptyState(
                 icon: Icons.home_work_outlined,
                 title: 'No properties yet',
-                message: 'Add an owner, then onboard your first property.',
+                message: canWrite
+                    ? 'Add an owner, then add your first property.'
+                    : 'No properties have been added to this workspace yet.',
+                action: canWrite
+                    ? OutlinedButton(
+                        onPressed: () => context.go('/ownership'),
+                        child: const Text('Add owner'),
+                      )
+                    : null,
               )
             : Card(
                 child: Column(
@@ -86,11 +130,21 @@ class PropertiesScreen extends ConsumerWidget {
                         .whereType<String>()
                         .join(', ');
                     final selected = item['id'] == initialPropertyId;
-                    return Material(
-                      color: selected
-                          ? PropertyOsColours.amber.withValues(alpha: 0.12)
-                          : null,
+                    return DecoratedBox(
+                      decoration: BoxDecoration(
+                        border: Border(
+                          left: BorderSide(
+                            color: selected
+                                ? PropertyOsColours.amber
+                                : Colors.transparent,
+                            width: 4,
+                          ),
+                        ),
+                      ),
                       child: ListTile(
+                        selected: selected,
+                        selectedColor: PropertyOsColours.ink,
+                        selectedTileColor: const Color(0xFFFFF4D8),
                         onTap: () => context.go('/properties/${item['id']}'),
                         contentPadding: const EdgeInsets.symmetric(
                             horizontal: 22, vertical: 10),
@@ -138,22 +192,45 @@ class _PropertyDraft {
 }
 
 class _PropertyDialog extends StatefulWidget {
-  const _PropertyDialog({required this.owners});
+  const _PropertyDialog({required this.owners, this.initial});
   final List<OwnershipEntity> owners;
+  final _PropertyDraft? initial;
   @override
   State<_PropertyDialog> createState() => _PropertyDialogState();
 }
 
 class _PropertyDialogState extends State<_PropertyDialog> {
   final _key = GlobalKey<FormState>();
-  final _displayName = TextEditingController();
-  final _address = TextEditingController();
-  final _town = TextEditingController();
-  final _postcode = TextEditingController();
-  final _bedrooms = TextEditingController();
-  final _percentage = TextEditingController(text: '100');
-  late String _ownerId = widget.owners.first.id;
-  String _propertyType = 'House';
+  late final _displayName =
+      TextEditingController(text: widget.initial?.displayName ?? '');
+  late final _address =
+      TextEditingController(text: widget.initial?.address ?? '');
+  late final _town = TextEditingController(text: widget.initial?.town ?? '');
+  late final _postcode =
+      TextEditingController(text: widget.initial?.postcode ?? '');
+  late final _bedrooms =
+      TextEditingController(text: widget.initial?.bedrooms?.toString() ?? '');
+  late final _percentage = TextEditingController(
+    text: widget.initial == null
+        ? '100'
+        : _percentText(widget.initial!.percentage),
+  );
+  late String _ownerId =
+      widget.owners.any((o) => o.id == widget.initial?.ownerId)
+          ? widget.initial!.ownerId
+          : widget.owners.first.id;
+  late String _propertyType = widget.initial?.propertyType ?? 'House';
+
+  @override
+  void dispose() {
+    _displayName.dispose();
+    _address.dispose();
+    _town.dispose();
+    _postcode.dispose();
+    _bedrooms.dispose();
+    _percentage.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) => AlertDialog(
@@ -195,6 +272,7 @@ class _PropertyDialogState extends State<_PropertyDialog> {
                   const SizedBox(height: 12),
                   DropdownButtonFormField<String>(
                     initialValue: _propertyType,
+                    isExpanded: true,
                     decoration:
                         const InputDecoration(labelText: 'Property type'),
                     items: ['House', 'Flat', 'Maisonette', 'HMO', 'Other']
@@ -216,12 +294,17 @@ class _PropertyDialogState extends State<_PropertyDialog> {
                   const Divider(height: 32),
                   DropdownButtonFormField<String>(
                     initialValue: _ownerId,
-                    decoration: const InputDecoration(labelText: 'Legal owner'),
+                    isExpanded: true,
+                    decoration: const InputDecoration(labelText: 'Owner'),
                     items: widget.owners
                         .map(
                           (owner) => DropdownMenuItem(
                             value: owner.id,
-                            child: Text(owner.legalName),
+                            child: Text(
+                              owner.legalName,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
                         )
                         .toList(),
@@ -278,3 +361,6 @@ class _PropertyDialogState extends State<_PropertyDialog> {
   String? _required(String? value) =>
       value == null || value.trim().isEmpty ? 'Required' : null;
 }
+
+String _percentText(double value) =>
+    value == value.roundToDouble() ? value.toInt().toString() : '$value';

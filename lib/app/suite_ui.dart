@@ -16,30 +16,37 @@ class SuiteBrand extends StatelessWidget {
             alignment: Alignment.center,
             child: const Text('K',
                 style: TextStyle(
-                    fontFamily: 'Georgia',
                     fontSize: 29,
                     fontWeight: FontWeight.w700,
                     color: PropertyOsColours.deepNavy)),
           ),
           if (!compact) ...[
             const SizedBox(width: 14),
-            const Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('PROPERTYOS',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 2.4,
-                          fontSize: 15)),
-                  SizedBox(height: 4),
-                  Text('PROPERTY OPERATIONS',
-                      style: TextStyle(
-                          color: Color(0xFF9DB1BF),
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 1.5,
-                          fontSize: 9)),
-                ]),
+            // The word mark scales down as a unit in narrow spaces and at
+            // large text sizes instead of overflowing.
+            const Flexible(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('PROPERTYOS',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 2.4,
+                              fontSize: 15)),
+                      SizedBox(height: 4),
+                      Text('PROPERTY OPERATIONS',
+                          style: TextStyle(
+                              color: Color(0xFF9DB1BF),
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 1.2,
+                              fontSize: 11)),
+                    ]),
+              ),
+            ),
           ],
         ],
       );
@@ -59,21 +66,20 @@ class PageHeading extends StatelessWidget {
   Widget build(BuildContext context) =>
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Text(eyebrow.toUpperCase(),
-            style: const TextStyle(
+            style: PropertyOsText.eyebrow.copyWith(
                 color: PropertyOsColours.amberText,
-                fontSize: 11,
-                fontWeight: FontWeight.w800,
-                letterSpacing: 1.5)),
+                fontWeight: FontWeight.w800)),
         const SizedBox(height: 10),
-        Text(title,
-            style: Theme.of(context)
-                .textTheme
-                .displayMedium
-                ?.copyWith(fontSize: 42)),
+        Semantics(
+          header: true,
+          child: Text(title, style: Theme.of(context).textTheme.displayMedium),
+        ),
         const SizedBox(height: 6),
         Text(subtitle,
-            style:
-                const TextStyle(color: PropertyOsColours.muted, fontSize: 16)),
+            style: Theme.of(context)
+                .textTheme
+                .bodyLarge
+                ?.copyWith(color: PropertyOsColours.muted)),
       ]);
 }
 
@@ -96,17 +102,14 @@ class SectionPanel extends StatelessWidget {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(title,
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineSmall
-                            ?.copyWith(
-                                fontFamily: 'Georgia',
-                                color: PropertyOsColours.ink)),
+                    Semantics(
+                      header: true,
+                      child: Text(title,
+                          style: Theme.of(context).textTheme.headlineSmall),
+                    ),
                     if (subtitle != null)
                       Text(subtitle!,
-                          style: const TextStyle(
-                              color: PropertyOsColours.muted, fontSize: 12)),
+                          style: Theme.of(context).textTheme.bodySmall),
                   ])),
           const Divider(height: 1),
           child,
@@ -173,10 +176,14 @@ class SuiteEmptyState extends StatelessWidget {
     required this.icon,
     required this.title,
     required this.message,
+    this.action,
   });
   final IconData icon;
   final String title;
   final String message;
+
+  /// The next step, such as a button that adds the first record.
+  final Widget? action;
 
   @override
   Widget build(BuildContext context) => Container(
@@ -190,7 +197,7 @@ class SuiteEmptyState extends StatelessWidget {
             Container(
               width: 52,
               height: 52,
-              color: const Color(0xFFFFF4D8),
+              color: PropertyOsColours.amberTint,
               child: Icon(icon, color: PropertyOsColours.amberText),
             ),
             const SizedBox(width: 18),
@@ -203,10 +210,83 @@ class SuiteEmptyState extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(message,
                       style: const TextStyle(color: PropertyOsColours.muted)),
+                  if (action != null) ...[
+                    const SizedBox(height: 14),
+                    action!,
+                  ],
                 ],
               ),
             ),
           ],
+        ),
+      );
+}
+
+/// A load failure with a way forward, used instead of a bare error message.
+class SuiteErrorState extends StatelessWidget {
+  const SuiteErrorState({
+    super.key,
+    required this.message,
+    required this.onRetry,
+    this.secondaryAction,
+  });
+
+  final String message;
+  final VoidCallback onRetry;
+
+  /// An extra button shown after "Try again", such as "Sign out".
+  final Widget? secondaryAction;
+
+  @override
+  Widget build(BuildContext context) => Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(color: PropertyOsColours.border),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              children: [
+                const Icon(Icons.error_outline,
+                    color: PropertyOsColours.critical),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Semantics(liveRegion: true, child: Text(message)),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Wrap(
+              spacing: 12,
+              runSpacing: 12,
+              children: [
+                OutlinedButton.icon(
+                  onPressed: onRetry,
+                  icon: const Icon(Icons.refresh),
+                  label: const Text('Try again'),
+                ),
+                if (secondaryAction != null) secondaryAction!,
+              ],
+            ),
+          ],
+        ),
+      );
+}
+
+/// A progress indicator that screen readers announce.
+class SuiteLoading extends StatelessWidget {
+  const SuiteLoading({super.key, this.label = 'Loading'});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) => Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: CircularProgressIndicator(semanticsLabel: label),
         ),
       );
 }

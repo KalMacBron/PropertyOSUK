@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:property_os/features/compliance/domain/compliance_status_labels.dart';
 import 'package:property_os/features/compliance/domain/compliance_models.dart';
 import 'package:property_os/features/today/domain/compliance_dashboard.dart';
 
@@ -150,7 +151,33 @@ void main() {
     );
     expect(
       attentionSummary(counts, 30),
-      '2 certificates overdue and 3 expire within the next 30 days.',
+      '2 compliance items are overdue and 3 are due within the next 30 days.',
     );
+    expect(
+      attentionSummary(
+        const DashboardCounts(
+          overdue: 1,
+          expiringSoon: 1,
+          compliant: 0,
+          missingInformation: 0,
+        ),
+        30,
+      ),
+      '1 compliance item is overdue and 1 is due within the next 30 days.',
+    );
+  });
+
+  test('status labels use shared wording and avoid certification claims', () {
+    expect(dashboardStatusLabel(DashboardStatus.overdue), 'Overdue');
+    expect(dashboardStatusLabel(DashboardStatus.expiringSoon), 'Due soon');
+    expect(dashboardStatusLabel(DashboardStatus.compliant), 'Current');
+    expect(
+      dashboardStatusLabel(DashboardStatus.missingInformation),
+      'Not recorded',
+    );
+    for (final status in ComplianceStatus.values) {
+      expect(complianceStatusLabel(status), isNot(contains('ompliant')));
+      expect(complianceStatusLabel(status), isNot('Expired'));
+    }
   });
 }

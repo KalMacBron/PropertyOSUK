@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:property_os/app/router.dart';
+import 'package:property_os/app/suite_ui.dart';
 import 'package:property_os/app/theme.dart';
+import 'package:property_os/core/database/supabase_provider.dart';
 import 'package:property_os/features/auth/application/auth_state.dart';
+import 'package:property_os/features/auth/data/auth_repository.dart';
 import 'package:property_os/features/auth/presentation/password_recovery_screen.dart';
 import 'package:property_os/features/auth/presentation/invitation_onboarding_screen.dart';
 import 'package:property_os/features/auth/presentation/sign_in_screen.dart';
@@ -71,16 +74,15 @@ class _AuthenticatedApp extends ConsumerWidget {
     if (invitationAcceptance.isLoading) {
       return MaterialApp(
         theme: buildPropertyOsTheme(),
-        home: const Scaffold(body: Center(child: CircularProgressIndicator())),
+        home: const Scaffold(body: SuiteLoading(label: 'Loading PropertyOS')),
       );
     }
     if (invitationAcceptance.hasError) {
       return MaterialApp(
         theme: buildPropertyOsTheme(),
-        home: const Scaffold(
-          body: Center(
-            child: Text('PropertyOS could not check your invitations.'),
-          ),
+        home: _StartupError(
+          message: 'PropertyOS could not check your invitations.',
+          onRetry: () => ref.invalidate(invitationAcceptanceProvider),
         ),
       );
     }
@@ -88,14 +90,13 @@ class _AuthenticatedApp extends ConsumerWidget {
     return memberships.when(
       loading: () => MaterialApp(
         theme: buildPropertyOsTheme(),
-        home: const Scaffold(body: Center(child: CircularProgressIndicator())),
+        home: const Scaffold(body: SuiteLoading(label: 'Loading PropertyOS')),
       ),
       error: (_, __) => MaterialApp(
         theme: buildPropertyOsTheme(),
-        home: const Scaffold(
-          body: Center(
-            child: Text('PropertyOS could not load your workspace.'),
-          ),
+        home: _StartupError(
+          message: 'PropertyOS could not load your workspace.',
+          onRetry: () => ref.invalidate(organisationMembershipsProvider),
         ),
       ),
       data: (organisations) {
@@ -112,15 +113,14 @@ class _AuthenticatedApp extends ConsumerWidget {
           loading: () => MaterialApp(
             theme: buildPropertyOsTheme(),
             home: const Scaffold(
-              body: Center(child: CircularProgressIndicator()),
+              body: SuiteLoading(label: 'Loading your workspace'),
             ),
           ),
           error: (_, __) => MaterialApp(
             theme: buildPropertyOsTheme(),
-            home: const Scaffold(
-              body: Center(
-                child: Text('PropertyOS could not select your workspace.'),
-              ),
+            home: _StartupError(
+              message: 'PropertyOS could not select your workspace.',
+              onRetry: () => ref.invalidate(organisationProvider),
             ),
           ),
           data: (value) => value == null
@@ -142,4 +142,35 @@ class _AuthenticatedApp extends ConsumerWidget {
       },
     );
   }
+}
+
+/// A start-up failure that still lets the user retry or sign out, because the
+/// app shell (and its Sign out button) has not loaded.
+class _StartupError extends ConsumerWidget {
+  const _StartupError({required this.message, required this.onRetry});
+
+  final String message;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) => Scaffold(
+        body: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 560),
+              child: SuiteErrorState(
+                message: '$message Check your connection and try again.',
+                onRetry: onRetry,
+                secondaryAction: TextButton.icon(
+                  onPressed: () =>
+                      AuthRepository(ref.read(supabaseProvider)).signOut(),
+                  icon: const Icon(Icons.logout_outlined),
+                  label: const Text('Sign out'),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
 }

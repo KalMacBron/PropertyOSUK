@@ -4,6 +4,7 @@ import 'package:property_os/app/suite_ui.dart';
 import 'package:property_os/app/theme.dart';
 import 'package:property_os/core/database/supabase_provider.dart';
 import 'package:property_os/features/auth/data/auth_repository.dart';
+import 'package:property_os/features/auth/domain/auth_error_messages.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class CustomerSignupScreen extends ConsumerStatefulWidget {
@@ -41,7 +42,16 @@ class _CustomerSignupScreenState extends ConsumerState<CustomerSignupScreen> {
       );
       if (mounted) setState(() => _submitted = true);
     } on AuthException catch (error) {
-      if (mounted) setState(() => _error = error.message);
+      if (mounted) {
+        setState(
+          () => _error = authErrorMessage(
+            code: error.code,
+            statusCode: error.statusCode,
+            message: error.message,
+            fallback: 'Unable to create the account. Try again.',
+          ),
+        );
+      }
     } catch (_) {
       if (mounted) {
         setState(() => _error = 'PropertyOS could not create the account.');
@@ -80,7 +90,6 @@ class _CustomerSignupScreenState extends ConsumerState<CustomerSignupScreen> {
                           'Start with one clear view of your portfolio.',
                           style: TextStyle(
                             color: Colors.white,
-                            fontFamily: 'Georgia',
                             fontSize: 48,
                             height: 1.1,
                           ),
@@ -123,10 +132,7 @@ class _CustomerSignupScreenState extends ConsumerState<CustomerSignupScreen> {
           const SizedBox(height: 20),
           const Text('Check your email',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontFamily: 'Georgia',
-                  fontSize: 38,
-                  color: PropertyOsColours.ink)),
+              style: TextStyle(fontSize: 38, color: PropertyOsColours.ink)),
           const SizedBox(height: 12),
           Text(
             'We sent a confirmation link to ${_email.text.trim()}. Open the newest email to confirm your address and continue setting up PropertyOS.',
@@ -153,10 +159,7 @@ class _CustomerSignupScreenState extends ConsumerState<CustomerSignupScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const Text('Create your account',
-                style: TextStyle(
-                    fontFamily: 'Georgia',
-                    fontSize: 40,
-                    color: PropertyOsColours.ink)),
+                style: TextStyle(fontSize: 40, color: PropertyOsColours.ink)),
             const SizedBox(height: 8),
             const Text('We will verify your email before creating a workspace.',
                 style: TextStyle(color: PropertyOsColours.muted)),
@@ -187,6 +190,7 @@ class _CustomerSignupScreenState extends ConsumerState<CustomerSignupScreen> {
               decoration: InputDecoration(
                 labelText: 'Password',
                 suffixIcon: IconButton(
+                  tooltip: _obscure ? 'Show password' : 'Hide password',
                   onPressed: () => setState(() => _obscure = !_obscure),
                   icon:
                       Icon(_obscure ? Icons.visibility : Icons.visibility_off),

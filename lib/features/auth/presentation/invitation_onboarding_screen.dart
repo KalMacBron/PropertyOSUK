@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:property_os/app/theme.dart';
 import 'package:property_os/core/database/supabase_provider.dart';
 import 'package:property_os/features/auth/data/auth_repository.dart';
+import 'package:property_os/features/auth/domain/auth_error_messages.dart';
 import 'package:property_os/features/portfolio/application/portfolio_providers.dart';
 import 'package:property_os/features/user_admin/application/user_admin_providers.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -36,7 +37,16 @@ class _InvitationOnboardingScreenState
       ref.invalidate(organisationMembershipsProvider);
       ref.invalidate(organisationUsersProvider);
     } on AuthException catch (error) {
-      if (mounted) setState(() => _error = error.message);
+      if (mounted) {
+        setState(
+          () => _error = authErrorMessage(
+            code: error.code,
+            statusCode: error.statusCode,
+            message: error.message,
+            fallback: 'Unable to complete your account. Try again.',
+          ),
+        );
+      }
     } catch (_) {
       if (mounted) {
         setState(
@@ -71,9 +81,7 @@ class _InvitationOnboardingScreenState
                     children: [
                       const Text('Complete your account',
                           style: TextStyle(
-                              fontFamily: 'Georgia',
-                              fontSize: 30,
-                              color: PropertyOsColours.ink)),
+                              fontSize: 30, color: PropertyOsColours.ink)),
                       const SizedBox(height: 8),
                       const Text(
                         'Create a password to secure your PropertyOS account and join the organisation.',
@@ -87,6 +95,8 @@ class _InvitationOnboardingScreenState
                         decoration: InputDecoration(
                           labelText: 'New password',
                           suffixIcon: IconButton(
+                            tooltip:
+                                _obscure ? 'Show password' : 'Hide password',
                             onPressed: () =>
                                 setState(() => _obscure = !_obscure),
                             icon: Icon(_obscure
