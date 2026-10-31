@@ -163,9 +163,7 @@ class _WorkspaceSetupScreenState extends ConsumerState<WorkspaceSetupScreen> {
                           _ => 'Add your first property',
                         },
                         style: const TextStyle(
-                            fontFamily: 'Georgia',
-                            fontSize: 36,
-                            color: PropertyOsColours.ink),
+                            fontSize: 36, color: PropertyOsColours.ink),
                       ),
                       const SizedBox(height: 8),
                       Text(

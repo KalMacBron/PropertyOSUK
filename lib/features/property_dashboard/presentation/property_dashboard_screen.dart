@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:property_os/features/compliance/domain/compliance_status_labels.dart';
 import 'package:property_os/app/suite_ui.dart';
 import 'package:property_os/app/theme.dart';
 import 'package:property_os/features/compliance/application/compliance_providers.dart';
@@ -25,7 +26,7 @@ class PropertyDashboardScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final properties = ref.watch(propertiesProvider);
     return properties.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => const SuiteLoading(label: 'Loading property'),
       error: (_, __) => _Unavailable(
         title: 'Property unavailable',
         message: 'The property register could not be loaded.',
@@ -36,7 +37,7 @@ class PropertyDashboardScreen extends ConsumerWidget {
         if (matching.isEmpty) {
           return const _Unavailable(
             title: 'Property not found',
-            message: 'This property is unavailable in the active organisation.',
+            message: 'This property is not in the active workspace.',
           );
         }
         return _Dashboard(property: matching.single);
@@ -141,7 +142,7 @@ class _IdentityPanel extends StatelessWidget {
           runSpacing: 14,
           children: [
             _Fact(
-                label: 'Ownership',
+                label: 'Owner',
                 value: owners.isEmpty ? 'Not recorded' : owners),
             _Fact(
                 label: 'Type',
@@ -235,7 +236,7 @@ class _CompliancePanel extends ConsumerWidget {
       title: 'Compliance',
       subtitle: 'Management prompts, not legal certification',
       child: Padding(
-        padding: const EdgeInsets.all(18),
+        padding: const EdgeInsets.all(22),
         child: Wrap(
           spacing: 10,
           runSpacing: 10,
@@ -282,7 +283,8 @@ class _TenancyPanel extends ConsumerWidget {
                 title: 'Tenancy',
                 subtitle: lifecycle,
                 child: ListTile(
-                  contentPadding: const EdgeInsets.all(18),
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
                   title: Text(tenancy.tenantDisplayName),
                   subtitle: Text(
                       '${_date(tenancy.startDate)}${tenancy.actualEndDate == null ? '' : ' – ${_date(tenancy.actualEndDate!)}'}${tenancy.monthlyRentPence == null ? '' : '\n${_money(tenancy.monthlyRentPence!)} monthly'}'),
@@ -309,7 +311,7 @@ class _TasksPanel extends ConsumerWidget {
               return SectionPanel(
                 title: 'Tasks',
                 child: Padding(
-                  padding: const EdgeInsets.all(18),
+                  padding: const EdgeInsets.all(22),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -370,7 +372,9 @@ class _ExpensesPanel extends ConsumerWidget {
                         title: Text(expense.description),
                         subtitle: Text(
                             '${_date(expense.expenseDate)} · ${expense.category}'),
-                        trailing: Text(_money(expense.amountPence)),
+                        trailing: Text(_money(expense.amountPence),
+                            style: const TextStyle(
+                                fontFeatures: PropertyOsText.tabularFigures)),
                       ),
                     ListTile(
                       title: const Text('Open property expenses'),
@@ -407,7 +411,7 @@ class _MaintenancePanel extends ConsumerWidget {
                 title: 'Maintenance',
                 subtitle: 'Operational tracking, not safety certification',
                 child: Padding(
-                  padding: const EdgeInsets.all(18),
+                  padding: const EdgeInsets.all(22),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -463,10 +467,8 @@ class _Fact extends StatelessWidget {
         width: 230,
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(label.toUpperCase(),
-              style: const TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w700,
-                  color: PropertyOsColours.muted)),
+              style: PropertyOsText.eyebrow
+                  .copyWith(color: PropertyOsColours.muted)),
           const SizedBox(height: 5),
           Text(value, style: const TextStyle(fontWeight: FontWeight.w600)),
         ]),
@@ -483,17 +485,21 @@ class _MetricButton extends StatelessWidget {
   Widget build(BuildContext context) => InkWell(
         onTap: onTap,
         child: Container(
-          width: 120,
+          width: 132,
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
               border: Border.all(color: PropertyOsColours.border)),
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(label.toUpperCase(),
-                style:
-                    const TextStyle(fontSize: 10, fontWeight: FontWeight.w700)),
+                style: PropertyOsText.eyebrow
+                    .copyWith(color: PropertyOsColours.muted)),
             const SizedBox(height: 8),
-            Text('$value', style: Theme.of(context).textTheme.headlineMedium),
+            Text('$value',
+                style: Theme.of(context)
+                    .textTheme
+                    .headlineMedium
+                    ?.copyWith(fontFeatures: PropertyOsText.tabularFigures)),
           ]),
         ),
       );
@@ -505,9 +511,11 @@ class _LoadingPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) => SectionPanel(
       title: title,
-      child: const Padding(
-          padding: EdgeInsets.all(32),
-          child: Center(child: CircularProgressIndicator())));
+      child: Padding(
+          padding: const EdgeInsets.all(32),
+          child: Center(
+              child: CircularProgressIndicator(
+                  semanticsLabel: 'Loading ${title.toLowerCase()}'))));
 }
 
 class _ErrorPanel extends StatelessWidget {
@@ -569,9 +577,5 @@ String _address(Map<String, dynamic> property) =>
 String _date(DateTime value) => DateFormat('dd/MM/yyyy').format(value);
 String _money(int pence) =>
     NumberFormat.currency(locale: 'en_GB', symbol: '£').format(pence / 100);
-String _complianceLabel(ComplianceStatus status) => switch (status) {
-      ComplianceStatus.compliant => 'Compliant',
-      ComplianceStatus.dueSoon => 'Due soon',
-      ComplianceStatus.overdue => 'Expired',
-      ComplianceStatus.notRecorded => 'Not recorded',
-    };
+String _complianceLabel(ComplianceStatus status) =>
+    complianceStatusLabel(status);

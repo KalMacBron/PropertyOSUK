@@ -235,6 +235,9 @@ void main() {
     );
     await tester.pumpAndSettle();
 
+    // Priority is shown in words and by icon, not only by colour.
+    expect(find.textContaining('Medium priority'), findsOneWidget);
+    expect(find.byIcon(Icons.schedule_outlined), findsOneWidget);
     await tester.tap(find.text('Review tenancy ending soon'));
     await tester.pumpAndSettle();
     expect(find.text('Tenancy target'), findsOneWidget);
@@ -299,6 +302,8 @@ void main() {
     );
     await tester.pumpAndSettle();
 
+    expect(find.textContaining('Urgent ·'), findsOneWidget);
+    expect(find.byIcon(Icons.error_outline), findsOneWidget);
     await tester.tap(find.text('Urgent boiler repair'));
     await tester.pumpAndSettle();
     expect(find.text('Maintenance issue-1'), findsOneWidget);

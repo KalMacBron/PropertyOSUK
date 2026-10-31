@@ -62,4 +62,40 @@ void main() {
     expect(find.text('Enter a valid email address'), findsOneWidget);
     expect(find.text('Use at least 8 characters'), findsOneWidget);
   });
+
+  testWidgets('wide sign-in scrolls on a short window instead of clipping',
+      (tester) async {
+    await renderAt(tester, const Size(1440, 480));
+
+    expect(tester.takeException(), isNull);
+    final button = find.text('Open property workspace  →');
+    await tester.ensureVisible(button);
+    await tester.pump();
+    expect(tester.takeException(), isNull);
+    final rect = tester.getRect(button);
+    expect(rect.bottom, lessThanOrEqualTo(480));
+  });
+
+  testWidgets('narrow sign-in shows the form before the introduction',
+      (tester) async {
+    await renderAt(tester, const Size(320, 640));
+
+    expect(tester.takeException(), isNull);
+    final welcome = tester.getTopLeft(find.text('Welcome back'));
+    final headline = tester.getTopLeft(
+      find.text('Every property.\nEvery obligation.\nOne clear view.'),
+    );
+    expect(welcome.dy, lessThan(headline.dy));
+    expect(welcome.dy, lessThan(640));
+  });
+
+  testWidgets('password visibility button has an accessible name',
+      (tester) async {
+    await renderAt(tester, const Size(1440, 900));
+
+    expect(find.byTooltip('Show password'), findsOneWidget);
+    await tester.tap(find.byTooltip('Show password'));
+    await tester.pump();
+    expect(find.byTooltip('Hide password'), findsOneWidget);
+  });
 }

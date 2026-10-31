@@ -152,21 +152,25 @@ class _AppShell extends ConsumerWidget {
       final desktop = constraints.maxWidth >= 900;
       final content = Column(children: [
         Container(
-            height: 72,
-            padding: const EdgeInsets.symmetric(horizontal: 28),
+            constraints: const BoxConstraints(minHeight: 72),
+            padding: EdgeInsets.symmetric(horizontal: desktop ? 28 : 16),
             decoration: const BoxDecoration(
                 color: Colors.white,
                 border: Border(
                     bottom: BorderSide(color: PropertyOsColours.border))),
             child: Row(children: [
-              Text(
-                  'PropertyOS  /  ${selected < 0 ? 'Workspace' : _destinations[selected].label}',
-                  style: const TextStyle(color: PropertyOsColours.muted)),
+              Expanded(
+                child: Text(
+                    'PropertyOS  /  ${selected < 0 ? 'Workspace' : _destinations[selected].label}',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(color: PropertyOsColours.muted)),
+              ),
               if (organisation?.role == 'viewer') ...[
                 const SizedBox(width: 16),
-                const Chip(label: Text('VIEW ONLY')),
+                Chip(label: Text('View only'.toUpperCase())),
               ],
-              const Spacer(),
+              const SizedBox(width: 8),
               IconButton(
                   tooltip: 'Sign out',
                   onPressed: () =>
@@ -209,28 +213,66 @@ class _AppShell extends ConsumerWidget {
 }
 
 const _destinations = [
-  (label: 'Today', path: '/today', icon: Icons.schedule_outlined),
-  (label: 'Properties', path: '/properties', icon: Icons.home_work_outlined),
-  (label: 'Compliance', path: '/compliance', icon: Icons.fact_check_outlined),
-  (label: 'Tasks', path: '/tasks', icon: Icons.task_alt_outlined),
+  (
+    label: 'Today',
+    path: '/today',
+    icon: Icons.schedule_outlined,
+    selectedIcon: Icons.schedule,
+  ),
+  (
+    label: 'Properties',
+    path: '/properties',
+    icon: Icons.home_work_outlined,
+    selectedIcon: Icons.home_work,
+  ),
+  (
+    label: 'Compliance',
+    path: '/compliance',
+    icon: Icons.fact_check_outlined,
+    selectedIcon: Icons.fact_check,
+  ),
+  (
+    label: 'Tasks',
+    path: '/tasks',
+    icon: Icons.task_alt_outlined,
+    selectedIcon: Icons.task_alt,
+  ),
   (
     label: 'Maintenance',
     path: '/maintenance',
-    icon: Icons.home_repair_service_outlined
+    icon: Icons.home_repair_service_outlined,
+    selectedIcon: Icons.home_repair_service,
   ),
-  (label: 'Tenancies', path: '/tenancies', icon: Icons.key_outlined),
-  (label: 'Expenses', path: '/expenses', icon: Icons.receipt_long_outlined),
+  (
+    label: 'Tenancies',
+    path: '/tenancies',
+    icon: Icons.key_outlined,
+    selectedIcon: Icons.key,
+  ),
+  (
+    label: 'Expenses',
+    path: '/expenses',
+    icon: Icons.receipt_long_outlined,
+    selectedIcon: Icons.receipt_long,
+  ),
   (
     label: 'Ownership',
     path: '/ownership',
-    icon: Icons.account_balance_outlined
+    icon: Icons.account_balance_outlined,
+    selectedIcon: Icons.account_balance,
   ),
   (
     label: 'Users',
     path: '/settings/users',
-    icon: Icons.manage_accounts_outlined
+    icon: Icons.manage_accounts_outlined,
+    selectedIcon: Icons.manage_accounts,
   ),
-  (label: 'Export', path: '/settings/export', icon: Icons.download_outlined),
+  (
+    label: 'Export',
+    path: '/settings/export',
+    icon: Icons.download_outlined,
+    selectedIcon: Icons.download,
+  ),
 ];
 
 class _DesktopNavigation extends StatelessWidget {
@@ -302,108 +344,187 @@ class _NavigationContentState extends ConsumerState<_NavigationContent> {
   }
 
   @override
-  Widget build(BuildContext context) => Padding(
-      padding: const EdgeInsets.all(18),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        const Padding(
-            padding: EdgeInsets.fromLTRB(10, 0, 10, 22), child: SuiteBrand()),
-        const Divider(color: Color(0xFF294656)),
-        Container(
-            margin: const EdgeInsets.symmetric(vertical: 16),
-            padding: const EdgeInsets.all(14),
-            color: const Color(0xFF102F40),
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('ORGANISATION',
-                  style: TextStyle(
-                      color: Color(0xFF7892A3),
-                      fontSize: 9,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 1.5)),
-              SizedBox(height: 8),
-              Text(widget.organisation?.name ?? 'PropertyOS',
-                  style: const TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.w700)),
-              const SizedBox(height: 4),
-              Text(
-                  widget.organisation == null
-                      ? 'Portfolio workspace'
-                      : '${widget.organisation!.role.toUpperCase()} · Portfolio workspace',
-                  style:
-                      const TextStyle(color: Color(0xFF8EA4B2), fontSize: 12))
-            ])),
-        if (widget.organisations.length > 1)
-          Padding(
-            padding: const EdgeInsets.fromLTRB(4, 0, 4, 16),
-            child: DropdownButtonFormField<String>(
-              initialValue: widget.organisation?.id,
-              dropdownColor: PropertyOsColours.deepNavy,
-              style: const TextStyle(color: Colors.white, fontSize: 12),
-              decoration: InputDecoration(
-                labelText: _switching ? 'Switching…' : 'Workspace',
-                labelStyle: const TextStyle(color: Color(0xFFA9BCC8)),
-                enabledBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(color: Color(0xFF496575)),
+  Widget build(BuildContext context) {
+    const sectionLabel = TextStyle(
+        color: PropertyOsColours.sidebarLabel,
+        fontSize: 12,
+        fontWeight: FontWeight.w800,
+        letterSpacing: 1.2);
+    // The brand and workspace card stay fixed; the destinations scroll so
+    // every item stays reachable on short windows and at large text sizes.
+    return Padding(
+        padding: const EdgeInsets.all(18),
+        child:
+            Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          const Padding(
+              padding: EdgeInsets.fromLTRB(10, 0, 10, 22), child: SuiteBrand()),
+          const Divider(color: Color(0xFF294656)),
+          Container(
+              margin: const EdgeInsets.symmetric(vertical: 16),
+              padding: const EdgeInsets.all(14),
+              color: const Color(0xFF102F40),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Workspace'.toUpperCase(), style: sectionLabel),
+                    const SizedBox(height: 8),
+                    Text(widget.organisation?.name ?? 'PropertyOS',
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.w700)),
+                    const SizedBox(height: 4),
+                    Text(
+                        widget.organisation == null
+                            ? 'Portfolio workspace'
+                            : '${_roleLabel(widget.organisation!.role)} · Portfolio workspace',
+                        style: const TextStyle(
+                            color: Color(0xFF9DB1BF), fontSize: 12))
+                  ])),
+          if (widget.organisations.length > 1)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(4, 0, 4, 16),
+              child: DropdownButtonFormField<String>(
+                initialValue: widget.organisation?.id,
+                isExpanded: true,
+                dropdownColor: PropertyOsColours.deepNavy,
+                style: const TextStyle(color: Colors.white, fontSize: 12),
+                decoration: InputDecoration(
+                  labelText: _switching ? 'Switching…' : 'Switch workspace',
+                  labelStyle: const TextStyle(color: Color(0xFFA9BCC8)),
+                  fillColor: PropertyOsColours.deepNavy,
+                  enabledBorder: const OutlineInputBorder(
+                    borderRadius: BorderRadius.zero,
+                    borderSide: BorderSide(color: Color(0xFF496575)),
+                  ),
+                  focusedBorder: const OutlineInputBorder(
+                    borderRadius: BorderRadius.zero,
+                    borderSide:
+                        BorderSide(color: PropertyOsColours.amber, width: 2),
+                  ),
                 ),
+                items: [
+                  for (final organisation in widget.organisations)
+                    DropdownMenuItem(
+                      value: organisation.id,
+                      child: Text(
+                        organisation.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                ],
+                onChanged: _switching ? null : _switchWorkspace,
               ),
-              items: [
-                for (final organisation in widget.organisations)
-                  DropdownMenuItem(
-                    value: organisation.id,
-                    child: Text(organisation.name),
+            ),
+          Expanded(
+            child: ListView(
+              key: const Key('navigation-destinations'),
+              padding: EdgeInsets.zero,
+              children: [
+                Padding(
+                    padding: const EdgeInsets.fromLTRB(12, 4, 0, 8),
+                    child: Text('Portfolio operations'.toUpperCase(),
+                        style: sectionLabel)),
+                for (var i = 0; i < _destinations.length; i++)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 4),
+                    child: _NavigationItem(
+                      label: _destinations[i].label,
+                      icon: i == widget.selected
+                          ? _destinations[i].selectedIcon
+                          : _destinations[i].icon,
+                      selected: i == widget.selected,
+                      onTap: () => widget.onSelected(i),
+                    ),
                   ),
               ],
-              onChanged: _switching ? null : _switchWorkspace,
             ),
           ),
-        const Padding(
-            padding: EdgeInsets.fromLTRB(12, 4, 0, 8),
-            child: Text('PORTFOLIO OPERATIONS',
-                style: TextStyle(
-                    color: Color(0xFF7892A3),
-                    fontSize: 9,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 1.5))),
-        for (var i = 0; i < _destinations.length; i++)
+          const Divider(color: Color(0xFF294656)),
           Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: Material(
-                  color: i == widget.selected
-                      ? PropertyOsColours.selectedNavy
-                      : Colors.transparent,
-                  child: InkWell(
-                      onTap: () => widget.onSelected(i),
-                      child: Container(
-                          decoration: BoxDecoration(
-                              border: Border(
-                                  left: BorderSide(
-                                      color: i == widget.selected
-                                          ? PropertyOsColours.amber
-                                          : Colors.transparent,
-                                      width: 4))),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 15),
-                          child: Row(children: [
-                            Icon(_destinations[i].icon,
-                                color: const Color(0xFFA9BCC8), size: 20),
-                            const SizedBox(width: 16),
-                            Text(_destinations[i].label,
-                                style: TextStyle(
-                                    color: i == widget.selected
-                                        ? Colors.white
-                                        : const Color(0xFFB2C2CC),
-                                    fontWeight: i == widget.selected
-                                        ? FontWeight.w700
-                                        : FontWeight.w400))
-                          ]))))),
-        const Spacer(),
-        const Divider(color: Color(0xFF294656)),
-        const Padding(
-            padding: EdgeInsets.all(10),
-            child: Text('KAELVAREN SUITE · ALPHA',
-                style: TextStyle(
-                    color: Color(0xFF7892A3),
-                    fontSize: 9,
-                    letterSpacing: 1.2))),
-      ]));
+              padding: const EdgeInsets.all(10),
+              child: Text('KaelVaren Suite · Alpha'.toUpperCase(),
+                  style: const TextStyle(
+                      color: PropertyOsColours.sidebarLabel,
+                      fontSize: 12,
+                      letterSpacing: 1.2))),
+        ]));
+  }
 }
+
+class _NavigationItem extends StatefulWidget {
+  const _NavigationItem({
+    required this.label,
+    required this.icon,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final IconData icon;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  State<_NavigationItem> createState() => _NavigationItemState();
+}
+
+class _NavigationItemState extends State<_NavigationItem> {
+  bool _focused = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final selected = widget.selected;
+    return Semantics(
+      selected: selected,
+      button: true,
+      child: Material(
+        color: selected ? PropertyOsColours.selectedNavy : Colors.transparent,
+        child: InkWell(
+          onTap: widget.onTap,
+          onFocusChange: (value) => setState(() => _focused = value),
+          hoverColor: Colors.white.withValues(alpha: 0.08),
+          focusColor: Colors.white.withValues(alpha: 0.12),
+          splashColor: Colors.white.withValues(alpha: 0.16),
+          highlightColor: Colors.white.withValues(alpha: 0.08),
+          child: Container(
+            foregroundDecoration: _focused
+                ? BoxDecoration(
+                    border:
+                        Border.all(color: PropertyOsColours.amber, width: 2),
+                  )
+                : null,
+            decoration: BoxDecoration(
+              border: Border(
+                left: BorderSide(
+                  color:
+                      selected ? PropertyOsColours.amber : Colors.transparent,
+                  width: 4,
+                ),
+              ),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 15),
+            child: Row(children: [
+              Icon(widget.icon,
+                  color: selected ? Colors.white : const Color(0xFFA9BCC8),
+                  size: 20),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Text(widget.label,
+                    style: TextStyle(
+                        color:
+                            selected ? Colors.white : const Color(0xFFB2C2CC),
+                        fontWeight:
+                            selected ? FontWeight.w700 : FontWeight.w400)),
+              ),
+            ]),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+String _roleLabel(String role) =>
+    role.isEmpty ? role : '${role[0].toUpperCase()}${role.substring(1)}';

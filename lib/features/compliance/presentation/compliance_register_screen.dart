@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:property_os/features/compliance/domain/compliance_status_labels.dart';
 import 'package:property_os/app/suite_ui.dart';
 import 'package:property_os/features/compliance/application/compliance_providers.dart';
 import 'package:property_os/features/compliance/domain/compliance_models.dart';
@@ -657,12 +658,7 @@ class _StatusDot extends StatelessWidget {
       );
 }
 
-String _statusLabel(ComplianceStatus status) => switch (status) {
-      ComplianceStatus.compliant => 'Compliant',
-      ComplianceStatus.dueSoon => 'Due soon',
-      ComplianceStatus.overdue => 'Overdue',
-      ComplianceStatus.notRecorded => 'Not recorded',
-    };
+String _statusLabel(ComplianceStatus status) => complianceStatusLabel(status);
 
 ComplianceStatus? _statusFromName(String? value) {
   for (final status in ComplianceStatus.values) {

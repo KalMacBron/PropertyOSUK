@@ -4,24 +4,49 @@ Status: approved for PropertyOS Alpha on 9 August 2026.
 
 PropertyOS uses the KaelVaren suite visual language: deep navy operational
 navigation, warm amber accents, cool-grey workspaces, white bordered surfaces,
-editorial serif headings and neutral sans-serif interface copy.
+editorial headings and neutral sans-serif interface copy.
 
 ## Core tokens
 
 - Deep navy: `#071F2F`; primary navy: `#0B2A3C`; selected navy: `#194A64`
-- Amber: `#F2B426`; amber text: `#A76A08`
+- Amber: `#F2B426`; amber text: `#8A5806`; amber tint: `#FFF4D8`
 - Workspace: `#F3F6F7`; border: `#D7E0E5`
-- Ink: `#102B3D`; muted text: `#718697`
-- Success: `#238A68`; warning: `#D99A16`; critical: `#D65353`
+- Ink: `#102B3D`; muted text: `#5B6E7D`
+- Success: `#1E7A5C`; warning: `#D99A16`; critical: `#B83A3A`
+
+Text colours meet WCAG AA (4.5:1) on white and on the workspace grey. Amber
+and warning are for fills, borders and icons only, never for text. Status
+colours are also available as the `StatusColours` theme extension.
 
 Status meaning must never rely on colour alone. Use a label or icon as well.
+Compliance status words come from one helper: Overdue, Due soon, Not recorded
+and Current. Never use "Compliant", which implies certification.
+
+## Typography
+
+No custom font is bundled. Flutter Web (CanvasKit) cannot load operating-system
+fonts by name, so the earlier Georgia and Arial references always rendered in
+the default sans-serif and have been removed. Bundling a licensed serif for
+headings is a separate design decision.
+
+Sizes come from the theme's text scale: page titles use `displayMedium`, panel
+titles `headlineSmall`, uppercase labels `PropertyOsText.eyebrow` (12px, stored
+in natural case and upper-cased when shown) and body text a 1.5 line height.
+Counts and money use tabular figures.
+
+## Focus and accessibility
+
+- Every interactive element shows a visible keyboard focus state: a 2px navy
+  outline on light surfaces, amber on the navy sidebar and filled buttons.
+- Page and panel titles are marked as headings for screen readers, the current
+  navigation item is announced as selected and form errors are live regions.
 
 ## Layout and components
 
 - Desktop uses a persistent suite sidebar and slim contextual top bar.
 - Narrow layouts retain the same hierarchy in a drawer.
-- Page headings use an uppercase operational eyebrow, serif title and concise
-  supporting copy.
+- Page headings use an uppercase operational eyebrow, a display title and
+  concise supporting copy.
 - Panels, tables and forms use square edges, fine borders and minimal shadow.
 - Feature screens consume shared theme tokens and suite components rather than
   defining local colours.

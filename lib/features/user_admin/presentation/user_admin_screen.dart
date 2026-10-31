@@ -50,9 +50,7 @@ class _UserAdminScreenState extends ConsumerState<UserAdminScreen> {
                     children: [
                   Text('User administration',
                       style: TextStyle(
-                          fontFamily: 'Georgia',
-                          fontSize: 34,
-                          color: PropertyOsColours.ink)),
+                          fontSize: 34, color: PropertyOsColours.ink)),
                   SizedBox(height: 6),
                   Text(
                       'Manage who can access this organisation and what they can do.',

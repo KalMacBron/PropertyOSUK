@@ -60,7 +60,6 @@ class _WorkspaceSelectionScreenState
                       const Text(
                         'Choose your workspace',
                         style: TextStyle(
-                          fontFamily: 'Georgia',
                           fontSize: 32,
                           color: PropertyOsColours.deepNavy,
                         ),
