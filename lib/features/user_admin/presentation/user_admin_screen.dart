@@ -129,10 +129,19 @@ class _UserAdminScreenState extends ConsumerState<UserAdminScreen> {
         ScaffoldMessenger.of(context)
             .showSnackBar(const SnackBar(content: Text('Invitation sent.')));
       }
+    } on InvitationException catch (error) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(invitationFailureMessage(error.failure)),
+          ),
+        );
+      }
     } catch (_) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('The invitation could not be sent.')));
+          const SnackBar(content: Text('The invitation could not be sent.')),
+        );
       }
     }
   }
@@ -161,21 +170,29 @@ class _UserRow extends ConsumerWidget {
             ? PopupMenuButton<String>(
                 onSelected: (action) async {
                   final repo = ref.read(userAdminRepositoryProvider);
-                  if (action == 'resend') {
-                    await repo.invite(
-                        organisationId: organisationId,
-                        email: item.email,
-                        role: item.role);
-                  } else if (action == 'remove') {
-                    if (pending) {
-                      await repo.revoke(item.id);
+                  try {
+                    if (action == 'resend') {
+                      await repo.invite(
+                          organisationId: organisationId,
+                          email: item.email,
+                          role: item.role);
+                    } else if (action == 'remove') {
+                      if (pending) {
+                        await repo.revoke(item.id);
+                      } else {
+                        await repo.remove(organisationId, item.id);
+                      }
                     } else {
-                      await repo.remove(organisationId, item.id);
+                      await repo.changeRole(organisationId, item.id, action);
                     }
-                  } else {
-                    await repo.changeRole(organisationId, item.id, action);
+                    ref.invalidate(organisationUsersProvider);
+                  } on InvitationException catch (error) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text(invitationFailureMessage(error.failure)),
+                      ));
+                    }
                   }
-                  ref.invalidate(organisationUsersProvider);
                 },
                 itemBuilder: (_) => [
                       if (pending)
