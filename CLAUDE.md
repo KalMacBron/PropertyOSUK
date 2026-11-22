@@ -37,3 +37,17 @@ A merge into `main` deploys the Alpha web app (and the marketing site when
 `marketing/` changes) through GitHub Actions. Merging is therefore a deployment
 and needs Karl's explicit approval. Hosted Supabase migrations are applied
 separately and must be applied before the web build that depends on them.
+
+## Agent skills
+
+### Issue tracker
+
+Issues are tracked in GitHub Issues on `KalMacBron/PropertyOSUK`, using the `gh` CLI. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Uses the five default triage labels: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human` and `wontfix`. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: one root `GLOSSARY.md`, with ADRs in `docs/Architecture_Decisions/`. See `docs/agents/domain.md`.
