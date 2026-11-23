@@ -10,11 +10,7 @@ Map<ComplianceStatus, int> propertyComplianceCounts({
 }) {
   final counts = {for (final status in ComplianceStatus.values) status: 0};
   for (final requirement in requirements) {
-    final status = property.recordFor(requirement.id)?.statusOn(
-              today,
-              warningDays: requirement.defaultWarningDays,
-            ) ??
-        ComplianceStatus.notRecorded;
+    final status = property.statusFor(requirement, today);
     counts[status] = counts[status]! + 1;
   }
   return counts;

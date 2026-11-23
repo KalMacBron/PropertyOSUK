@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:property_os/features/compliance/application/compliance_providers.dart';
+import 'package:property_os/features/compliance/domain/compliance_models.dart';
 import 'package:property_os/features/documents/presentation/compliance_evidence_section.dart';
 import 'package:property_os/features/portfolio/application/portfolio_providers.dart';
 import 'package:property_os/features/timeline/application/timeline_providers.dart';
@@ -114,6 +115,10 @@ class ComplianceRecordScreen extends ConsumerWidget {
                             value: _date(record?.applicableDate),
                           ),
                           _Detail(
+                            label: 'Reminder from',
+                            value: _date(record?.reminderDateFor(requirement)),
+                          ),
+                          _Detail(
                             label: 'Certificate reference',
                             value: record?.referenceNumber?.trim().isNotEmpty ==
                                     true
@@ -124,6 +129,20 @@ class ComplianceRecordScreen extends ConsumerWidget {
                       ),
                     ),
                   ),
+                  if (requirement.code == epcRequirementCode &&
+                      record != null &&
+                      record.isExpiredOn(europeLondonToday())) ...[
+                    const SizedBox(height: 16),
+                    const Card(
+                      child: Padding(
+                        padding: EdgeInsets.all(20),
+                        child: Text(
+                          'This EPC has expired. A new certificate is needed '
+                          'before the next tenancy starts.',
+                        ),
+                      ),
+                    ),
+                  ],
                   const SizedBox(height: 16),
                   Card(
                     child: Padding(

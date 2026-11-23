@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:property_os/app/suite_ui.dart';
 import 'package:property_os/app/theme.dart';
+import 'package:property_os/features/compliance/application/compliance_providers.dart';
+import 'package:property_os/features/compliance/domain/compliance_models.dart';
 import 'package:property_os/features/portfolio/application/portfolio_providers.dart';
 import 'package:property_os/features/portfolio/data/portfolio_repository.dart';
 import 'package:property_os/features/tenancies/application/tenancy_providers.dart';
@@ -45,6 +47,10 @@ class TenanciesScreen extends ConsumerWidget {
       );
       return;
     }
+    final epcRecords = tenancy == null
+        ? await _loadEpcRecords(ref)
+        : const <String, ComplianceRecord?>{};
+    if (!context.mounted) return;
     final input = await showDialog<TenancyInput>(
       context: context,
       barrierDismissible: false,
@@ -53,6 +59,7 @@ class TenanciesScreen extends ConsumerWidget {
         properties: properties,
         tenancy: tenancy,
         initialPropertyId: initialPropertyId,
+        epcRecords: epcRecords,
       ),
     );
     if (input == null) return;
@@ -60,10 +67,21 @@ class TenanciesScreen extends ConsumerWidget {
       await ref.read(tenancyRepositoryProvider).save(input);
       _refresh(ref, input.propertyId);
       if (context.mounted) {
+        final epcPrompt = epcRecords == null
+            ? null
+            : epcPromptForNewTenancy(
+                epcRecord: epcRecords[input.propertyId],
+                tenancyStart: input.startDate,
+              );
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content:
-                Text(tenancy == null ? 'Tenancy created.' : 'Tenancy updated.'),
+            content: Text(
+              tenancy != null
+                  ? 'Tenancy updated.'
+                  : epcPrompt == null
+                      ? 'Tenancy created.'
+                      : 'Tenancy created. $epcPrompt',
+            ),
           ),
         );
       }
@@ -73,6 +91,22 @@ class TenanciesScreen extends ConsumerWidget {
           const SnackBar(content: Text('The tenancy could not be saved.')),
         );
       }
+    }
+  }
+
+  /// EPC records by property id, or null when compliance data is unavailable
+  /// (in which case no EPC prompt is shown rather than a misleading one).
+  Future<Map<String, ComplianceRecord?>?> _loadEpcRecords(WidgetRef ref) async {
+    try {
+      final requirements =
+          await ref.read(complianceRequirementsProvider.future);
+      final portfolio = await ref.read(compliancePortfolioProvider.future);
+      return {
+        for (final property in portfolio)
+          property.id: epcRecordFor(property, requirements),
+      };
+    } catch (_) {
+      return null;
     }
   }
 
@@ -422,12 +456,16 @@ class _TenancyDialog extends StatefulWidget {
     required this.properties,
     this.tenancy,
     this.initialPropertyId,
+    this.epcRecords,
   });
 
   final String organisationId;
   final List<Map<String, dynamic>> properties;
   final PortfolioTenancy? tenancy;
   final String? initialPropertyId;
+
+  /// EPC records by property id for new tenancies; null skips the EPC prompt.
+  final Map<String, ComplianceRecord?>? epcRecords;
 
   @override
   State<_TenancyDialog> createState() => _TenancyDialogState();
@@ -491,6 +529,15 @@ class _TenancyDialogState extends State<_TenancyDialog> {
     if (picked != null) setState(() => _actualEndDate = picked);
   }
 
+  String? get _epcPrompt {
+    final records = widget.epcRecords;
+    if (widget.tenancy != null || records == null) return null;
+    return epcPromptForNewTenancy(
+      epcRecord: records[_propertyId],
+      tenancyStart: _startDate,
+    );
+  }
+
   void _save() {
     if (!_formKey.currentState!.validate()) return;
     final rent = _rent.text.trim().isEmpty ? null : double.parse(_rent.text);
@@ -532,8 +579,12 @@ class _TenancyDialogState extends State<_TenancyDialog> {
                           child: Text(_propertyLabel(property)),
                         ),
                     ],
-                    onChanged: (value) => _propertyId = value!,
+                    onChanged: (value) => setState(() => _propertyId = value!),
                   ),
+                  if (_epcPrompt != null) ...[
+                    const SizedBox(height: 14),
+                    _EpcPrompt(message: _epcPrompt!),
+                  ],
                   const SizedBox(height: 14),
                   TextFormField(
                     controller: _tenant,
@@ -617,6 +668,31 @@ class _TenancyDialogState extends State<_TenancyDialog> {
                 Text(widget.tenancy == null ? 'Add tenancy' : 'Save changes'),
           ),
         ],
+      );
+}
+
+class _EpcPrompt extends StatelessWidget {
+  const _EpcPrompt({required this.message});
+  final String message;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+        liveRegion: true,
+        child: Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: const Color(0xFFFFF4D8),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Icon(Icons.warning_amber_outlined),
+              const SizedBox(width: 10),
+              Expanded(child: Text(message)),
+            ],
+          ),
+        ),
       );
 }
 
