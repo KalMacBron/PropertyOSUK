@@ -31,11 +31,7 @@ PortfolioSummary buildPortfolioSummary({
 
   for (final property in properties) {
     for (final requirement in requirements) {
-      final status = property.recordFor(requirement.id)?.statusOn(
-                today,
-                warningDays: requirement.defaultWarningDays,
-              ) ??
-          ComplianceStatus.notRecorded;
+      final status = property.statusFor(requirement, today);
       switch (status) {
         case ComplianceStatus.compliant:
           compliant++;

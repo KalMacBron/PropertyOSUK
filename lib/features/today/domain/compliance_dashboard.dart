@@ -65,7 +65,7 @@ List<ComplianceDashboardItem> buildDashboardItems({
         status = DashboardStatus.missingInformation;
       } else if (days < 0) {
         status = DashboardStatus.overdue;
-      } else if (days <= warningDays) {
+      } else if (days <= (record?.reminderDays ?? warningDays)) {
         status = DashboardStatus.expiringSoon;
       } else {
         status = DashboardStatus.compliant;

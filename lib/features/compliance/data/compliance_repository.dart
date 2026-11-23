@@ -12,7 +12,8 @@ class ComplianceRepository {
   ) async {
     final rows = await _client
         .from('compliance_requirement_types')
-        .select('id, code, name, description, default_warning_days')
+        .select('id, code, name, description, default_warning_days, '
+            'default_validity_months')
         .or('organisation_id.is.null,organisation_id.eq.$organisationId')
         .inFilter('code', trackedRequirementCodes.toList())
         .order('name');
@@ -29,7 +30,7 @@ class ComplianceRepository {
     final recordRows = await _client
         .from('property_compliance_records')
         .select(
-          'id, property_id, requirement_type_id, issue_date, expiry_date, review_date, reference_number, notes',
+          'id, property_id, requirement_type_id, issue_date, expiry_date, review_date, reference_number, notes, reminder_days',
         )
         .eq('organisation_id', organisationId);
     final records = recordRows.map(ComplianceRecord.fromJson).toList();
@@ -58,6 +59,7 @@ class ComplianceRepository {
     required DateTime? reviewDate,
     required String? referenceNumber,
     required String? notes,
+    int? reminderDays,
   }) async {
     await _client.from('property_compliance_records').upsert({
       'organisation_id': organisationId,
@@ -68,6 +70,7 @@ class ComplianceRepository {
       'review_date': _dateValue(reviewDate),
       'reference_number': _optional(referenceNumber),
       'notes': _optional(notes),
+      'reminder_days': reminderDays,
       'confirmed_at': DateTime.now().toUtc().toIso8601String(),
       'confirmed_by': _userId,
       'created_by': _userId,

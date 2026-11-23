@@ -77,11 +77,7 @@ class _RegisterContent extends ConsumerWidget {
     final counts = {for (final status in ComplianceStatus.values) status: 0};
     for (final property in scopedProperties) {
       for (final requirement in requirements) {
-        final status = property.recordFor(requirement.id)?.statusOn(
-                  today,
-                  warningDays: requirement.defaultWarningDays,
-                ) ??
-            ComplianceStatus.notRecorded;
+        final status = property.statusFor(requirement, today);
         counts[status] = counts[status]! + 1;
       }
     }
@@ -92,11 +88,7 @@ class _RegisterContent extends ConsumerWidget {
             property: property,
             requirements: requirements.where((requirement) {
               if (statusFilter == null) return true;
-              final status = property.recordFor(requirement.id)?.statusOn(
-                        today,
-                        warningDays: requirement.defaultWarningDays,
-                      ) ??
-                  ComplianceStatus.notRecorded;
+              final status = property.statusFor(requirement, today);
               return status == statusFilter;
             }).toList(),
           ),
@@ -232,6 +224,7 @@ class _RequirementRow extends ConsumerWidget {
             reviewDate: draft.reviewDate,
             referenceNumber: draft.referenceNumber,
             notes: draft.notes,
+            reminderDays: draft.reminderDays,
           );
       refreshCompliance(ref);
       if (context.mounted) {
@@ -332,9 +325,10 @@ class _RequirementRow extends ConsumerWidget {
     final record = property.recordFor(requirement.id);
     final status = record?.statusOn(
           DateTime.now(),
-          warningDays: requirement.defaultWarningDays,
+          warningDays: record.warningDaysFor(requirement),
         ) ??
         ComplianceStatus.notRecorded;
+    final reminderDate = record?.reminderDateFor(requirement);
     final summary = <String>[
       if (record?.issueDate != null)
         'Checked ${DateFormat('dd/MM/yyyy').format(record!.issueDate!)}',
@@ -342,8 +336,14 @@ class _RequirementRow extends ConsumerWidget {
         'Expires ${DateFormat('dd/MM/yyyy').format(record!.expiryDate!)}',
       if (record?.reviewDate != null)
         'Review ${DateFormat('dd/MM/yyyy').format(record!.reviewDate!)}',
+      if (reminderDate != null)
+        'Reminder from ${DateFormat('dd/MM/yyyy').format(reminderDate)}',
       if (record?.referenceNumber?.trim().isNotEmpty ?? false)
         'Ref: ${record!.referenceNumber!.trim()}',
+      if (requirement.code == epcRequirementCode &&
+          record != null &&
+          record.isExpiredOn(DateTime.now()))
+        'Renew before the next tenancy starts',
     ];
     final subtitle =
         summary.isEmpty ? requirement.description : summary.join(' · ');
@@ -416,6 +416,28 @@ class _ComplianceDialogState extends State<_ComplianceDialog> {
   late final TextEditingController _notes = TextEditingController(
     text: widget.existing?.notes ?? '',
   );
+  late final TextEditingController _reminder = TextEditingController(
+    text:
+        '${widget.existing?.reminderDays ?? widget.requirement.defaultWarningDays}',
+  );
+
+  /// True while the expiry date is the suggested default, so a new issue date
+  /// moves it. Choosing an expiry date by hand stops the automatic update.
+  late bool _expiryFollowsIssue = widget.existing?.expiryDate == null ||
+      (widget.existing?.issueDate != null &&
+          widget.requirement.suggestedExpiryFor(widget.existing!.issueDate!) ==
+              widget.existing!.expiryDate);
+
+  void _setIssueDate(DateTime value) {
+    setState(() {
+      _issueDate = value;
+      final suggested = widget.requirement.suggestedExpiryFor(value);
+      if (!_usesReviewDate && suggested != null && _expiryFollowsIssue) {
+        _expiryDate = suggested;
+        _reviewDate = null;
+      }
+    });
+  }
 
   bool get _usesReviewDate =>
       widget.requirement.code == 'smoke_alarms' ||
@@ -425,13 +447,14 @@ class _ComplianceDialogState extends State<_ComplianceDialog> {
         context: context,
         initialDate: value ?? DateTime.now(),
         firstDate: DateTime(2000),
-        lastDate: DateTime.now().add(const Duration(days: 3650)),
+        lastDate: DateTime(DateTime.now().year + 20, 12, 31),
       );
 
   @override
   void dispose() {
     _reference.dispose();
     _notes.dispose();
+    _reminder.dispose();
     super.dispose();
   }
 
@@ -451,7 +474,7 @@ class _ComplianceDialogState extends State<_ComplianceDialog> {
                   value: _issueDate,
                   onTap: () async {
                     final value = await _pick(_issueDate);
-                    if (value != null) setState(() => _issueDate = value);
+                    if (value != null) _setIssueDate(value);
                   },
                 ),
                 const SizedBox(height: 12),
@@ -470,10 +493,30 @@ class _ComplianceDialogState extends State<_ComplianceDialog> {
                         } else {
                           _expiryDate = value;
                           _reviewDate = null;
+                          _expiryFollowsIssue = false;
                         }
                       });
                     }
                   },
+                ),
+                if (!_usesReviewDate &&
+                    widget.requirement.defaultValidityMonths != null) ...[
+                  const SizedBox(height: 6),
+                  Text(
+                    'Defaults to ${validityLabel(widget.requirement.defaultValidityMonths!)} '
+                    'after the issue date. You can choose a different date.',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ],
+                const SizedBox(height: 12),
+                TextField(
+                  controller: _reminder,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    labelText: 'Reminder (days before due date)',
+                    helperText:
+                        'Default ${widget.requirement.defaultWarningDays} days',
+                  ),
                 ),
                 const SizedBox(height: 12),
                 TextField(
@@ -513,9 +556,27 @@ class _ComplianceDialogState extends State<_ComplianceDialog> {
                 );
                 return;
               }
+              final reminderText = _reminder.text.trim();
+              final reminder =
+                  reminderText.isEmpty ? null : int.tryParse(reminderText);
+              if (reminderText.isNotEmpty &&
+                  (reminder == null || reminder < 0 || reminder > 365)) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                      'Enter a reminder between 0 and 365 days.',
+                    ),
+                  ),
+                );
+                return;
+              }
               Navigator.pop(
                 context,
                 _ComplianceDraft(
+                  reminderDays: reminder == null ||
+                          reminder == widget.requirement.defaultWarningDays
+                      ? null
+                      : reminder,
                   issueDate: _issueDate,
                   expiryDate: _expiryDate,
                   reviewDate: _reviewDate,
@@ -537,8 +598,10 @@ class _ComplianceDraft {
     required this.reviewDate,
     required this.referenceNumber,
     required this.notes,
+    required this.reminderDays,
   });
 
+  final int? reminderDays;
   final DateTime? issueDate;
   final DateTime? expiryDate;
   final DateTime? reviewDate;
