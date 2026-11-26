@@ -50,6 +50,7 @@ For Edge Function changes, also run:
 
 ```bash
 deno fmt --check supabase/functions
+deno lint supabase/functions
 deno check supabase/functions/certificate-processing/index.ts
 ```
 
