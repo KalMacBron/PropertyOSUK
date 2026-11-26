@@ -1,0 +1,30 @@
+# Dependabot opens weekly pull requests for outdated dependencies and
+# security fixes. Every pull request runs the normal CI checks, and nothing
+# merges without Karl's approval (a merge into main deploys Alpha).
+version: 2
+updates:
+  # Flutter and Dart packages from pubspec.yaml
+  - package-ecosystem: "pub"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      timezone: "Europe/London"
+    open-pull-requests-limit: 5
+    groups:
+      pub-minor-and-patch:
+        update-types: ["minor", "patch"]
+    labels: ["dependencies"]
+
+  # GitHub Actions used by the workflows in .github/workflows
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      timezone: "Europe/London"
+    open-pull-requests-limit: 5
+    groups:
+      github-actions:
+        patterns: ["*"]
+    labels: ["dependencies"]

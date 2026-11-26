@@ -67,8 +67,18 @@ flutter test
 supabase db reset
 supabase test db
 deno fmt --check supabase/functions
+deno lint supabase/functions
 deno check supabase/functions/certificate-processing/index.ts
 ```
+
+Automated scanning on GitHub:
+
+- CI runs the checks above on every pull request.
+- CodeQL (`.github/workflows/codeql.yml`) scans the Edge Functions and the
+  workflows for security issues on every pull request and weekly. CodeQL does
+  not support Dart, so `flutter analyze` is the Dart linter.
+- Dependabot (`.github/dependabot.yml`) opens weekly pull requests for pub
+  packages and GitHub Actions.
 
 ## Environments
 

@@ -66,4 +66,6 @@ jobs:
             git diff
             exit 1
           }
+      - name: Lint Edge Functions
+        run: deno lint supabase/functions
       - run: deno check supabase/functions/*/index.ts
