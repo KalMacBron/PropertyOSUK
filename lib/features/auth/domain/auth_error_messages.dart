@@ -19,6 +19,8 @@ const authWeakPasswordMessage =
     'Choose a longer password that is harder to guess.';
 const authLinkExpiredMessage =
     'This link has expired. Request a new email and use the newest link.';
+const authSamePasswordMessage =
+    'Your new password must be different from your current password.';
 
 /// Returns the message to show for an authentication failure.
 ///
@@ -47,6 +49,8 @@ String authErrorMessage({
       return authAccountExistsMessage;
     case 'weak_password':
       return authWeakPasswordMessage;
+    case 'same_password':
+      return authSamePasswordMessage;
     case 'otp_expired':
     case 'flow_state_expired':
       return authLinkExpiredMessage;
@@ -59,6 +63,9 @@ String authErrorMessage({
   }
   if (normalisedMessage.contains('email not confirmed')) {
     return authEmailNotConfirmedMessage;
+  }
+  if (normalisedMessage.contains('different from the old password')) {
+    return authSamePasswordMessage;
   }
   return fallback;
 }

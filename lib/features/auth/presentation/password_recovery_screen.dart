@@ -95,6 +95,9 @@ class _PasswordRecoveryScreenState
                         autofillHints: const [AutofillHints.newPassword],
                         decoration: InputDecoration(
                           labelText: 'New password',
+                          helperText: 'Must be at least 8 characters and '
+                              'different from your current password.',
+                          helperMaxLines: 2,
                           suffixIcon: IconButton(
                             tooltip:
                                 _obscure ? 'Show password' : 'Hide password',
