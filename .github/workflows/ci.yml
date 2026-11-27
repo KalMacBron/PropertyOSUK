@@ -29,6 +29,12 @@ jobs:
           }
       - run: flutter analyze
       - run: flutter test
+      # Landlords' browsers run on UK time; date logic can pass in UTC and
+      # still break across the clock changes, so run the suite in both.
+      - name: flutter test (UK time)
+        run: flutter test
+        env:
+          TZ: Europe/London
 
   database:
     runs-on: ubuntu-latest

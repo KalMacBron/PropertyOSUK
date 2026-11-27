@@ -87,6 +87,20 @@ void main() {
       expect(value.reminderDateFor(gas), DateTime(2027, 10, 23));
     });
 
+    test('a reminder across the spring clock change keeps its date', () {
+      final value = record(expiry: DateTime(2027, 4, 10), reminderDays: 30);
+      expect(value.reminderDateFor(gas), DateTime(2027, 3, 11));
+    });
+
+    test('a due date exactly the warning period away is due soon in October',
+        () {
+      expect(
+        record(expiry: DateTime(2027, 11, 5))
+            .statusOn(DateTime(2027, 10, 6), warningDays: 30),
+        ComplianceStatus.dueSoon,
+      );
+    });
+
     test('a record-level reminder overrides the default', () {
       final value = record(expiry: DateTime(2027, 11, 23), reminderDays: 60);
       expect(value.warningDaysFor(gas), 60);

@@ -59,6 +59,20 @@ void main() {
     expect(items[1].daysUntilDue, 23);
   });
 
+  test('counts days to due across the spring clock change', () {
+    final items = buildDashboardItems(
+      properties: [
+        property([record('eicr-record', 'eicr', DateTime(2027, 4, 5))]),
+      ],
+      requirements: [eicr],
+      today: DateTime(2027, 3, 1),
+      warningDays: 35,
+    );
+
+    expect(items.single.daysUntilDue, 35);
+    expect(items.single.status, DashboardStatus.expiringSoon);
+  });
+
   test('recalculates expiring soon between 30 and 60 days', () {
     final portfolio = [
       property([record('gas-record', 'gas', DateTime(2026, 9, 10))]),
