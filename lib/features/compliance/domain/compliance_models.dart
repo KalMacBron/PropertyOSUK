@@ -1,3 +1,5 @@
+import 'package:property_os/core/dates/calendar_days.dart';
+
 enum ComplianceStatus { compliant, dueSoon, overdue, notRecorded }
 
 const trackedRequirementCodes = <String>{
@@ -117,8 +119,7 @@ class ComplianceRecord {
   DateTime? reminderDateFor(ComplianceRequirement requirement) {
     final due = applicableDate;
     if (due == null) return null;
-    return DateTime(due.year, due.month, due.day)
-        .subtract(Duration(days: warningDaysFor(requirement)));
+    return addCalendarDays(due, -warningDaysFor(requirement));
   }
 
   bool isExpiredOn(DateTime day) {
@@ -134,7 +135,7 @@ class ComplianceRecord {
     final day = DateTime(today.year, today.month, today.day);
     final due = DateTime(dueDate.year, dueDate.month, dueDate.day);
     if (due.isBefore(day)) return ComplianceStatus.overdue;
-    if (!due.isAfter(day.add(Duration(days: warningDays)))) {
+    if (!due.isAfter(addCalendarDays(day, warningDays))) {
       return ComplianceStatus.dueSoon;
     }
     return ComplianceStatus.compliant;

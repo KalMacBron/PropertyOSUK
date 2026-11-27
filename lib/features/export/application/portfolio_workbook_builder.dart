@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:archive/archive.dart';
 import 'package:excel/excel.dart';
+import 'package:property_os/core/dates/calendar_days.dart';
 
 class PortfolioWorkbookBuilder {
   const PortfolioWorkbookBuilder();
@@ -771,6 +772,6 @@ String _complianceStatus(Map<String, dynamic> row) {
   final date = DateTime(expiry.year, expiry.month, expiry.day);
   final start = DateTime(today.year, today.month, today.day);
   if (date.isBefore(start)) return 'Expired';
-  if (!date.isAfter(start.add(const Duration(days: 45)))) return 'Due soon';
+  if (!date.isAfter(addCalendarDays(start, 45))) return 'Due soon';
   return 'Current';
 }

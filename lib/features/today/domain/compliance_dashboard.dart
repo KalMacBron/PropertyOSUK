@@ -1,5 +1,6 @@
 import 'package:property_os/features/compliance/domain/compliance_models.dart';
 import 'package:property_os/features/compliance/domain/compliance_status_labels.dart';
+import 'package:property_os/core/dates/calendar_days.dart';
 
 enum DashboardStatus { overdue, expiringSoon, compliant, missingInformation }
 
@@ -59,7 +60,7 @@ List<ComplianceDashboardItem> buildDashboardItems({
       final due = dueDate == null
           ? null
           : DateTime(dueDate.year, dueDate.month, dueDate.day);
-      final days = due?.difference(day).inDays;
+      final days = due == null ? null : calendarDaysBetween(day, due);
       final DashboardStatus status;
       if (days == null) {
         status = DashboardStatus.missingInformation;
