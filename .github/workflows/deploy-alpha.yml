@@ -21,7 +21,7 @@ jobs:
       name: alpha
       url: https://alpha.propertyosuk.com
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - uses: subosito/flutter-action@v2
         with:
