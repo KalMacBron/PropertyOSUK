@@ -51,4 +51,17 @@ void main() {
         authAccountExistsMessage);
     expect(authErrorMessage(code: 'weak_password'), authWeakPasswordMessage);
   });
+
+  test('maps a reused password on password update', () {
+    expect(
+      authErrorMessage(code: 'same_password', statusCode: '422'),
+      'Your new password must be different from your current password.',
+    );
+    expect(
+      authErrorMessage(
+        message: 'New password should be different from the old password.',
+      ),
+      authSamePasswordMessage,
+    );
+  });
 }
